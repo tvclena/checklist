@@ -1,0 +1,7931 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+
+  <title>Checklist Mercatto • OTTO</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #f3f6fa;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --surface-3: #eef2f7;
+      --text: #0f172a;
+      --muted: #64748b;
+      --muted-2: #94a3b8;
+      --line: #dbe3ec;
+      --line-2: #e8eef5;
+      --dark: #111827;
+      --dark-2: #1f2937;
+      --gold: #d4af37;
+      --gold-2: #f2cf66;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --orange: #f59e0b;
+      --purple: #7c3aed;
+      --radius: 10px;
+      --shadow: 0 14px 34px rgba(15, 23, 42, .08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    body {
+      display: block;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      user-select: none;
+    }
+
+.content {
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 0 10px 10px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 72px;
+      margin: 0 0 18px 0;
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, .98);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .top h2 {
+      font-size: 24px;
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: 0;
+      color: var(--dark);
+    }
+
+    .top p {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .actions button,
+    .btn-primary,
+    .btn-refresh,
+    .btn-pdf {
+      height: 42px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1;
+      cursor: pointer;
+      transition: background .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
+    }
+
+    .actions button:hover,
+    .btn-primary:hover,
+    .btn-refresh:hover,
+    .btn-pdf:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--dark);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, .14);
+    }
+
+    .btn-refresh {
+      background: #fff;
+      color: var(--dark);
+      border-color: var(--line);
+    }
+
+    .btn-pdf {
+      background: #fff7df;
+      color: #7a5400;
+      border-color: #f4dd94;
+    }
+
+    .btn-pdf i {
+      font-size: 17px;
+    }
+
+    .filtros-wrap {
+      display: grid;
+      grid-template-columns:
+        minmax(260px, 2fr) minmax(130px, 1fr) minmax(115px, .8fr) minmax(130px, 1fr) minmax(115px, .8fr) minmax(160px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr) minmax(130px, .9fr) minmax(150px, 1fr) auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 16px;
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .filtro-item {
+      min-width: 0 !important;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .filtro-item label,
+    .field label {
+      color: #475569;
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .filtro-item select,
+    .filtro-item input,
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      min-width: 0;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      padding: 0 12px;
+      font-size: 13px;
+      font-weight: 650;
+      outline: none;
+      box-shadow: none;
+      transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    .filtro-item select:focus,
+    .filtro-item input:focus,
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: #334155;
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, .10);
+      background: #fff;
+    }
+
+
+
+    .filtro-busca {
+      min-width: 260px !important;
+    }
+
+    .filtros-wrap .filtro-item {
+      min-width: 0 !important;
+    }
+
+    .filtros-wrap select,
+    .filtros-wrap input {
+      height: 40px !important;
+      font-size: 12px !important;
+    }
+
+    #btnCronManual {
+      width: 150px !important;
+      height: 40px !important;
+      white-space: nowrap;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    #btnCronManual {
+      height: 42px !important;
+      border-radius: 8px !important;
+      padding: 0 14px !important;
+      background: var(--dark) !important;
+      color: #fff !important;
+      box-shadow: none !important;
+    }
+
+    #cronSpinner {
+      border-color: rgba(255, 255, 255, .35) !important;
+      border-top-color: #fff !important;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .kpi {
+      min-width: 0;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, .06);
+    }
+
+    .kpi::before {
+      display: none;
+    }
+
+    .kpi small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .kpi h3 {
+      margin-top: 6px;
+      color: var(--dark);
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow: auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1180px;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      background: var(--dark);
+    }
+
+    th {
+      height: 46px;
+      padding: 0 12px;
+      color: #fff;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .45px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px;
+      color: #1f2937;
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.38;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--line-2);
+      background: #fff;
+    }
+
+    tbody tr {
+      transition: background .14s ease;
+    }
+
+    tbody tr:hover td {
+      background: #fafcff;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 132px;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 310px;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 150px;
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+      width: 145px;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: 190px;
+    }
+
+    th:nth-child(6),
+    td:nth-child(6) {
+      width: 150px;
+    }
+
+    th:nth-child(7),
+    td:nth-child(7) {
+      width: 120px;
+    }
+
+    th:nth-child(8),
+    td:nth-child(8) {
+      width: 250px;
+    }
+
+    td b {
+      display: block;
+      color: var(--dark);
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    td div {
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-width: 0;
+      height: 28px;
+      padding: 0 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .25px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .PENDENTE {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .ATRASADO {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+
+    .CONCLUIDO {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .EM_ANDAMENTO {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+
+    .IGNORADO {
+      background: #e2e8f0;
+      color: #475569;
+      border-color: #cbd5e1;
+    }
+
+    .CANCELADO,
+    .REPROVADO {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+
+    .AGUARDANDO_VALIDACAO,
+    .AGUARDANDO_FINALIZACAO {
+      background: #f3e8ff;
+      color: #6b21a8;
+      border-color: #e9d5ff;
+    }
+
+    .action-btn {
+      height: 32px;
+      min-width: 68px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      padding: 0 10px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 850;
+      cursor: pointer;
+      box-shadow: none;
+      transition: transform .14s ease, filter .14s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(.97);
+    }
+
+    .btn-blue {
+      background: #2563eb;
+    }
+
+    .btn-green {
+      background: #16a34a;
+    }
+
+    .btn-red {
+      background: #dc2626;
+    }
+
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .75);
+      backdrop-filter: blur(8px);
+      z-index: 999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .loading-spinner {
+      width: 70px;
+      height: 70px;
+      border: 5px solid rgba(255, 255, 255, .25);
+      border-top: 5px solid #d4af37;
+      border-radius: 50%;
+      animation: loadingSpin .8s linear infinite;
+    }
+
+    .loading-text {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    @keyframes loadingSpin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, .62);
+      backdrop-filter: blur(10px);
+    }
+
+    .modal {
+      width: min(1200px, 98vw);
+      max-width: 1200px;
+      max-height: 92vh;
+
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      position: relative;
+
+      padding: 22px;
+
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+
+      box-shadow: 0 34px 90px rgba(0, 0, 0, .28);
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal>* {
+      width: 100%;
+    }
+
+    .grid {
+      width: 100%;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 14px;
+    }
+
+    .field {
+      width: 100%;
+      min-width: 0;
+
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .field textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .responsavel {
+      width: 100%;
+
+      margin-top: 18px;
+
+      padding: 16px;
+
+      background: #f8fafc;
+
+      border: 1px solid var(--line);
+
+      border-radius: 10px;
+    }
+
+    #listaResponsaveis {
+      width: 100%;
+    }
+
+    #listaSubtarefas {
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 10px;
+    }
+
+    #listaSubtarefas>div {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+
+    .field:has(#fotoObrigatoria)>label::after,
+    label:has(input[onchange*="foto_obrigatoria"])::after {
+      content: "";
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-left: 7px;
+      vertical-align: -3px;
+      background: currentColor;
+      opacity: .82;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9 3 7.17 5H5a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3h-2.17L15 3H9Zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2.2a2.8 2.8 0 1 0 0-5.6 2.8 2.8 0 0 0 0 5.6Z'/%3E%3C/svg%3E") center/contain no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9 3 7.17 5H5a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3h-2.17L15 3H9Zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2.2a2.8 2.8 0 1 0 0-5.6 2.8 2.8 0 0 0 0 5.6Z'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+    .dias-semana {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .dia-pill {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .dia-pill input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .dia-pill span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      min-width: 46px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .dia-pill input:checked+span {
+      background: var(--dark);
+      border-color: var(--dark);
+      color: #fff;
+    }
+
+
+
+    .busca-responsavel {
+      position: relative;
+    }
+
+    .busca-responsavel i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 17px;
+      pointer-events: none;
+    }
+
+    .busca-responsavel input {
+      padding-left: 40px !important;
+    }
+
+    .resultado-responsaveis,
+    #resultadoModelos {
+      margin-top: 8px;
+      overflow: auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .12);
+    }
+
+    .usuario-resultado {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+    }
+
+    .usuario-resultado>div {
+      flex: 1;
+    }
+
+    .usuario-resultado:hover {
+      background: #f8fafc;
+    }
+
+    .usuario-resultado:last-child {
+      border-bottom: 0;
+    }
+
+    #listaResponsaveis {
+      margin-top: 14px !important;
+      gap: 10px !important;
+    }
+
+    #listaSubtarefas {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #listaSubtarefas input {
+      height: 38px;
+      border: 1px solid var(--line) !important;
+      border-radius: 8px !important;
+      padding: 0 10px !important;
+      outline: none;
+    }
+
+    #listaSubtarefas input:focus {
+      border-color: #334155 !important;
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, .10);
+    }
+
+    .modal-actions {
+      position: sticky;
+      bottom: -22px;
+      z-index: 2;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin: 18px -22px -22px;
+      padding: 14px 22px;
+      background: rgba(255, 255, 255, .96);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-actions button {
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 16px;
+      background: #fff;
+      color: var(--dark);
+      font-size: 12px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .modal-actions .btn-primary {
+      background: var(--dark);
+      color: #fff;
+      border-color: var(--dark);
+    }
+
+    #painelDinamico {
+      margin-top: 16px !important;
+    }
+
+    #listaCobrancas,
+    #listaLogs {
+      display: grid;
+      gap: 12px;
+    }
+
+    @keyframes girar {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      border: 3px solid transparent;
+      border-radius: 999px;
+      background: #aebccc;
+      background-clip: padding-box;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #8796a8;
+      background-clip: padding-box;
+    }
+
+
+
+    /* =====================================================
+       FONTE DE DADOS DAS SUBTAREFAS
+    ===================================================== */
+
+    .subtask-font-card {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .subtask-font-card.active {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .subtask-font-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .subtask-font-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 38px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #dbe3ec;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .subtask-font-card.active .subtask-font-toggle {
+      background: #dbeafe;
+      border-color: #93c5fd;
+      color: #1d4ed8;
+    }
+
+    .subtask-font-help {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .subtask-font-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 10px;
+    }
+
+    .subtask-font-grid label {
+      display: block;
+      margin-bottom: 6px;
+      color: #475569;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+    }
+
+    .subtask-font-grid input,
+    .subtask-font-grid select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid #dbe3ec;
+      border-radius: 9px;
+      background: #fff;
+      color: #0f172a;
+      padding: 0 11px;
+      font-size: 12px;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .subtask-font-grid input:focus,
+    .subtask-font-grid select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+    }
+
+    .fonte-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .fonte-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 22px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    @media(max-width:1100px) {
+      .filtros-wrap {
+        grid-template-columns:
+          minmax(260px, 2fr) minmax(130px, 1fr) minmax(115px, .8fr) minmax(130px, 1fr) minmax(115px, .8fr) minmax(160px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr) minmax(130px, .9fr) minmax(150px, 1fr) auto;
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media(max-width:760px) {
+
+      .modal {
+        width: 100vw;
+        max-width: 100vw;
+
+        padding: 16px;
+
+        overflow-x: hidden;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .subtask-font-grid {
+        grid-template-columns: 1fr;
+      }
+
+
+      .modal-actions {
+        margin: 16px -16px -16px;
+        padding: 12px 16px;
+      }
+
+      .modal-actions button {
+        flex: 1;
+      }
+
+      #listaSubtarefas>div>div {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
+
+      #listaSubtarefas input {
+        width: 100% !important;
+      }
+    }
+
+    @media(max-width:480px) {
+      .kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .actions button,
+      .btn-primary,
+      .btn-refresh,
+      .btn-pdf {
+        width: 100%;
+      }
+    }
+
+    .resultado-responsaveis {
+      margin-top: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .12);
+    }
+
+
+
+
+    /* =====================================================
+   TAREFAS EM CARD COM ROLAGEM INTERNA
+===================================================== */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+}
+
+.content {
+  height: 100dvh !important;
+  overflow: hidden !important;
+  padding: 0 10px 10px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.cabecalho-fixo {
+  height: 100% !important;
+  min-height: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  overflow: hidden !important;
+}
+
+/* Cabeçalho fixo no topo */
+.top {
+  flex: 0 0 auto !important;
+  margin: 0 0 12px 0 !important;
+}
+
+/* Filtros + KPIs ficam fixos, sem entrar na rolagem */
+#conteudoTarefas {
+  flex: 0 0 auto !important;
+}
+
+/* Card das tarefas */
+.table-wrap {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+
+  width: 100% !important;
+  overflow: auto !important;
+
+  background: #fff !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Cabeçalho da tabela fixo dentro do card */
+.table-wrap thead {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+}
+
+/* Evita a tabela estourar verticalmente */
+.table-wrap table {
+  margin: 0 !important;
+}
+
+/* Remove rolagem externa acidental */
+#painelDinamico {
+  flex: 0 0 auto !important;
+}
+
+
+
+
+
+
+
+
+
+
+    
+  </style>
+</head>
+
+<body>
+
+
+  <!-- =====================================================
+CONTENT
+===================================================== -->
+
+  <body>
+
+    <!-- OVERLAY CARREGANDO -->
+    <div id="loadingOverlay">
+      <div class="loading-box">
+
+        <div class="loading-spinner"></div>
+
+        <div class="loading-text">
+          Espera que eu estou carregando...
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <datalist id="listaFontesDados">
+      <option value="KG"></option>
+      <option value="G"></option>
+      <option value="UN"></option>
+      <option value="LITROS"></option>
+      <option value="ML"></option>
+      <option value="R$"></option>
+      <option value="BALDES"></option>
+      <option value="CAIXAS"></option>
+      <option value="PACOTES"></option>
+      <option value="PESSOAS"></option>
+      <option value="HORAS"></option>
+      <option value="MINUTOS"></option>
+      <option value="CONTAGEM_ESTOQUE"></option>
+      <option value="REGISTRO_CAIXA"></option>
+    </datalist>
+    <!-- =====================================================
+CONTENT
+===================================================== -->
+
+    <div class="content">
+
+      <div class="cabecalho-fixo">
+
+        <div class="top">
+
+          <div>
+
+            <h2>Checklist OTTO</h2>
+
+          </div>
+
+          <div class="actions">
+
+            <button
+        class="btn-refresh"
+        onclick="carregarTudo()"
+      >
+
+        Atualizar
+
+      </button>
+
+
+            <button
+  class="btn-pdf"
+  onclick="gerarPDFChecklist()"
+>
+  <i class="ri-file-pdf-2-fill"></i>
+  Baixar PDF
+</button>
+
+
+
+
+
+            <button
+        class="btn-primary"
+        onclick="abrirNovaTarefa()"
+      >
+
+        Nova Tarefa
+
+      </button>
+
+          </div>
+
+        </div>
+
+        <div id="conteudoTarefas" style="display:block">
+
+
+
+          <!-- =====================================================
+FILTROS
+===================================================== -->
+
+          <div class="filtros-wrap">
+            <div class="filtro-item filtro-busca">
+              <label>Buscar Tarefa</label>
+
+              <div style="position:relative;">
+                <i class="ri-search-line" style="
+      position:absolute;
+      left:12px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#94a3b8;
+      font-size:17px;
+      pointer-events:none;
+    "></i>
+
+                <input
+      type="text"
+      id="filtroBuscaTarefa"
+      placeholder="Pesquisar tarefa..."
+      oninput="aplicarFiltros()"
+      style="padding-left:40px;"
+    >
+              </div>
+            </div>
+
+
+            <div class="filtro-item">
+              <label>Data De</label>
+              <input
+    type="date"
+    id="filtroDataDe"
+    onchange="aplicarFiltros()"
+  >
+            </div>
+
+            <div class="filtro-item">
+              <label>Hora De</label>
+              <input
+    type="time"
+    id="filtroHoraDe"
+    onchange="aplicarFiltros()"
+  >
+            </div>
+
+            <div class="filtro-item">
+              <label>Data Até</label>
+              <input
+    type="date"
+    id="filtroDataAte"
+    onchange="aplicarFiltros()"
+  >
+            </div>
+
+            <div class="filtro-item">
+              <label>Hora Até</label>
+              <input
+    type="time"
+    id="filtroHoraAte"
+    onchange="aplicarFiltros()"
+  >
+            </div>
+
+
+
+
+
+
+
+
+
+            <div class="filtro-item">
+
+              <label>Status da Tarefa</label>
+
+              <select id="filtroStatus" onchange="aplicarFiltros()">
+
+  <option value="">Todos</option>
+
+  <option value="PENDENTE">Pendente</option>
+
+  <option value="EM_ANDAMENTO">Em andamento</option>
+
+  <option value="ATRASADO">Atrasado</option>
+
+  <option value="CONCLUIDO">Concluído</option>
+
+  <option value="IGNORADO">Ignorado</option>
+
+  <option value="CANCELADO">Cancelado</option>
+
+  <option value="AGUARDANDO_VALIDACAO">
+    Aguardando validação
+  </option>
+
+  <option value="REPROVADO">
+    Reprovado
+  </option>
+
+  <option value="AGUARDANDO_FINALIZACAO">
+    Aguardando finalização
+  </option>
+
+</select>
+
+            </div>
+
+            <div class="filtro-item">
+
+              <label>Empresa</label>
+
+              <select id="filtroEmpresa" onchange="aplicarFiltros()">
+
+      <option value="">Todas</option>
+
+    </select>
+
+            </div>
+
+            <div class="filtro-item">
+
+              <label>Setor</label>
+
+              <select id="filtroSetor" onchange="aplicarFiltros()">
+
+      <option value="">Todos</option>
+
+    </select>
+
+            </div>
+
+            <div class="filtro-item">
+
+              <label>Prioridade</label>
+
+              <select id="filtroPrioridade" onchange="aplicarFiltros()">
+
+      <option value="">Todas</option>
+
+      <option value="BAIXA">Baixa</option>
+
+      <option value="MEDIA">Média</option>
+
+      <option value="ALTA">Alta</option>
+
+      <option value="URGENTE">Urgente</option>
+
+    </select>
+
+            </div>
+            <div class="filtro-item">
+
+              <label>
+    Responsável
+  </label>
+
+              <select
+    id="filtroResponsavel"
+    onchange="aplicarFiltros()"
+  >
+
+    <option value="">
+      Todos
+    </option>
+
+  </select>
+
+            </div>
+
+
+
+
+
+
+
+            <!-- BOTÃO CRON -->
+
+            <div class="filtro-item" style="
+      min-width:auto;
+      justify-content:flex-end;
+    ">
+
+              <label>&nbsp;</label>
+
+              <button
+      id="btnCronManual"
+      onclick="executarCronManual()"
+      style="
+        height:52px;
+        padding:0 22px;
+        border:none;
+        border-radius:16px;
+        background:linear-gradient(135deg,#d4af37,#f7d774);
+        color:#000;
+        font-weight:900;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        transition:.2s;
+      "
+    >
+
+      <span
+        id="cronSpinner"
+        style="
+          width:16px;
+          height:16px;
+          border:2px solid rgba(0,0,0,.25);
+          border-top:2px solid #000;
+          border-radius:50%;
+          display:none;
+          animation:girar .7s linear infinite;
+        "
+      ></span>
+
+      <span id="cronTexto">
+        Rodar Cron
+      </span>
+
+    </button>
+
+            </div>
+
+          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <!-- KPIS -->
+
+          <div class="kpis">
+
+            <div class="kpi">
+
+              <small>Total</small>
+
+              <h3 id="kpiTotal">0</h3>
+
+            </div>
+
+            <div class="kpi">
+
+              <small>Pendentes</small>
+
+              <h3 id="kpiPendentes">0</h3>
+
+            </div>
+
+            <div class="kpi">
+
+              <small>Atrasadas</small>
+
+              <h3 id="kpiAtrasadas">0</h3>
+
+            </div>
+
+            <div class="kpi">
+
+              <small>Concluídas</small>
+
+              <h3 id="kpiConcluidas">0</h3>
+
+            </div>
+
+          </div>
+        </div>
+        <!-- TABLE -->
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>Status</th>
+                <th>Título</th>
+                <th>Empresa</th>
+                <th>Setor</th>
+                <th>Responsáveis</th>
+                <th>Limite</th>
+                <th>Prioridade</th>
+                <th>Ações</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody id="tbody"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+      <div id="painelDinamico" style="
+    margin-top:24px;
+    display:none;
+  "></div>
+    </div>
+
+    <!-- =====================================================
+MODAL
+===================================================== -->
+
+    <div class="overlay" id="overlay">
+
+      <div class="modal">
+
+        <h3 id="tituloModal">
+          Nova Tarefa
+        </h3>
+        <div class="grid">
+
+          <div class="field">
+
+            <label>Título</label>
+
+            <div style="position:relative">
+
+              <input
+    id="titulo"
+    autocomplete="off"
+    placeholder="Pesquisar tarefa cadastrada..."
+    oninput="pesquisarModelosTarefa()"
+  >
+
+              <div id="resultadoModelos" style="
+      position:absolute;
+      top:100%;
+      left:0;
+      right:0;
+      background:#fff;
+      border:1px solid #e2e8f0;
+      border-radius:18px;
+      margin-top:8px;
+      max-height:320px;
+      overflow:auto;
+      z-index:9999;
+      display:none;
+      box-shadow:0 10px 30px rgba(0,0,0,.12);
+    "></div>
+
+            </div>
+          </div>
+
+          <div class="field">
+
+            <label>Empresa</label>
+
+            <input
+    id="empresa"
+    disabled
+    placeholder="Automático"
+  >
+
+          </div>
+
+          <div class="field">
+
+            <label>Setor</label>
+
+            <input
+    id="setor"
+    disabled
+    placeholder="Automático"
+  >
+
+          </div>
+
+
+
+
+          <div class="field">
+
+            <label>Prioridade</label>
+
+            <select id="prioridade">
+
+          <option>BAIXA</option>
+          <option>MEDIA</option>
+          <option>ALTA</option>
+          <option>URGENTE</option>
+
+        </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Data Limite</label>
+
+            <input
+          type="datetime-local"
+          id="dataLimite"
+        >
+
+          </div>
+
+          <div class="field">
+
+            <label>Foto obrigatória</label>
+
+            <select id="fotoObrigatoria">
+
+          <option value="true">
+            SIM
+          </option>
+
+          <option value="false">
+            NÃO
+          </option>
+
+        </select>
+
+          </div>
+
+        </div>
+
+        <div class="grid" style="margin-top:20px">
+
+
+          <div class="field">
+
+            <label>Recorrente</label>
+
+            <select id="recorrente">
+
+    <option value="false">
+      NÃO
+    </option>
+
+    <option value="true">
+      SIM
+    </option>
+
+  </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Tipo recorrência</label>
+
+            <select id="tipoRecorrencia">
+
+    <option value="">
+      Nenhum
+    </option>
+
+    <option value="DIARIA">
+      Diária
+    </option>
+
+    <option value="SEMANAL">
+      Semanal
+    </option>
+
+    <option value="MENSAL">
+      Mensal
+    </option>
+
+    <option value="HORAS">
+      Horas
+    </option>
+
+  </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Intervalo recorrência</label>
+
+            <input
+    type="number"
+    id="intervaloRecorrencia"
+    value="1"
+  >
+
+          </div>
+
+          <div class="field">
+
+            <label>Horário execução</label>
+
+            <input
+    type="time"
+    id="horarioExecucao"
+  >
+
+          </div>
+
+          <div class="field">
+
+            <label>Dias semana</label>
+
+            <div class="dias-semana">
+
+              <label class="dia-pill">
+
+      <input
+        type="checkbox"
+        value="segunda"
+      >
+
+      <span>SEG</span>
+
+    </label>
+
+              <label class="dia-pill">
+
+      <input
+        type="checkbox"
+        value="terca"
+      >
+
+      <span>TER</span>
+
+    </label>
+
+              <label class="dia-pill">
+
+      <input
+        type="checkbox"
+        value="quarta"
+      >
+
+      <span>QUA</span>
+
+    </label>
+
+              <label class="dia-pill">
+
+      <input
+        type="checkbox"
+        value="quinta"
+      >
+
+      <span>QUI</span>
+
+    </label>
+
+              <label class="dia-pill">
+
+      <input
+        type="checkbox"
+        value="sexta"
+      >
+
+      <span>SEX</span>
+
+    </label>
+
+              <label class="dia-pill">
+
+      <input
+        type="checkbox"
+        value="sabado"
+      >
+
+      <span>SAB</span>
+
+    </label>
+
+              <label class="dia-pill">
+
+      <input
+        type="checkbox"
+        value="domingo"
+      >
+
+      <span>DOM</span>
+
+    </label>
+
+            </div>
+
+          </div>
+          <div class="field">
+
+            <label>SLA minutos</label>
+
+            <input
+    type="number"
+    id="slaMinutos"
+    value="60"
+  >
+
+          </div>
+
+          <div class="field">
+
+            <label>Exigir áudio</label>
+
+            <select id="audioObrigatorio">
+
+    <option value="false">
+      NÃO
+    </option>
+
+    <option value="true">
+      SIM
+    </option>
+
+  </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Exigir vídeo</label>
+
+            <select id="videoObrigatorio">
+
+    <option value="false">
+      NÃO
+    </option>
+
+    <option value="true">
+      SIM
+    </option>
+
+  </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Exigir assinatura</label>
+
+            <select id="assinaturaObrigatoria">
+
+    <option value="false">
+      NÃO
+    </option>
+
+    <option value="true">
+      SIM
+    </option>
+
+  </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Validação gerencial</label>
+
+            <select id="validacaoGerencial">
+
+    <option value="false">
+      NÃO
+    </option>
+
+    <option value="true">
+      SIM
+    </option>
+
+  </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Cobrança automática</label>
+
+            <select id="cobrancaAutomatica">
+
+    <option value="true">
+      SIM
+    </option>
+
+    <option value="false">
+      NÃO
+    </option>
+
+  </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Intervalo cobrança</label>
+
+            <input
+    type="number"
+    id="intervaloCobranca"
+    value="15"
+  >
+
+          </div>
+
+          <div class="field">
+
+            <label>Máx cobranças</label>
+
+            <input
+    type="number"
+    id="maxCobrancas"
+    value="10"
+  >
+
+          </div>
+
+          <div class="field">
+
+            <label>Escalar supervisor</label>
+
+            <select id="escalarSupervisor">
+
+    <option value="true">
+      SIM
+    </option>
+
+    <option value="false">
+      NÃO
+    </option>
+
+  </select>
+
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:20px">
+
+          <label>Descrição</label>
+
+          <textarea id="descricao"></textarea>
+
+        </div>
+
+        <div class="responsavel">
+          <div class="field">
+
+            <label>Pesquisar responsável</label>
+
+            <div class="busca-responsavel">
+
+              <i class="ri-search-line"></i>
+
+              <input
+      id="buscarResponsavel"
+      placeholder="Digite nome, setor ou empresa..."
+      autocomplete="off"
+      oninput="pesquisarResponsavel()"
+    >
+
+            </div>
+
+            <div id="resultadoResponsaveis" class="resultado-responsaveis"></div>
+
+          </div>
+
+          <div id="listaResponsaveis" style="
+      margin-top:18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    "></div>
+
+        </div>
+        <div style="
+    margin-top:24px;
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:22px;
+    padding:20px;
+  ">
+
+          <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+  ">
+
+            <h3 style="
+      font-size:18px;
+      font-weight:900;
+    ">
+              Subtarefas
+            </h3>
+
+            <button
+      type="button"
+      onclick="adicionarSubtarefa()"
+      class="btn-primary"
+      style="
+        border:none;
+        padding:10px 14px;
+        border-radius:12px;
+        cursor:pointer;
+      "
+    >
+      + Adicionar
+    </button>
+
+          </div>
+
+          <div id="listaSubtarefas"></div>
+
+        </div>
+
+
+
+        <div class="modal-actions">
+
+          <button onclick="fecharModal()">
+
+        Cancelar
+
+      </button>
+
+          <button
+        class="btn-primary"
+        onclick="salvarTarefa()"
+      >
+
+        Salvar
+
+      </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- =====================================================
+POPUP CONTAGEM DE ESTOQUE
+===================================================== -->
+
+    <div id="popupContagemEstoque" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    background:rgba(15,23,42,.70);
+    backdrop-filter:blur(8px);
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+  ">
+      <div style="
+      width:min(1100px,98vw);
+      max-height:92vh;
+      overflow:hidden;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 35px 90px rgba(0,0,0,.30);
+      display:flex;
+      flex-direction:column;
+    ">
+        <div style="
+        padding:18px;
+        border-bottom:1px solid #e2e8f0;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+      ">
+          <div>
+            <h2 style="font-size:20px;font-weight:900;color:#0f172a;">
+              Contagem de Estoque
+            </h2>
+
+            <div id="resumoSelecaoEstoque" style="margin-top:4px;color:#64748b;font-size:12px;font-weight:800;">
+              0 item(ns) selecionado(s)
+            </div>
+          </div>
+
+          <button
+        type="button"
+        onclick="fecharPopupContagemEstoque()"
+        style="
+          width:42px;
+          height:42px;
+          border:none;
+          border-radius:12px;
+          background:#fee2e2;
+          color:#991b1b;
+          font-size:22px;
+          font-weight:900;
+          cursor:pointer;
+        "
+      >
+        ×
+      </button>
+        </div>
+
+        <div style="
+        padding:14px 18px;
+        border-bottom:1px solid #e2e8f0;
+        display:grid;
+        grid-template-columns:2fr 1fr 1fr 1fr;
+        gap:10px;
+      ">
+          <input
+        id="buscaProdutoContagem"
+        placeholder="Pesquisar produto ou código..."
+        oninput="renderizarItensEstoquePopup()"
+        style="
+          height:42px;
+          border:1px solid #dbe3ec;
+          border-radius:10px;
+          padding:0 12px;
+          font-weight:800;
+          outline:none;
+        "
+      >
+
+          <select
+        id="filtroEmpresaContagem"
+        onchange="renderizarItensEstoquePopup()"
+        style="
+          height:42px;
+          border:1px solid #dbe3ec;
+          border-radius:10px;
+          padding:0 12px;
+          font-weight:800;
+          outline:none;
+        "
+      >
+        <option value="">Todas empresas</option>
+      </select>
+
+          <select
+        id="filtroLocalContagem"
+        onchange="renderizarItensEstoquePopup()"
+        style="
+          height:42px;
+          border:1px solid #dbe3ec;
+          border-radius:10px;
+          padding:0 12px;
+          font-weight:800;
+          outline:none;
+        "
+      >
+        <option value="">Todos estoques</option>
+      </select>
+
+          <select
+        id="filtroUnidadeContagem"
+        onchange="renderizarItensEstoquePopup()"
+        style="
+          height:42px;
+          border:1px solid #dbe3ec;
+          border-radius:10px;
+          padding:0 12px;
+          font-weight:800;
+          outline:none;
+        "
+      >
+        <option value="">Todas unidades</option>
+      </select>
+        </div>
+
+        <div style="
+        padding:12px 18px;
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        border-bottom:1px solid #e2e8f0;
+      ">
+          <button
+        type="button"
+        onclick="selecionarTodosFiltradosEstoque()"
+        style="
+          height:38px;
+          border:none;
+          border-radius:10px;
+          background:#111827;
+          color:#fff;
+          padding:0 14px;
+          font-size:12px;
+          font-weight:900;
+          cursor:pointer;
+        "
+      >
+        Selecionar todos filtrados
+      </button>
+
+          <button
+        type="button"
+        onclick="limparSelecaoEstoquePopup()"
+        style="
+          height:38px;
+          border:1px solid #e2e8f0;
+          border-radius:10px;
+          background:#fff;
+          color:#111827;
+          padding:0 14px;
+          font-size:12px;
+          font-weight:900;
+          cursor:pointer;
+        "
+      >
+        Limpar seleção
+      </button>
+        </div>
+
+        <div id="listaItensEstoquePopup" style="
+        flex:1;
+        overflow:auto;
+        padding:14px 18px;
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+        gap:12px;
+      "></div>
+
+        <div style="
+        padding:14px 18px;
+        border-top:1px solid #e2e8f0;
+        display:flex;
+        justify-content:flex-end;
+        gap:10px;
+        background:#fff;
+      ">
+          <button
+        type="button"
+        onclick="fecharPopupContagemEstoque()"
+        style="
+          height:42px;
+          border:1px solid #e2e8f0;
+          border-radius:10px;
+          background:#fff;
+          padding:0 16px;
+          font-size:12px;
+          font-weight:900;
+          cursor:pointer;
+        "
+      >
+        Cancelar
+      </button>
+
+          <button
+        type="button"
+        onclick="confirmarItensContagemEstoque()"
+        style="
+          height:42px;
+          border:none;
+          border-radius:10px;
+          background:#16a34a;
+          color:#fff;
+          padding:0 16px;
+          font-size:12px;
+          font-weight:900;
+          cursor:pointer;
+        "
+      >
+        Adicionar à tarefa
+      </button>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+    <script>
+      /* =====================================================
+SUPABASE
+===================================================== */
+function mostrarLoading(){
+
+  document.getElementById(
+    "loadingOverlay"
+  ).style.display = "flex"
+
+}
+
+function esconderLoading(){
+
+  document.getElementById(
+    "loadingOverlay"
+  ).style.display = "none"
+
+}
+window.supabaseClient =
+  window.supabase.createClient(
+
+    "https://dxkszikemntfusfyrzos.supabase.co",
+
+    "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+
+)
+
+/* =====================================================
+LOAD
+===================================================== */
+carregarTudo()
+carregarUsuariosSistema()
+
+const agora = new Date()
+
+function formatarDataLocal(data){
+
+  const ano = data.getFullYear()
+
+  const mes =
+    String(
+      data.getMonth() + 1
+    ).padStart(2,"0")
+
+  const dia =
+    String(
+      data.getDate()
+    ).padStart(2,"0")
+
+  return `${ano}-${mes}-${dia}`
+}
+
+const hoje = formatarDataLocal(agora)
+
+const amanha = new Date(agora)
+
+amanha.setDate(
+  amanha.getDate() + 1
+)
+
+document.getElementById(
+  "filtroDataDe"
+).value = hoje
+
+document.getElementById(
+  "filtroHoraDe"
+).value = "05:00"
+
+document.getElementById(
+  "filtroDataAte"
+).value =
+  formatarDataLocal(
+    amanha
+  )
+
+document.getElementById(
+  "filtroHoraAte"
+).value = "04:30"
+
+
+setTimeout(()=>{
+
+  aplicarFiltros()
+
+},500)
+/* =====================================================
+CARREGAR TUDO
+===================================================== */
+
+async function carregarTudo(){
+
+  mostrarLoading()
+
+  try{
+
+    await carregarTarefas(true)
+
+  }finally{
+
+    esconderLoading()
+
+  }
+
+}
+
+
+
+
+function ativarMenu(botao){
+
+  document
+    .querySelectorAll(".menu button")
+    .forEach(btn=>{
+
+      btn.classList.remove("active")
+
+    })
+
+  botao.classList.add("active")
+
+}
+
+
+
+
+function esconderConteudos(){
+
+  document.getElementById(
+    "conteudoTarefas"
+  ).style.display = "none"
+
+  document.getElementById(
+    "painelDinamico"
+  ).style.display = "none"
+
+}
+
+
+let todasTarefas = []
+
+
+
+  
+/* =====================================================
+CARREGAR TAREFAS
+===================================================== */
+
+async function carregarTarefas(manterFiltros = false){
+
+  mostrarLoading()
+
+  esconderConteudos()
+
+  document.getElementById(
+    "conteudoTarefas"
+  ).style.display = "block"
+
+const filtros = {
+
+  status:
+    document.getElementById(
+      "filtroStatus"
+    )?.value || "",
+
+  empresa:
+    document.getElementById(
+      "filtroEmpresa"
+    )?.value || "",
+
+  setor:
+    document.getElementById(
+      "filtroSetor"
+    )?.value || "",
+
+  prioridade:
+    document.getElementById(
+      "filtroPrioridade"
+    )?.value || "",
+
+  responsavel:
+    document.getElementById(
+      "filtroResponsavel"
+    )?.value || ""
+
+}
+  const { data, error } =
+
+    await supabaseClient
+
+      .from("tarefas_checklist")
+
+      .select("*")
+
+
+let tarefasOrdenadas = (data || []).sort((a,b)=>{
+
+  const numA =
+    parseInt(
+      (a.titulo || "")
+        .match(/^\d+/)?.[0]
+    ) || 0
+
+  const numB =
+    parseInt(
+      (b.titulo || "")
+        .match(/^\d+/)?.[0]
+    ) || 0
+
+  return numA - numB
+
+})
+
+  if(error){
+
+    console.log(error)
+
+    return
+
+  }
+
+  todasTarefas = tarefasOrdenadas
+
+  popularFiltros(todasTarefas)
+
+  if(manterFiltros){
+
+document.getElementById(
+  "filtroStatus"
+).value = filtros.status
+
+document.getElementById(
+  "filtroEmpresa"
+).value = filtros.empresa
+
+document.getElementById(
+  "filtroSetor"
+).value = filtros.setor
+
+document.getElementById(
+  "filtroPrioridade"
+).value = filtros.prioridade
+
+document.getElementById(
+  "filtroResponsavel"
+).value = filtros.responsavel
+
+aplicarFiltros()
+  }else{
+
+    renderizarTabela(todasTarefas)
+
+    atualizarKPIS(todasTarefas)
+
+  }
+    esconderLoading()
+
+
+}
+
+/* =====================================================
+POPULAR FILTROS
+===================================================== */
+
+function popularFiltros(lista){
+
+  const selectEmpresa =
+    document.getElementById(
+      "filtroEmpresa"
+    )
+
+  const empresas = [
+
+    ...new Set(
+
+      lista
+        .map(x=>x.empresa)
+        .filter(Boolean)
+
+    )
+
+  ].sort()
+
+  selectEmpresa.innerHTML = `
+
+    <option value="">
+      Todas
+    </option>
+
+  `
+
+  empresas.forEach(empresa=>{
+
+    selectEmpresa.innerHTML += `
+
+      <option value="${empresa}">
+        ${empresa}
+      </option>
+
+    `
+
+  })
+
+  const selectSetor =
+    document.getElementById(
+      "filtroSetor"
+    )
+
+  const setores = [
+
+    ...new Set(
+
+      lista
+        .map(x=>x.setor)
+        .filter(Boolean)
+
+    )
+
+  ].sort()
+
+  selectSetor.innerHTML = `
+
+    <option value="">
+      Todos
+    </option>
+
+  `
+
+  setores.forEach(setor=>{
+
+    selectSetor.innerHTML += `
+
+      <option value="${setor}">
+        ${setor}
+      </option>
+
+    `
+
+  })
+
+/* =====================================================
+RESPONSÁVEIS
+===================================================== */
+
+const selectResponsavel =
+
+document.getElementById(
+  "filtroResponsavel"
+)
+
+const nomesResponsaveis = [
+
+  ...new Set(
+
+    lista.flatMap(t=>{
+
+      try{
+
+        let r =
+
+          typeof t.responsaveis
+          === "string"
+
+          ? JSON.parse(
+              t.responsaveis
+            )
+
+          : t.responsaveis || []
+
+        return r.map(x=>x.nome)
+
+      }catch{
+
+        return []
+
+      }
+
+    })
+
+  )
+
+]
+
+selectResponsavel.innerHTML = `
+
+  <option value="">
+    Todos
+  </option>
+
+`
+
+nomesResponsaveis
+
+.sort()
+
+.forEach(nome=>{
+
+  selectResponsavel.innerHTML += `
+
+    <option value="${nome}">
+      ${nome}
+    </option>
+
+  `
+
+})
+
+}
+
+/* =====================================================
+APLICAR FILTROS
+===================================================== */
+
+function aplicarFiltros(){
+
+  const status =
+    document
+      .getElementById("filtroStatus")
+      .value
+      .trim()
+
+  const empresa =
+    document
+      .getElementById("filtroEmpresa")
+      .value
+      .trim()
+
+  const setor =
+    document
+      .getElementById("filtroSetor")
+      .value
+      .trim()
+
+  const prioridade =
+    document
+      .getElementById("filtroPrioridade")
+      .value
+      .trim()
+
+
+const buscaTarefa =
+  document
+    .getElementById("filtroBuscaTarefa")
+    ?.value
+    .trim()
+    .toLowerCase() || ""
+
+
+
+
+
+
+
+  
+const responsavel =
+
+document
+  .getElementById(
+    "filtroResponsavel"
+  )
+  .value
+  .trim()
+
+const dataDe =
+  document.getElementById(
+    "filtroDataDe"
+  )?.value || ""
+
+const horaDe =
+  document.getElementById(
+    "filtroHoraDe"
+  )?.value || "00:00"
+
+const dataAte =
+  document.getElementById(
+    "filtroDataAte"
+  )?.value || ""
+
+const horaAte =
+  document.getElementById(
+    "filtroHoraAte"
+  )?.value || "23:59"
+
+
+
+  
+  let filtradas = [...todasTarefas]
+
+
+
+  if(buscaTarefa){
+
+  filtradas = filtradas.filter(t=>{
+
+    const titulo =
+      String(t.titulo || "")
+        .toLowerCase()
+
+    const descricao =
+      String(t.descricao || "")
+        .toLowerCase()
+
+    const empresa =
+      String(t.empresa || "")
+        .toLowerCase()
+
+    const setor =
+      String(t.setor || "")
+        .toLowerCase()
+
+    const prioridade =
+      String(t.prioridade || "")
+        .toLowerCase()
+
+    const status =
+      String(t.status || "")
+        .toLowerCase()
+
+    return (
+      titulo.includes(buscaTarefa) ||
+      descricao.includes(buscaTarefa) ||
+      empresa.includes(buscaTarefa) ||
+      setor.includes(buscaTarefa) ||
+      prioridade.includes(buscaTarefa) ||
+      status.includes(buscaTarefa)
+    )
+
+  })
+
+}
+
+
+  
+  if(status){
+
+    filtradas = filtradas.filter(x =>
+
+      String(x.status || "")
+        .trim()
+        .toUpperCase() ===
+      status.toUpperCase()
+
+    )
+
+  }
+
+  if(empresa){
+
+    filtradas = filtradas.filter(x =>
+
+      String(x.empresa || "")
+        .trim()
+        .toUpperCase() ===
+      empresa.toUpperCase()
+
+    )
+
+  }
+
+  if(setor){
+
+    filtradas = filtradas.filter(x =>
+
+      String(x.setor || "")
+        .trim() === setor
+
+    )
+
+  }
+
+  if(prioridade){
+
+    filtradas = filtradas.filter(x =>
+
+      String(x.prioridade || "")
+        .trim() === prioridade
+
+    )
+
+  }
+
+
+
+if(responsavel){
+
+  filtradas = filtradas.filter(t=>{
+
+    try{
+
+      let r =
+
+        typeof t.responsaveis
+        === "string"
+
+        ? JSON.parse(
+            t.responsaveis
+          )
+
+        : t.responsaveis || []
+
+      return r.some(x=>
+
+        String(x.nome || "")
+        .trim()
+        .toUpperCase()
+
+        ===
+
+        responsavel
+        .toUpperCase()
+
+      )
+
+    }catch{
+
+      return false
+
+    }
+
+  })
+
+}
+
+if(dataDe || dataAte){
+
+  filtradas = filtradas.filter(t=>{
+
+    if(!t.data_limite) return false
+
+    const dataTarefa =
+      new Date(t.data_limite)
+
+    let inicio = null
+    let fim = null
+
+    if(dataDe){
+
+      inicio =
+        new Date(
+          `${dataDe}T${horaDe}`
+        )
+    }
+
+    if(dataAte){
+
+      fim =
+        new Date(
+          `${dataAte}T${horaAte}`
+        )
+    }
+
+    if(inicio && dataTarefa < inicio)
+      return false
+
+    if(fim && dataTarefa > fim)
+      return false
+
+    return true
+
+  })
+
+}
+
+  
+
+  renderizarTabela(filtradas)
+
+  atualizarKPIS(filtradas)
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+/* =====================================================
+KPIS
+===================================================== */
+
+function atualizarKPIS(lista){
+
+  document.getElementById(
+    "kpiTotal"
+  ).innerText =
+    lista.length
+
+  document.getElementById(
+    "kpiPendentes"
+  ).innerText =
+    lista.filter(
+      x=>x.status === "PENDENTE"
+    ).length
+
+  document.getElementById(
+    "kpiAtrasadas"
+  ).innerText =
+    lista.filter(
+      x=>x.status === "ATRASADO"
+    ).length
+
+  document.getElementById(
+    "kpiConcluidas"
+  ).innerText =
+    lista.filter(
+      x=>x.status === "CONCLUIDO"
+    ).length
+
+}
+
+/* =====================================================
+RENDER
+===================================================== */
+
+function renderizarTabela(lista){
+
+  const tbody =
+    document.getElementById(
+      "tbody"
+    )
+
+  tbody.innerHTML = ""
+
+  lista.forEach(t=>{
+
+    let responsaveis = []
+
+    try{
+
+      responsaveis =
+
+        typeof t.responsaveis ===
+          "string"
+
+          ? JSON.parse(
+              t.responsaveis
+            )
+
+          : t.responsaveis || []
+
+    }catch{}
+
+    let checklistLinha = []
+
+    try{
+
+      checklistLinha =
+        Array.isArray(t.checklist)
+          ? t.checklist
+          : (typeof t.checklist === "string" ? JSON.parse(t.checklist) : [])
+
+    }catch{}
+
+    const qtdFontes =
+      checklistLinha.filter(x=>x?.fonte_obrigatoria === true).length
+
+    const tr =
+      document.createElement("tr")
+tr.style.cursor = "pointer"
+
+tr.onclick = () => {
+  editarTarefa(t)
+}
+    tr.innerHTML = `
+
+      <td>
+
+        <span class="
+          status
+          ${t.status}
+        ">
+
+          ${t.status}
+
+        </span>
+
+      </td>
+
+      <td>
+
+        <b>${t.titulo || "-"}</b>
+
+        <div style="
+          color:#64748b;
+          margin-top:6px;
+          font-size:12px;
+        ">
+
+          ${t.descricao || ""}
+
+        </div>
+
+        ${qtdFontes > 0 ? `
+          <div class="fonte-badge-row">
+            <span class="fonte-badge">📊 ${qtdFontes} fonte(s) obrigatória(s)</span>
+          </div>
+        ` : ""}
+
+      </td>
+
+      <td>
+        ${t.empresa || "-"}
+      </td>
+
+      <td>
+        ${t.setor || "-"}
+      </td>
+
+      <td>
+
+        ${responsaveis.map(r=>`
+
+          <div>
+            ${r.nome}
+          </div>
+
+        `).join("")}
+
+      </td>
+
+<td>
+
+  <div style="
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  ">
+
+    <div style="
+      font-weight:800;
+      color:#0f172a;
+    ">
+
+      ${
+        t.horario_execucao
+        ? t.horario_execucao.slice(0,5)
+        : "--:--"
+      }
+
+      às
+
+      ${
+        t.data_limite
+        ? new Date(t.data_limite)
+            .toLocaleTimeString(
+              "pt-BR",
+              {
+                hour:"2-digit",
+                minute:"2-digit"
+              }
+            )
+        : "--:--"
+      }
+
+    </div>
+
+    <div style="
+      font-size:10px;
+      color:#64748b;
+    ">
+
+      ${
+        t.data_limite
+        ? new Date(t.data_limite)
+            .toLocaleDateString("pt-BR")
+        : "-"
+      }
+
+    </div>
+
+  </div>
+
+</td>
+
+      <td>
+        ${t.prioridade || "-"}
+      </td>
+
+     <td>
+
+  <div style="
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  ">
+
+    <button
+      class="action-btn btn-blue"
+      onclick='event.stopPropagation(); editarTarefa(${JSON.stringify(t)})'
+    >
+
+      Editar
+
+    </button>
+
+<button
+  class="action-btn"
+  style="background:#7c3aed"
+  onclick="
+    event.stopPropagation();
+    clonarTarefa('${t.id}')
+  "
+>
+  Clonar
+</button>
+
+<button
+  class="action-btn btn-red"
+  onclick="
+    event.stopPropagation();
+    excluirTarefa('${t.id}')
+  "
+>
+  Excluir
+
+
+  </div>
+
+</td>
+
+    `
+
+    tbody.appendChild(tr)
+
+  })
+
+}
+
+/* =====================================================
+CONCLUIR
+===================================================== */
+
+/* =====================================================
+CONCLUIR TAREFA
+===================================================== */
+
+async function concluirTarefa(id){
+
+  console.log("🔵 CONCLUINDO:", id)
+
+  try{
+
+    const { data, error } =
+
+      await supabaseClient
+
+        .from("tarefas_checklist")
+
+        .update({
+
+          status:"CONCLUIDO",
+
+          data_conclusao:
+            new Date()
+              .toISOString()
+
+        })
+
+        .eq("id", id)
+
+        .select()
+
+    console.log("DATA:", data)
+
+    console.log("ERROR:", error)
+
+    if(error){
+
+      alert(
+        JSON.stringify(
+          error,
+          null,
+          2
+        )
+      )
+
+      return
+
+    }
+
+    await carregarTarefas(true)
+
+  }catch(err){
+
+    console.log(err)
+
+    alert(
+      "Erro ao concluir tarefa"
+    )
+
+  }
+
+}
+/* =====================================================
+MODAL
+===================================================== */
+
+function abrirNovaTarefa(){
+
+  tarefaEditando = null
+
+  document.getElementById(
+    "tituloModal"
+  ).innerText =
+    "Nova Tarefa"
+
+  document
+    .querySelectorAll(
+      ".modal input, .modal textarea, .modal select"
+    )
+    .forEach(campo=>{
+
+      if(
+        campo.type === "select-multiple"
+      ){
+
+        Array.from(campo.options)
+          .forEach(opt=>{
+
+            opt.selected = false
+
+          })
+
+      }else{
+
+        campo.value = ""
+
+      }
+
+    })
+
+  responsaveisSelecionados = []
+subtarefas = []
+
+renderizarSubtarefas()
+  atualizarResponsaveis()
+
+  document.getElementById(
+    "overlay"
+  ).style.display = "flex"
+
+}
+function fecharModal(){
+
+  document.getElementById(
+    "overlay"
+  ).style.display = "none"
+
+}
+
+function editarTarefa(tarefa){
+window.clonando =
+  !tarefa.id
+  tarefaEditando = tarefa
+
+  document.getElementById(
+    "tituloModal"
+  ).innerText =
+    "Editar Tarefa"
+
+  document.getElementById(
+    "overlay"
+  ).style.display = "flex"
+
+  document.getElementById(
+    "titulo"
+  ).value =
+    tarefa.titulo || ""
+
+  document.getElementById(
+    "descricao"
+  ).value =
+    tarefa.descricao || ""
+
+  document.getElementById(
+    "empresa"
+  ).value =
+    tarefa.empresa || ""
+
+  document.getElementById(
+    "setor"
+  ).value =
+    tarefa.setor || ""
+
+  document.getElementById(
+    "prioridade"
+  ).value =
+    tarefa.prioridade || "MEDIA"
+
+  document.getElementById(
+    "dataLimite"
+  ).value =
+    tarefa.data_limite
+      ? tarefa.data_limite.slice(0,16)
+      : ""
+
+  document.getElementById(
+    "fotoObrigatoria"
+  ).value =
+    tarefa.foto_obrigatoria
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "recorrente"
+  ).value =
+    tarefa.recorrente
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "tipoRecorrencia"
+  ).value =
+    tarefa.tipo_recorrencia || ""
+
+  document.getElementById(
+    "intervaloRecorrencia"
+  ).value =
+    tarefa.intervalo_recorrencia || 1
+
+  document.getElementById(
+    "horarioExecucao"
+  ).value =
+    tarefa.horario_execucao || ""
+
+  document.getElementById(
+    "slaMinutos"
+  ).value =
+    tarefa.sla_minutos || 60
+
+  document.getElementById(
+    "audioObrigatorio"
+  ).value =
+    tarefa.audio_obrigatorio
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "videoObrigatorio"
+  ).value =
+    tarefa.video_obrigatorio
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "assinaturaObrigatoria"
+  ).value =
+    tarefa.assinatura_obrigatoria
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "validacaoGerencial"
+  ).value =
+    tarefa.validacao_gerencial
+      ? "true"
+      : "false"
+
+responsaveisSelecionados =
+  tarefa.responsaveis || []
+  
+subtarefas =
+  (Array.isArray(tarefa.checklist) ? tarefa.checklist : []).map(sub=>({
+
+    ...sub,
+
+    fonte_obrigatoria:
+      sub.fonte_obrigatoria === true,
+
+    fonte_tipo:
+      normalizarFonteTipo(sub.fonte_tipo || ""),
+
+    fonte_valor:
+      String(sub.fonte_valor || ""),
+
+
+    fonte_config:
+  sub.fonte_config || null,
+
+    fonte_respondida_em:
+      sub.fonte_respondida_em || null,
+
+    fonte_atualizada_em:
+      sub.fonte_atualizada_em || null
+
+  }))
+
+renderizarSubtarefas()
+atualizarResponsaveis()
+
+document
+  .querySelectorAll(
+    ".dias-semana input"
+  )
+  .forEach(input=>{
+
+    input.checked = false
+
+    let dias = tarefa.dias_semana
+
+    if(typeof dias === "string"){
+
+      try{
+        dias = JSON.parse(dias)
+      }catch{
+        dias = []
+      }
+
+    }
+
+    input.checked =
+      dias?.includes(input.value)
+
+  })
+
+}
+
+/* =====================================================
+USUÁRIOS
+===================================================== */
+
+let usuariosSistema = []
+
+let responsaveisSelecionados = []
+
+  let tarefaEditando = null
+/* =====================================================
+CARREGAR USUÁRIOS
+===================================================== */
+
+async function carregarUsuariosSistema(){
+
+  const { data, error } =
+    await supabaseClient
+      .from("usuarios_do_sistema")
+      .select("*")
+      .eq("ativo", true)
+      .order("nome", { ascending:true });
+
+  if(error){
+    console.log("ERRO AO CARREGAR USUÁRIOS:", error);
+    return;
+  }
+
+  console.log("USUÁRIOS BRUTOS DO BANCO:", data);
+
+  usuariosSistema = (data || []).filter(u => {
+
+    const status = String(u.status_funcionario || "")
+      .trim()
+      .toUpperCase();
+
+    return (
+      status === "ATIVO" ||
+      status === "ATIVOS" ||
+      status === "ATIVA" ||
+      status === "ATIVAS" ||
+      status === "ATIVO(A)" ||
+      status === "ATIVOS(AS)"
+    );
+
+  });
+
+  console.log("USUÁRIOS FILTRADOS:", usuariosSistema);
+
+}
+      
+function pesquisarResponsavel(){
+
+  const termo =
+    document
+      .getElementById("buscarResponsavel")
+      .value
+      .toLowerCase()
+
+  const box =
+    document.getElementById(
+      "resultadoResponsaveis"
+    )
+
+  if(!termo){
+    box.innerHTML = ""
+    return
+  }
+
+  const encontrados =
+    usuariosSistema.filter(u=>
+
+      (u.nome || "")
+        .toLowerCase()
+        .includes(termo)
+
+      ||
+
+      (u.setor || "")
+        .toLowerCase()
+        .includes(termo)
+
+      ||
+
+      (u.empresa || "")
+        .toLowerCase()
+        .includes(termo)
+
+    )
+
+  if(encontrados.length === 0){
+
+    box.innerHTML = `
+      <div style="
+        padding:18px;
+        text-align:center;
+        color:#64748b;
+        font-weight:700;
+      ">
+        Nenhum responsável encontrado
+      </div>
+    `
+
+    return
+  }
+
+  box.innerHTML = encontrados.map(u=>`
+
+    <div
+      class="usuario-resultado"
+      onclick="adicionarResponsavel('${u.id}')"
+    >
+
+<img
+  src="${u.foto_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}"
+  style="
+    width:48px;
+    height:48px;
+    min-width:48px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #e2e8f0;
+  "
+>
+
+      <div>
+
+        <div style="
+          font-weight:800;
+          color:#0f172a;
+        ">
+          ${u.nome}
+        </div>
+
+        <div style="
+          font-size:12px;
+          color:#64748b;
+          margin-top:4px;
+        ">
+          ${u.cargo || "-"}
+          •
+          ${u.setor || "-"}
+          •
+          ${u.empresa || "-"}
+        </div>
+
+      </div>
+
+    </div>
+
+  `).join("")
+
+}
+function adicionarResponsavel(id){
+
+  const usuario =
+
+    usuariosSistema.find(
+      x=>x.id === id
+    )
+
+  if(!usuario) return
+
+  const existe =
+
+    responsaveisSelecionados.some(
+      x=>x.id === usuario.id
+    )
+
+  if(existe){
+
+    return
+
+  }
+
+responsaveisSelecionados.push({
+
+  id:
+    String(usuario.id || ""),
+
+  nome:
+    String(usuario.nome || ""),
+
+  telefone:
+    String(usuario.telefone || ""),
+
+  empresa:
+    String(usuario.empresa || ""),
+
+  setor:
+    String(usuario.setor || ""),
+
+  cargo:
+    String(usuario.cargo || ""),
+
+  foto_url:
+    String(usuario.foto_url || "")
+
+})
+
+  atualizarResponsaveis()
+
+  document.getElementById(
+    "buscarResponsavel"
+  ).value = ""
+
+  document.getElementById(
+    "resultadoResponsaveis"
+  ).innerHTML = ""
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+ATUALIZAR RESPONSÁVEIS
+===================================================== */
+
+function atualizarResponsaveis(){
+
+  const box =
+    document.getElementById(
+      "listaResponsaveis"
+    )
+
+  box.innerHTML = ""
+
+  if(
+    responsaveisSelecionados.length === 0
+  ){
+
+    document.getElementById(
+      "empresa"
+    ).value = ""
+
+    document.getElementById(
+      "setor"
+    ).value = ""
+
+    return
+
+  }
+
+  const primeiro =
+    responsaveisSelecionados[0]
+
+  document.getElementById(
+    "empresa"
+  ).value =
+    primeiro.empresa || ""
+
+  document.getElementById(
+    "setor"
+  ).value =
+    primeiro.setor || ""
+
+  responsaveisSelecionados.forEach(
+    usuario=>{
+
+      box.innerHTML += `
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          gap:18px;
+          flex-wrap:wrap;
+          background:#fff;
+          border:1px solid #e2e8f0;
+          border-radius:18px;
+          padding:18px;
+        ">
+
+          <div style="
+            display:flex;
+            align-items:center;
+            gap:16px;
+          ">
+
+            <img
+              src="${
+                usuario.foto_url ||
+                'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              }"
+
+              style="
+                width:64px;
+                height:64px;
+                border-radius:50%;
+                object-fit:cover;
+                border:3px solid #fff;
+                box-shadow:0 5px 20px rgba(0,0,0,.08);
+              "
+            >
+
+            <div>
+
+              <div style="
+                font-size:17px;
+                font-weight:900;
+                color:#0f172a;
+              ">
+
+                ${usuario.nome}
+
+              </div>
+
+              <div style="
+                color:#64748b;
+                margin-top:6px;
+              ">
+
+                ${usuario.cargo || "-"}
+                •
+                ${usuario.setor || "-"}
+
+              </div>
+
+              <div style="
+                color:#64748b;
+                margin-top:4px;
+                font-size:13px;
+              ">
+
+                ${usuario.telefone || "-"}
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <button
+            onclick="
+              removerResponsavel(
+                '${usuario.id}'
+              )
+            "
+
+            style="
+              border:none;
+              background:#fee2e2;
+              color:#991b1b;
+              width:42px;
+              height:42px;
+              border-radius:14px;
+              cursor:pointer;
+              font-size:20px;
+              font-weight:900;
+            "
+          >
+
+            ×
+
+          </button>
+
+        </div>
+
+      `
+
+    }
+  )
+
+}
+
+/* =====================================================
+REMOVER RESPONSÁVEL
+===================================================== */
+
+function removerResponsavel(id){
+
+  responsaveisSelecionados =
+
+    responsaveisSelecionados.filter(
+      x=>x.id !== id
+    )
+
+  atualizarResponsaveis()
+
+}
+  
+
+/* =====================================================
+SALVAR TAREFA
+===================================================== */
+
+
+
+  let modelosTarefas = []
+
+async function pesquisarModelosTarefa(){
+
+  const termo =
+
+    document
+    .getElementById("titulo")
+    .value
+    .trim()
+
+  const box =
+    document.getElementById(
+      "resultadoModelos"
+    )
+
+  if(termo.length < 2){
+
+    box.style.display = "none"
+
+    return
+  }
+
+  const { data, error } =
+
+    await supabaseClient
+
+      .from("tarefas_checklist")
+
+      .select("*")
+
+      .ilike(
+        "titulo",
+        `%${termo}%`
+      )
+
+      .limit(20)
+
+  if(error){
+
+    console.log(error)
+
+    return
+  }
+
+  modelosTarefas = data || []
+
+  if(modelosTarefas.length === 0){
+
+    box.style.display = "none"
+
+    return
+  }
+
+  box.style.display = "block"
+
+  box.innerHTML = modelosTarefas.map(t=>`
+
+    <div
+      onclick="selecionarModeloTarefa('${t.id}')"
+
+      style="
+        padding:18px;
+        border-bottom:1px solid #f1f5f9;
+        cursor:pointer;
+      "
+
+      onmouseover="
+        this.style.background='#f8fafc'
+      "
+
+      onmouseout="
+        this.style.background='#fff'
+      "
+    >
+
+      <div style="
+        font-weight:800;
+        color:#0f172a;
+      ">
+
+        ${t.titulo}
+
+      </div>
+
+      <div style="
+        margin-top:6px;
+        font-size:13px;
+        color:#64748b;
+      ">
+
+        ${t.empresa || "-"}
+        •
+        ${t.setor || "-"}
+        •
+        ${t.prioridade || "-"}
+
+      </div>
+
+    </div>
+
+  `).join("")
+
+}
+
+
+
+
+
+
+function selecionarModeloTarefa(id){
+
+  const tarefa =
+
+    modelosTarefas.find(
+      x=>x.id === id
+    )
+
+  if(!tarefa) return
+
+  window.modeloSelecionado = tarefa
+
+  document.getElementById(
+    "titulo"
+  ).value =
+    tarefa.titulo || ""
+
+  document.getElementById(
+    "descricao"
+  ).value =
+    tarefa.descricao || ""
+
+  document.getElementById(
+    "prioridade"
+  ).value =
+    tarefa.prioridade || "MEDIA"
+
+  document.getElementById(
+    "fotoObrigatoria"
+  ).value =
+
+    tarefa.foto_obrigatoria
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "recorrente"
+  ).value =
+
+    tarefa.recorrente
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "tipoRecorrencia"
+  ).value =
+
+    tarefa.tipo_recorrencia || ""
+
+  document.getElementById(
+    "intervaloRecorrencia"
+  ).value =
+
+    tarefa.intervalo_recorrencia || 1
+
+  document.getElementById(
+    "horarioExecucao"
+  ).value =
+
+    tarefa.horario_execucao || ""
+
+  document.getElementById(
+    "slaMinutos"
+  ).value =
+
+    tarefa.sla_minutos || 60
+
+  document.getElementById(
+    "audioObrigatorio"
+  ).value =
+
+    tarefa.audio_obrigatorio
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "videoObrigatorio"
+  ).value =
+
+    tarefa.video_obrigatorio
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "assinaturaObrigatoria"
+  ).value =
+
+    tarefa.assinatura_obrigatoria
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "validacaoGerencial"
+  ).value =
+
+    tarefa.validacao_gerencial
+      ? "true"
+      : "false"
+
+  document.getElementById(
+    "cobrancaAutomatica"
+  ).value =
+
+    tarefa.configuracoes
+      ?.cobranca_automatica
+
+        ? "true"
+
+        : "false"
+
+  document.getElementById(
+    "intervaloCobranca"
+  ).value =
+
+    tarefa.configuracoes
+      ?.intervalo_cobranca_minutos || 15
+
+  document.getElementById(
+    "maxCobrancas"
+  ).value =
+
+    tarefa.configuracoes
+      ?.max_cobrancas || 10
+
+  document.getElementById(
+    "escalarSupervisor"
+  ).value =
+
+    tarefa.configuracoes
+      ?.escalar_supervisor
+
+        ? "true"
+
+        : "false"
+
+document
+  .querySelectorAll(
+    ".dias-semana input"
+  )
+  .forEach(input=>{
+
+    input.checked =
+
+      tarefa.dias_semana
+        ?.includes(input.value)
+
+  })
+
+
+
+  document.getElementById(
+    "resultadoModelos"
+  ).style.display = "none"
+
+}
+
+function escaparHtml(valor){
+
+  return String(valor ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;")
+
+}
+
+function escaparAttr(valor){
+
+  return escaparHtml(valor)
+    .replaceAll("`","&#096;")
+
+}
+
+function normalizarFonteTipo(valor){
+
+  return String(valor || "")
+    .trim()
+    .toUpperCase()
+
+}
+
+let subtarefas = []
+
+function adicionarSubtarefa(){
+
+  subtarefas.push({
+
+    ordem:
+      subtarefas.length + 1,
+
+    item: "",
+
+    descricao: "",
+
+    hora_inicio: "",
+
+    hora_fim: "",
+
+    hora: "",
+
+    obrigatorio: true,
+
+    foto_obrigatoria: false,
+
+    audio_obrigatorio: false,
+
+    video_obrigatorio: false,
+
+    assinatura_obrigatoria: false,
+
+    fonte_obrigatoria: false,
+
+fonte_tipo: "",
+
+fonte_valor: "",
+
+fonte_config: null,
+
+fonte_respondida_em: null,
+
+    fonte_atualizada_em: null,
+
+    concluido: false,
+
+    resposta: "",
+
+    observacao: "",
+
+    anexos: [],
+
+    foto_url: null,
+
+    respondido_por: null,
+
+    data_resposta: null,
+
+    criado_em:
+      new Date().toISOString()
+
+  })
+
+  renderizarSubtarefas()
+
+}
+
+
+
+  
+
+function removerSubtarefa(index){
+
+  subtarefas.splice(index,1)
+
+  renderizarSubtarefas()
+
+}
+
+function atualizarSubtarefa(
+  index,
+  campo,
+  valor
+){
+
+  if(!subtarefas[index]) return
+
+  /* =====================================================
+  BOOLEANOS
+  ===================================================== */
+
+  const camposBooleanos = [
+
+    "obrigatorio",
+    "foto_obrigatoria",
+    "audio_obrigatorio",
+    "video_obrigatorio",
+    "assinatura_obrigatoria",
+    "fonte_obrigatoria",
+    "concluido"
+
+  ]
+
+  if(camposBooleanos.includes(campo)){
+
+    subtarefas[index][campo] =
+      valor === true
+
+  }else if(campo === "fonte_tipo"){
+
+    subtarefas[index][campo] =
+      normalizarFonteTipo(valor)
+
+  }else{
+
+    subtarefas[index][campo] =
+      valor
+
+  }
+
+  if(
+    campo === "fonte_valor" ||
+    campo === "fonte_tipo" ||
+    campo === "fonte_obrigatoria"
+  ){
+
+    subtarefas[index].fonte_atualizada_em =
+      new Date().toISOString()
+
+  }
+
+  /* =====================================================
+  HORÁRIOS
+  ===================================================== */
+
+  const inicio =
+    subtarefas[index].hora_inicio || ""
+
+  const fim =
+    subtarefas[index].hora_fim || ""
+
+  subtarefas[index].hora =
+
+    inicio && fim
+
+      ? `${inicio} AS ${fim}`
+
+      : ""
+
+  console.log(
+    "✅ SUBTAREFA:",
+    JSON.parse(
+      JSON.stringify(
+        subtarefas[index]
+      )
+    )
+  )
+
+}
+/* =====================================================
+GERAR HORÁRIOS SUBTAREFAS
+===================================================== */
+
+function gerarHorariosSubtarefas(){
+
+  const horarioInicio =
+    document
+      .getElementById(
+        "horarioExecucao"
+      )
+      .value
+
+  const dataLimite =
+    document
+      .getElementById(
+        "dataLimite"
+      )
+      .value
+
+  if(!horarioInicio){
+
+    alert("Defina horário inicial")
+
+    return
+
+  }
+
+  if(!dataLimite){
+
+    alert("Defina data limite")
+
+    return
+
+  }
+
+  if(subtarefas.length === 0){
+
+    alert("Adicione subtarefas")
+
+    return
+
+  }
+
+  /* =====================================================
+  PEGAR HORAS/MINUTOS
+  ===================================================== */
+
+  const [inicioHora,inicioMin] =
+    horarioInicio.split(":").map(Number)
+
+  const dataFim =
+    new Date(dataLimite)
+
+  const fimHora =
+    dataFim.getHours()
+
+  const fimMin =
+    dataFim.getMinutes()
+
+  /* =====================================================
+  CONVERTER EM MINUTOS
+  ===================================================== */
+
+  let inicioTotal =
+    (inicioHora * 60)
+    + inicioMin
+
+  let fimTotal =
+    (fimHora * 60)
+    + fimMin
+
+  /* =====================================================
+  VIRADA DE DIA
+  EX:
+  23:00 -> 02:59
+  ===================================================== */
+
+  if(fimTotal <= inicioTotal){
+
+    fimTotal += 24 * 60
+
+  }
+
+  const totalPeriodo =
+    fimTotal - inicioTotal
+
+  const intervalo =
+    Math.floor(
+      totalPeriodo / subtarefas.length
+    )
+
+  /* =====================================================
+  FORMATAR
+  ===================================================== */
+
+  function formatarHorario(total){
+
+    total =
+      total % (24 * 60)
+
+    const hora =
+      String(
+        Math.floor(total / 60)
+      ).padStart(2,"0")
+
+    const minuto =
+      String(
+        total % 60
+      ).padStart(2,"0")
+
+    return `${hora}:${minuto}`
+
+  }
+
+  /* =====================================================
+  DISTRIBUIR
+  ===================================================== */
+
+  subtarefas =
+    subtarefas.map((sub,index)=>{
+
+      const inicio =
+        inicioTotal +
+        (intervalo * index)
+
+      const fim =
+        inicio + intervalo
+
+      const horaInicio =
+        formatarHorario(inicio)
+
+      const horaFim =
+        formatarHorario(fim)
+
+      return {
+
+        ...sub,
+
+        ordem:
+          index + 1,
+
+        hora_inicio:
+          horaInicio,
+
+        hora_fim:
+          horaFim,
+
+        hora:
+          `${horaInicio} AS ${horaFim}`
+
+      }
+
+    })
+
+  renderizarSubtarefas()
+
+}
+
+function renderBlocoFonte(sub,index){
+
+  const ativa =
+    sub.fonte_obrigatoria === true
+
+  const tipo =
+    normalizarFonteTipo(
+      sub.fonte_tipo || ""
+    )
+
+  const valor =
+    String(sub.fonte_valor || "")
+
+  const totalItensContagem =
+    sub.fonte_config?.itens?.length || 0
+
+  return `
+
+    <div class="subtask-font-card ${ativa ? "active" : ""}">
+
+      <div class="subtask-font-head">
+
+        <label class="subtask-font-toggle">
+
+          <input
+            type="checkbox"
+            ${ativa ? "checked" : ""}
+            onchange="
+              atualizarSubtarefa(
+                ${index},
+                'fonte_obrigatoria',
+                this.checked
+              );
+              renderizarSubtarefas();
+            "
+          >
+
+          📊 Exigir fonte de dados
+
+        </label>
+
+        <div class="subtask-font-help">
+          Use para exigir quantidade, valor, medida ou contagem de estoque antes de concluir.<br>
+          Para estoque, selecione CONTAGEM_ESTOQUE.
+        </div>
+
+      </div>
+
+      ${ativa ? `
+
+        <div class="subtask-font-grid">
+
+          <div>
+            <label>Fonte / Unidade obrigatória</label>
+
+            <input
+              value="${escaparAttr(tipo)}"
+              placeholder="Ex: KG ou CONTAGEM_ESTOQUE"
+              list="listaFontesDados"
+              oninput="
+                atualizarSubtarefa(
+                  ${index},
+                  'fonte_tipo',
+                  this.value
+                );
+
+                if(
+                  normalizarFonteTipo(this.value)
+                  === 'CONTAGEM_ESTOQUE'
+                ){
+                  abrirPopupContagemEstoque(${index});
+                }
+              "
+              onblur="
+                if(
+                  normalizarFonteTipo(this.value)
+                  === 'CONTAGEM_ESTOQUE'
+                ){
+                  abrirPopupContagemEstoque(${index});
+                }
+              "
+            >
+          </div>
+
+          <div>
+            <label>Valor padrão / observação para o responsável</label>
+
+            <input
+              value="${escaparAttr(valor)}"
+              placeholder="Opcional. O responsável poderá alterar antes de concluir."
+              oninput="
+                atualizarSubtarefa(
+                  ${index},
+                  'fonte_valor',
+                  this.value
+                )
+              "
+            >
+          </div>
+
+        </div>
+
+        ${
+          tipo === "CONTAGEM_ESTOQUE"
+          ? `
+            <div style="
+              margin-top:12px;
+              padding:12px;
+              background:#f8fafc;
+              border:1px solid #e2e8f0;
+              border-radius:12px;
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              gap:10px;
+              flex-wrap:wrap;
+            ">
+              <div>
+                <div style="
+                  font-size:12px;
+                  font-weight:900;
+                  color:#0f172a;
+                ">
+                  Itens selecionados para contagem
+                </div>
+
+                <div style="
+                  margin-top:4px;
+                  font-size:11px;
+                  font-weight:800;
+                  color:#64748b;
+                ">
+                  ${totalItensContagem} item(ns) vinculado(s) nesta tarefa
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onclick="abrirPopupContagemEstoque(${index})"
+                style="
+                  height:38px;
+                  border:none;
+                  border-radius:10px;
+                  background:#16a34a;
+                  color:#fff;
+                  padding:0 14px;
+                  font-size:12px;
+                  font-weight:900;
+                  cursor:pointer;
+                "
+              >
+                Escolher itens
+              </button>
+            </div>
+          `
+          : ""
+        }
+
+      ` : ""}
+
+    </div>
+
+  `
+
+}
+
+function renderizarSubtarefas(){
+
+  const box =
+    document.getElementById(
+      "listaSubtarefas"
+    )
+
+  if(!box) return
+
+  box.innerHTML = `
+
+    <div style="
+      display:flex;
+      justify-content:flex-end;
+      margin-bottom:16px;
+    ">
+
+      <button
+        type="button"
+
+        onclick="gerarHorariosSubtarefas()"
+
+        class="btn-primary"
+
+        style="
+          border:none;
+          padding:10px 16px;
+          border-radius:12px;
+          cursor:pointer;
+        "
+      >
+
+        Gerar horários
+
+      </button>
+
+    </div>
+
+  `
+
+  subtarefas.forEach((sub,index)=>{
+
+    box.innerHTML += `
+
+      <div style="
+        border:1px solid #e2e8f0;
+        border-radius:18px;
+        padding:16px;
+        margin-bottom:14px;
+        background:#fff;
+      ">
+
+        <div style="
+          display:grid;
+          grid-template-columns:
+            1fr 130px 130px auto;
+          gap:12px;
+          align-items:center;
+        ">
+
+          <input
+            value="${sub.item || ""}"
+
+            oninput="
+              atualizarSubtarefa(
+                ${index},
+                'item',
+                this.value
+              )
+            "
+
+            placeholder="Nome da subtarefa"
+
+            style="
+              border:1px solid #dbe3ec;
+              border-radius:12px;
+              padding:12px;
+            "
+          >
+
+          <input
+            type="time"
+
+            value="${sub.hora_inicio || ""}"
+
+            oninput="
+              atualizarSubtarefa(
+                ${index},
+                'hora_inicio',
+                this.value
+              )
+            "
+
+            style="
+              border:1px solid #dbe3ec;
+              border-radius:12px;
+              padding:12px;
+            "
+          >
+
+          <input
+            type="time"
+
+            value="${sub.hora_fim || ""}"
+
+            oninput="
+              atualizarSubtarefa(
+                ${index},
+                'hora_fim',
+                this.value
+              )
+            "
+
+            style="
+              border:1px solid #dbe3ec;
+              border-radius:12px;
+              padding:12px;
+            "
+          >
+
+          <button
+            type="button"
+
+            onclick="
+              removerSubtarefa(${index})
+            "
+
+            style="
+              border:none;
+              background:#fee2e2;
+              color:#991b1b;
+              width:42px;
+              height:42px;
+              border-radius:12px;
+              cursor:pointer;
+              font-weight:900;
+            "
+          >
+
+            ×
+
+          </button>
+
+        </div>
+
+        <div style="
+  margin-top:14px;
+  display:flex;
+  gap:18px;
+  align-items:center;
+  flex-wrap:wrap;
+">
+
+  <label style="
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    font-weight:800;
+  ">
+
+    <input
+      type="checkbox"
+
+      ${sub.obrigatorio ? "checked" : ""}
+
+      onchange="
+        atualizarSubtarefa(
+          ${index},
+          'obrigatorio',
+          this.checked
+        )
+      "
+    >
+
+    Obrigatória
+
+  </label>
+
+  <label style="
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:12px;
+  font-weight:900;
+
+  padding:10px 14px;
+
+  border-radius:14px;
+
+  transition:.2s;
+
+  cursor:pointer;
+
+  background:
+    ${sub.foto_obrigatoria
+      ? 'rgba(22,163,74,.12)'
+      : '#f8fafc'};
+
+  border:
+    2px solid
+    ${sub.foto_obrigatoria
+      ? '#16a34a'
+      : '#e2e8f0'};
+
+  color:
+    ${sub.foto_obrigatoria
+      ? '#166534'
+      : '#475569'};
+">
+
+  <input
+    type="checkbox"
+
+    ${sub.foto_obrigatoria ? "checked" : ""}
+
+    onchange="
+      atualizarSubtarefa(
+        ${index},
+        'foto_obrigatoria',
+        this.checked
+      )
+
+      this.parentElement.style.background =
+        this.checked
+          ? 'rgba(22,163,74,.12)'
+          : '#f8fafc'
+
+      this.parentElement.style.border =
+        this.checked
+          ? '2px solid #16a34a'
+          : '2px solid #e2e8f0'
+
+      this.parentElement.style.color =
+        this.checked
+          ? '#166534'
+          : '#475569'
+    "
+  >
+
+  📸 Foto obrigatória
+
+</label>
+
+${
+  sub.foto_obrigatoria
+
+  ? `
+
+  <div style="
+    margin-top:12px;
+
+    padding:12px 14px;
+
+    border-radius:14px;
+
+    background:
+      rgba(22,163,74,.08);
+
+    border:
+      1px solid rgba(22,163,74,.2);
+
+    color:#166534;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+  ">
+
+    📸 ESTA SUBTAREFA EXIGIRÁ FOTO
+
+  </div>
+
+  `
+
+  : ""
+}
+
+${renderBlocoFonte(sub,index)}
+
+</div>
+      </div>
+
+    `
+
+  })
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+CONTAGEM DE ESTOQUE NA FONTE DE DADOS
+===================================================== */
+
+const TABELA_ESTOQUE_CONTAGEM = "mercatto_estoque"
+
+let indiceSubtarefaContagem = null
+let itensEstoqueContagem = []
+let selecionadosEstoqueContagem = new Set()
+
+async function abrirPopupContagemEstoque(index){
+
+  indiceSubtarefaContagem = index
+
+  const sub = subtarefas[index]
+
+  if(!sub) return
+
+  selecionadosEstoqueContagem = new Set(
+    (
+      sub.fonte_config?.itens || []
+    ).map(item => String(item.id))
+  )
+
+  document.getElementById(
+    "popupContagemEstoque"
+  ).style.display = "flex"
+
+  await carregarItensEstoquePopup()
+
+}
+
+function fecharPopupContagemEstoque(){
+
+  document.getElementById(
+    "popupContagemEstoque"
+  ).style.display = "none"
+
+  indiceSubtarefaContagem = null
+
+}
+
+async function carregarItensEstoquePopup(){
+
+  mostrarLoading()
+
+  try{
+
+    let todos = []
+    let pagina = 0
+    const limite = 1000
+
+    while(true){
+
+      const { data, error } = await supabaseClient
+        .from(TABELA_ESTOQUE_CONTAGEM)
+        .select("*")
+        .eq("ativo", true)
+        .order("produto", { ascending:true })
+        .range(
+          pagina * limite,
+          pagina * limite + limite - 1
+        )
+
+      if(error){
+
+        console.log(error)
+        alert("Erro ao carregar itens do estoque.")
+        return
+
+      }
+
+      if(!data || data.length === 0){
+        break
+      }
+
+      todos.push(...data)
+
+      if(data.length < limite){
+        break
+      }
+
+      pagina++
+
+    }
+
+    itensEstoqueContagem = todos || []
+
+    popularFiltrosEstoquePopup()
+    renderizarItensEstoquePopup()
+
+  }finally{
+
+    esconderLoading()
+
+  }
+
+}
+
+function popularFiltrosEstoquePopup(){
+
+  const empresas = [
+    ...new Set(
+      itensEstoqueContagem
+        .map(x => x.empresa)
+        .filter(Boolean)
+    )
+  ].sort()
+
+  const locais = [
+    ...new Set(
+      itensEstoqueContagem
+        .map(x => x.local_saida)
+        .filter(Boolean)
+    )
+  ].sort()
+
+  const unidades = [
+    ...new Set(
+      itensEstoqueContagem
+        .map(x => x.unidade || x.und_compra)
+        .filter(Boolean)
+    )
+  ].sort()
+
+  const selEmpresa =
+    document.getElementById(
+      "filtroEmpresaContagem"
+    )
+
+  const selLocal =
+    document.getElementById(
+      "filtroLocalContagem"
+    )
+
+  const selUnidade =
+    document.getElementById(
+      "filtroUnidadeContagem"
+    )
+
+  selEmpresa.innerHTML =
+    `<option value="">Todas empresas</option>`
+
+  selLocal.innerHTML =
+    `<option value="">Todos estoques</option>`
+
+  selUnidade.innerHTML =
+    `<option value="">Todas unidades</option>`
+
+  empresas.forEach(valor=>{
+
+    selEmpresa.innerHTML += `
+      <option value="${escaparAttr(valor)}">
+        ${escaparHtml(valor)}
+      </option>
+    `
+
+  })
+
+  locais.forEach(valor=>{
+
+    selLocal.innerHTML += `
+      <option value="${escaparAttr(valor)}">
+        ${escaparHtml(valor)}
+      </option>
+    `
+
+  })
+
+  unidades.forEach(valor=>{
+
+    selUnidade.innerHTML += `
+      <option value="${escaparAttr(valor)}">
+        ${escaparHtml(valor)}
+      </option>
+    `
+
+  })
+
+}
+
+function obterItensFiltradosEstoquePopup(){
+
+  const busca = String(
+    document.getElementById(
+      "buscaProdutoContagem"
+    )?.value || ""
+  ).trim().toUpperCase()
+
+  const empresa = String(
+    document.getElementById(
+      "filtroEmpresaContagem"
+    )?.value || ""
+  ).trim().toUpperCase()
+
+  const local = String(
+    document.getElementById(
+      "filtroLocalContagem"
+    )?.value || ""
+  ).trim().toUpperCase()
+
+  const unidade = String(
+    document.getElementById(
+      "filtroUnidadeContagem"
+    )?.value || ""
+  ).trim().toUpperCase()
+
+  return itensEstoqueContagem.filter(item=>{
+
+    const produto =
+      String(item.produto || "")
+        .toUpperCase()
+
+    const codigo =
+      String(
+        item.cod_barras ||
+        item.codigo_ean ||
+        ""
+      ).toUpperCase()
+
+    const emp =
+      String(item.empresa || "")
+        .toUpperCase()
+
+    const loc =
+      String(item.local_saida || "")
+        .toUpperCase()
+
+    const und =
+      String(
+        item.unidade ||
+        item.und_compra ||
+        ""
+      ).toUpperCase()
+
+    const matchBusca =
+      !busca ||
+      produto.includes(busca) ||
+      codigo.includes(busca)
+
+    const matchEmpresa =
+      !empresa ||
+      emp === empresa
+
+    const matchLocal =
+      !local ||
+      loc === local
+
+    const matchUnidade =
+      !unidade ||
+      und === unidade
+
+    return (
+      matchBusca &&
+      matchEmpresa &&
+      matchLocal &&
+      matchUnidade
+    )
+
+  })
+
+}
+
+function renderizarItensEstoquePopup(){
+
+  const box =
+    document.getElementById(
+      "listaItensEstoquePopup"
+    )
+
+  const resumo =
+    document.getElementById(
+      "resumoSelecaoEstoque"
+    )
+
+  const filtrados =
+    obterItensFiltradosEstoquePopup()
+
+  resumo.innerText =
+    `${selecionadosEstoqueContagem.size} item(ns) selecionado(s)`
+
+  if(!filtrados.length){
+
+    box.innerHTML = `
+      <div style="
+        grid-column:1/-1;
+        padding:30px;
+        text-align:center;
+        color:#64748b;
+        font-weight:800;
+      ">
+        Nenhum item encontrado.
+      </div>
+    `
+
+    return
+
+  }
+
+  box.innerHTML = filtrados.map(item=>{
+
+    const id =
+      String(item.id)
+
+    const checked =
+      selecionadosEstoqueContagem.has(id)
+
+    const qtdAtual =
+      Number(
+        item.quantidade ||
+        item.saldo ||
+        0
+      )
+
+    const unidade =
+      item.unidade ||
+      item.und_compra ||
+      "UN"
+
+    return `
+
+      <label
+        style="
+          border:1px solid ${checked ? "#16a34a" : "#e2e8f0"};
+          background:${checked ? "#f0fdf4" : "#fff"};
+          border-radius:16px;
+          padding:14px;
+          display:flex;
+          gap:12px;
+          cursor:pointer;
+          box-shadow:0 8px 22px rgba(15,23,42,.06);
+        "
+      >
+        <input
+          type="checkbox"
+          ${checked ? "checked" : ""}
+          onchange="alternarItemEstoqueContagem('${id}', this.checked)"
+          style="
+            width:18px;
+            height:18px;
+            margin-top:2px;
+          "
+        >
+
+        <div style="flex:1;min-width:0;">
+          <div style="
+            font-size:13px;
+            font-weight:900;
+            color:#0f172a;
+            text-transform:uppercase;
+            line-height:1.25;
+          ">
+            ${escaparHtml(item.produto || "-")}
+          </div>
+
+          <div style="
+            margin-top:6px;
+            color:#64748b;
+            font-size:11px;
+            font-weight:800;
+          ">
+            ${escaparHtml(item.empresa || "-")}
+            •
+            ${escaparHtml(item.local_saida || "-")}
+          </div>
+
+          <div style="
+            margin-top:8px;
+            display:flex;
+            gap:6px;
+            flex-wrap:wrap;
+          ">
+            <span style="
+              background:#eff6ff;
+              color:#1d4ed8;
+              border:1px solid #bfdbfe;
+              border-radius:999px;
+              padding:4px 8px;
+              font-size:10px;
+              font-weight:900;
+            ">
+              Atual: ${qtdAtual} ${escaparHtml(unidade)}
+            </span>
+
+            <span style="
+              background:#fff7ed;
+              color:#c2410c;
+              border:1px solid #fed7aa;
+              border-radius:999px;
+              padding:4px 8px;
+              font-size:10px;
+              font-weight:900;
+            ">
+              Mín: ${item.estoque_minimo || 0}
+            </span>
+
+            <span style="
+              background:#f8fafc;
+              color:#475569;
+              border:1px solid #e2e8f0;
+              border-radius:999px;
+              padding:4px 8px;
+              font-size:10px;
+              font-weight:900;
+            ">
+              ${escaparHtml(unidade)}
+            </span>
+          </div>
+        </div>
+      </label>
+
+    `
+
+  }).join("")
+
+}
+
+function alternarItemEstoqueContagem(id, marcado){
+
+  if(marcado){
+
+    selecionadosEstoqueContagem.add(
+      String(id)
+    )
+
+  }else{
+
+    selecionadosEstoqueContagem.delete(
+      String(id)
+    )
+
+  }
+
+  renderizarItensEstoquePopup()
+
+}
+
+function selecionarTodosFiltradosEstoque(){
+
+  const filtrados =
+    obterItensFiltradosEstoquePopup()
+
+  filtrados.forEach(item=>{
+
+    selecionadosEstoqueContagem.add(
+      String(item.id)
+    )
+
+  })
+
+  renderizarItensEstoquePopup()
+
+}
+
+function limparSelecaoEstoquePopup(){
+
+  selecionadosEstoqueContagem.clear()
+
+  renderizarItensEstoquePopup()
+
+}
+
+function confirmarItensContagemEstoque(){
+
+  if(indiceSubtarefaContagem === null){
+    return
+  }
+
+  const itensSelecionados =
+    itensEstoqueContagem
+      .filter(item =>
+        selecionadosEstoqueContagem.has(
+          String(item.id)
+        )
+      )
+      .map(item=>{
+
+        const quantidadeAtual =
+          Number(
+            item.quantidade ||
+            item.saldo ||
+            0
+          )
+
+        return {
+
+          id:
+            String(item.id),
+
+          produto:
+            String(item.produto || ""),
+
+          empresa:
+            String(item.empresa || ""),
+
+          local_saida:
+            String(item.local_saida || ""),
+
+          unidade:
+            String(
+              item.unidade ||
+              item.und_compra ||
+              "UN"
+            ),
+
+          cod_barras:
+            String(
+              item.cod_barras ||
+              item.codigo_ean ||
+              ""
+            ),
+
+          quantidade_sistema:
+            quantidadeAtual,
+
+          estoque_minimo:
+            Number(item.estoque_minimo || 0),
+
+          estoque_ideal:
+            Number(item.estoque_ideal || 0),
+
+          selecionado_em:
+            new Date().toISOString()
+
+        }
+
+      })
+
+  if(!itensSelecionados.length){
+
+    alert(
+      "Selecione pelo menos um item para a contagem."
+    )
+
+    return
+
+  }
+
+  subtarefas[indiceSubtarefaContagem].fonte_obrigatoria = true
+
+  subtarefas[indiceSubtarefaContagem].fonte_tipo =
+    "CONTAGEM_ESTOQUE"
+
+  subtarefas[indiceSubtarefaContagem].fonte_valor =
+    `${itensSelecionados.length} item(ns) para contar`
+
+  subtarefas[indiceSubtarefaContagem].fonte_config = {
+
+    tipo:
+      "CONTAGEM_ESTOQUE",
+
+    tabela:
+      TABELA_ESTOQUE_CONTAGEM,
+
+    itens:
+      itensSelecionados,
+
+    total_itens:
+      itensSelecionados.length,
+
+    atualizado_em:
+      new Date().toISOString()
+
+  }
+
+  subtarefas[indiceSubtarefaContagem].fonte_atualizada_em =
+    new Date().toISOString()
+
+  fecharPopupContagemEstoque()
+
+  renderizarSubtarefas()
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+async function salvarTarefa(){
+
+  try{
+
+    /* =====================================================
+    VALIDAR RESPONSÁVEIS
+    ===================================================== */
+
+    if(responsaveisSelecionados.length === 0){
+
+      alert(
+        "Adicione pelo menos um responsável"
+      )
+
+      return
+
+    }
+
+    /* =====================================================
+    NORMALIZAR RESPONSÁVEIS
+    ===================================================== */
+
+    const responsaveis = responsaveisSelecionados.map(usuario=>({
+
+      id:
+        String(usuario.id || ""),
+
+      nome:
+        String(usuario.nome || ""),
+
+      telefone:
+        String(usuario.telefone || ""),
+
+      empresa:
+        String(usuario.empresa || ""),
+
+      setor:
+        String(usuario.setor || ""),
+
+      cargo:
+        String(usuario.cargo || "")
+
+    }))
+
+    /* =====================================================
+    NORMALIZAR CHECKLIST
+    ===================================================== */
+
+    let checklistNormalizado = []
+
+    if(subtarefas.length > 0){
+
+      checklistNormalizado =
+        subtarefas.map((item,index)=>({
+
+          id:
+            item.id ||
+            crypto.randomUUID(),
+
+          ordem:
+            Number(index + 1),
+
+          item:
+            String(item.item || "Subtarefa"),
+
+          descricao:
+            String(item.descricao || ""),
+
+          status:
+            String(item.status || "PENDENTE"),
+
+          prioridade:
+            String(item.prioridade || "NORMAL"),
+
+          obrigatorio:
+            item.obrigatorio === true,
+
+          concluido:
+            item.concluido === true,
+
+          resposta:
+            String(item.resposta || ""),
+
+          observacao:
+            String(item.observacao || ""),
+
+          hora:
+            item.hora || "",
+
+          hora_inicio:
+            item.hora_inicio || "",
+
+          hora_fim:
+            item.hora_fim || "",
+
+          executado_em:
+            item.executado_em || null,
+
+          concluido_em:
+            item.concluido_em || null,
+
+          usuario_executor:
+            item.usuario_executor || null,
+
+
+          
+
+obrigatorio:
+  item.obrigatorio === true,
+
+concluido:
+  item.concluido === true,
+
+foto_obrigatoria:
+  item.foto_obrigatoria === true,
+
+audio_obrigatorio:
+  item.audio_obrigatorio === true,
+
+video_obrigatorio:
+  item.video_obrigatorio === true,
+
+assinatura_obrigatoria:
+  item.assinatura_obrigatoria === true,
+
+fonte_obrigatoria:
+  item.fonte_obrigatoria === true,
+
+fonte_tipo:
+  normalizarFonteTipo(
+    item.fonte_tipo || ""
+  ),
+
+fonte_valor:
+  String(item.fonte_valor || ""),
+
+fonte_config:
+  item.fonte_config || null,
+
+fonte_respondida_em:
+  item.fonte_respondida_em || null,
+fonte_atualizada_em:
+  item.fonte_atualizada_em || null,
+          foto_url:
+            item.foto_url || "",
+
+          audio_url:
+            item.audio_url || "",
+
+          video_url:
+            item.video_url || "",
+
+          assinatura_url:
+            item.assinatura_url || "",
+
+          anexos:
+            Array.isArray(item.anexos)
+              ? item.anexos
+              : [],
+
+          midias:
+            Array.isArray(item.midias)
+              ? item.midias
+              : [],
+
+          historico:
+            Array.isArray(item.historico)
+              ? item.historico
+              : [],
+
+          criado_em:
+            item.criado_em ||
+            new Date().toISOString(),
+
+          atualizado_em:
+            new Date().toISOString()
+
+        }))
+
+    }else{
+
+      checklistNormalizado = [
+
+        {
+
+          id:
+            crypto.randomUUID(),
+
+          ordem:1,
+
+          item:
+            "Checklist obrigatório",
+
+          descricao:"",
+
+          status:"PENDENTE",
+
+          prioridade:"NORMAL",
+
+          obrigatorio:true,
+
+          concluido:false,
+
+          resposta:"",
+
+          observacao:"",
+
+          hora:"",
+
+          hora_inicio:"",
+
+          hora_fim:"",
+
+          executado_em:null,
+
+          concluido_em:null,
+
+          usuario_executor:null,
+
+          foto_obrigatoria:false,
+
+          audio_obrigatorio:false,
+
+          video_obrigatorio:false,
+
+          assinatura_obrigatoria:false,
+
+          fonte_obrigatoria:false,
+
+          fonte_tipo:"",
+
+          fonte_valor:"",
+
+          fonte_respondida_em:null,
+
+          fonte_atualizada_em:null,
+
+          foto_url:"",
+
+          audio_url:"",
+
+          video_url:"",
+
+          assinatura_url:"",
+
+          anexos:[],
+
+          midias:[],
+
+          historico:[],
+
+          criado_em:
+            new Date().toISOString(),
+
+          atualizado_em:
+            new Date().toISOString()
+
+        }
+
+      ]
+
+    }
+
+    console.log(
+      "✅ CHECKLIST NORMALIZADO:",
+      checklistNormalizado
+    )
+
+    /* =====================================================
+    MONTAR QUERY
+    ===================================================== */
+
+    let query =
+      supabaseClient
+        .from("tarefas_checklist")
+
+    const payload = {
+
+      empresa:
+        String(
+          document.getElementById(
+            "empresa"
+          ).value ||
+
+          responsaveisSelecionados[0]
+            ?.empresa ||
+
+          ""
+        ),
+
+      setor:
+        String(
+          document.getElementById(
+            "setor"
+          ).value ||
+
+          responsaveisSelecionados[0]
+            ?.setor ||
+
+          ""
+        ),
+
+      titulo:
+        String(
+          document.getElementById(
+            "titulo"
+          ).value || ""
+        ),
+
+      descricao:
+        String(
+          document.getElementById(
+            "descricao"
+          ).value || ""
+        ),
+
+      prioridade:
+        String(
+          document.getElementById(
+            "prioridade"
+          ).value || "NORMAL"
+        ),
+
+status:
+  window.clonando
+    ? "PENDENTE"
+    : (tarefaEditando?.status || "PENDENTE"),
+
+      foto_obrigatoria:
+        document.getElementById(
+          "fotoObrigatoria"
+        ).value === "true",
+
+      data_limite:
+        document.getElementById(
+          "dataLimite"
+        ).value || null,
+
+      recorrente:
+        document.getElementById(
+          "recorrente"
+        ).value === "true",
+
+      tipo_recorrencia:
+        String(
+          document.getElementById(
+            "tipoRecorrencia"
+          ).value || ""
+        ),
+
+      intervalo_recorrencia:
+        Number(
+          document.getElementById(
+            "intervaloRecorrencia"
+          ).value || 1
+        ),
+
+      horario_execucao:
+        document.getElementById(
+          "horarioExecucao"
+        ).value || null,
+
+      dias_semana:
+        Array.from(
+          document.querySelectorAll(
+            ".dias-semana input:checked"
+          )
+        ).map(x=>String(x.value)),
+
+      responsaveis,
+
+      checklist:
+        checklistNormalizado,
+
+      total_subtarefas:
+        checklistNormalizado.length,
+
+      total_concluidas:
+        checklistNormalizado.filter(
+          x=>x.concluido
+        ).length,
+
+      percentual_conclusao:
+        checklistNormalizado.length > 0
+
+          ? Math.round(
+
+              (
+                checklistNormalizado.filter(
+                  x=>x.concluido
+                ).length
+
+                /
+
+                checklistNormalizado.length
+
+              ) * 100
+
+            )
+
+          : 0,
+
+      updated_at:
+        new Date().toISOString()
+
+    }
+
+    /* =====================================================
+    UPDATE
+    ===================================================== */
+
+if(
+  tarefaEditando &&
+  !window.clonando
+){
+
+  query = query
+    .update(payload)
+    .eq(
+      "id",
+      tarefaEditando.id
+    )
+
+}else{
+
+  query = query.insert({
+
+    ...payload,
+
+    created_at:
+      new Date().toISOString(),
+
+    status:"PENDENTE",
+
+    data_conclusao:null,
+
+    concluido_por:null,
+
+    concluido_por_nome:null,
+
+    finalizado_por:null,
+
+    finalizado_por_nome:null,
+
+    finalizado_em:null,
+
+    validado_por:null,
+
+    validado_por_nome:null,
+
+    validado_em:null
+
+  })
+
+}
+    /* =====================================================
+    EXECUTAR
+    ===================================================== */
+
+    const { error } =
+      await query
+
+    if(error){
+
+      console.error(error)
+
+      alert(error.message)
+
+      return
+
+    }
+
+    /* =====================================================
+    FINALIZAR
+    ===================================================== */
+
+window.clonando = false
+
+fecharModal()
+
+await carregarTarefas(true)
+
+aplicarFiltros()
+
+    console.log(
+      "✅ TAREFA SALVA COM SUCESSO"
+    )
+
+  }catch(err){
+
+    console.error(err)
+
+    alert(
+      "Erro ao salvar tarefa"
+    )
+
+  }
+
+}
+
+function fecharPainelDinamico(){
+
+  const painel =
+    document.getElementById(
+      "painelDinamico"
+    )
+
+  painel.style.display = "none"
+
+  painel.innerHTML = ""
+
+}
+
+
+
+
+
+
+
+
+
+
+  
+/* =====================================================
+COBRANÇAS
+===================================================== */
+
+async function carregarCobrancas(){
+
+esconderConteudos()
+
+const painel =
+  document.getElementById(
+    "painelDinamico"
+  )
+
+  painel.style.display = "block"
+
+  painel.innerHTML = `
+
+    <div style="
+      background:#fff;
+      border-radius:26px;
+      padding:24px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:22px;
+      ">
+
+        <h3 style="
+          font-size:28px;
+          font-weight:900;
+          color:#0f172a;
+        ">
+
+          Cobranças Automáticas
+
+        </h3>
+
+      </div>
+
+      <div id="listaCobrancas">
+
+        <div style="
+          padding:40px;
+          text-align:center;
+          color:#64748b;
+        ">
+
+          Carregando...
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `
+
+  const { data, error } =
+
+    await supabaseClient
+
+      .from(
+        "tarefas_checklist_cobrancas"
+      )
+
+      .select("*")
+
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+
+  if(error){
+
+    painel.innerHTML = `
+      <div style="
+        background:#fee2e2;
+        color:#991b1b;
+        padding:24px;
+        border-radius:20px;
+      ">
+        ${error.message}
+      </div>
+    `
+
+    return
+  }
+
+  const lista =
+    document.getElementById(
+      "listaCobrancas"
+    )
+
+  if(!data || data.length === 0){
+
+    lista.innerHTML = `
+
+      <div style="
+        padding:40px;
+        text-align:center;
+        color:#64748b;
+      ">
+
+        Nenhuma cobrança encontrada.
+
+      </div>
+
+    `
+
+    return
+  }
+
+  lista.innerHTML = data.map(c=>`
+
+    <div style="
+      border:1px solid #e2e8f0;
+      border-radius:22px;
+      padding:22px;
+      margin-bottom:18px;
+      background:#fff;
+    ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:20px;
+        flex-wrap:wrap;
+      ">
+
+        <div>
+
+          <div style="
+            font-size:18px;
+            font-weight:800;
+            color:#0f172a;
+          ">
+
+            ${c.destinatario || "-"}
+
+          </div>
+
+          <div style="
+            color:#64748b;
+            margin-top:6px;
+            font-size:13px;
+          ">
+
+            ${c.telefone || "-"}
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <span style="
+            padding:10px 14px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:800;
+
+            background:
+              ${c.status === "ENVIADO"
+                ? "#dcfce7"
+                : "#fee2e2"};
+
+            color:
+              ${c.status === "ENVIADO"
+                ? "#166534"
+                : "#991b1b"};
+
+          ">
+
+            ${c.status || "-"}
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <div style="
+        margin-top:18px;
+        background:#f8fafc;
+        border-radius:18px;
+        padding:18px;
+        white-space:pre-wrap;
+        font-size:14px;
+        line-height:1.6;
+      ">
+
+        ${c.mensagem || "-"}
+
+      </div>
+
+      <div style="
+        display:grid;
+        grid-template-columns:
+          repeat(auto-fit,minmax(180px,1fr));
+        gap:14px;
+        margin-top:18px;
+      ">
+
+        <div style="
+          background:#f8fafc;
+          padding:14px;
+          border-radius:16px;
+        ">
+
+          <small style="
+            color:#64748b;
+            font-weight:700;
+          ">
+
+            Empresa
+
+          </small>
+
+          <div style="
+            margin-top:6px;
+            font-weight:800;
+          ">
+
+            ${c.empresa || "-"}
+
+          </div>
+
+        </div>
+
+        <div style="
+          background:#f8fafc;
+          padding:14px;
+          border-radius:16px;
+        ">
+
+          <small style="
+            color:#64748b;
+            font-weight:700;
+          ">
+
+            Tipo
+
+          </small>
+
+          <div style="
+            margin-top:6px;
+            font-weight:800;
+          ">
+
+            ${c.tipo_envio || "-"}
+
+          </div>
+
+        </div>
+
+        <div style="
+          background:#f8fafc;
+          padding:14px;
+          border-radius:16px;
+        ">
+
+          <small style="
+            color:#64748b;
+            font-weight:700;
+          ">
+
+            Prioridade
+
+          </small>
+
+          <div style="
+            margin-top:6px;
+            font-weight:800;
+          ">
+
+            ${c.prioridade || "-"}
+
+          </div>
+
+        </div>
+
+        <div style="
+          background:#f8fafc;
+          padding:14px;
+          border-radius:16px;
+        ">
+
+          <small style="
+            color:#64748b;
+            font-weight:700;
+          ">
+
+            Enviado em
+
+          </small>
+
+          <div style="
+            margin-top:6px;
+            font-weight:800;
+          ">
+
+            ${
+              c.enviada_em
+
+              ? new Date(
+                  c.enviada_em
+                ).toLocaleString("pt-BR")
+
+              : "-"
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `).join("")
+
+}
+/* =====================================================
+LOGS
+===================================================== */
+
+async function carregarLogs(){
+
+esconderConteudos()
+
+const painel =
+  document.getElementById(
+    "painelDinamico"
+  )
+  painel.style.display = "block"
+
+  painel.innerHTML = `
+
+    <div style="
+      background:#fff;
+      border-radius:26px;
+      padding:24px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    ">
+
+      <h3 style="
+        font-size:28px;
+        font-weight:900;
+        margin-bottom:24px;
+      ">
+
+        Logs do Checklist Mercatto
+
+      </h3>
+
+      <div id="listaLogs"></div>
+
+    </div>
+
+  `
+
+  const { data, error } =
+
+    await supabaseClient
+
+      .from(
+        "acionamentos_dos_fofoqueiros"
+      )
+
+      .select("*")
+
+      .eq(
+        "nome_fofoqueiro",
+        "checklist_mercatto"
+      )
+
+      .order(
+        "horario_execucao",
+        {
+          ascending:false
+        }
+      )
+
+  if(error){
+
+    painel.innerHTML = error.message
+
+    return
+  }
+
+  const lista =
+    document.getElementById(
+      "listaLogs"
+    )
+
+  if(!data || data.length === 0){
+
+    lista.innerHTML = `
+
+      <div style="
+        padding:40px;
+        text-align:center;
+        color:#64748b;
+      ">
+
+        Nenhum log encontrado.
+
+      </div>
+
+    `
+
+    return
+  }
+
+  lista.innerHTML = data.map(log=>`
+
+    <div style="
+      border:1px solid #e2e8f0;
+      border-radius:22px;
+      padding:22px;
+      margin-bottom:18px;
+      background:#fff;
+    ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        gap:20px;
+      ">
+
+        <div>
+
+          <div style="
+            font-size:18px;
+            font-weight:800;
+          ">
+
+            ${log.nome_fofoqueiro}
+
+          </div>
+
+          <div style="
+            color:#64748b;
+            margin-top:6px;
+          ">
+
+            ${
+              log.horario_execucao
+
+              ? new Date(
+                  log.horario_execucao
+                ).toLocaleString("pt-BR")
+
+              : "-"
+            }
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <span style="
+            padding:10px 14px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:800;
+
+            background:
+              ${log.sucesso
+                ? "#dcfce7"
+                : "#fee2e2"};
+
+            color:
+              ${log.sucesso
+                ? "#166534"
+                : "#991b1b"};
+
+          ">
+
+            ${log.sucesso
+              ? "SUCESSO"
+              : "ERRO"}
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <div style="
+        margin-top:18px;
+        background:#f8fafc;
+        border-radius:18px;
+        padding:18px;
+        white-space:pre-wrap;
+        line-height:1.6;
+      ">
+
+        ${log.mensagem_enviada || "-"}
+
+      </div>
+
+    </div>
+
+  `).join("")
+
+}
+
+
+
+
+
+
+/* =====================================================
+CRON MANUAL
+===================================================== */
+
+async function executarCronManual(){
+
+  const botao =
+    document.getElementById(
+      "btnCronManual"
+    )
+
+  const spinner =
+    document.getElementById(
+      "cronSpinner"
+    )
+
+  const texto =
+    document.getElementById(
+      "cronTexto"
+    )
+
+  botao.disabled = true
+
+  spinner.style.display = "block"
+
+  texto.innerText =
+    "Executando..."
+
+  try{
+
+await fetch(
+  "https://reservas-mercatto.vercel.app/api/fofoqueiros/checklist_mercatto",
+  {
+    method:"GET"
+  }
+)
+    await new Promise(resolve=>
+      setTimeout(resolve,5000)
+    )
+
+    spinner.style.display = "none"
+
+    texto.innerText = "OK ✓"
+
+    setTimeout(()=>{
+
+      texto.innerText =
+        "Rodar Cron"
+
+      botao.disabled = false
+
+    },2000)
+
+  }catch(e){
+
+    spinner.style.display = "none"
+
+    texto.innerText = "Erro"
+
+    botao.disabled = false
+
+    console.log(e)
+
+  }
+
+}
+
+/* =====================================================
+EXCLUIR TAREFA
+===================================================== */
+
+async function excluirTarefa(id){
+
+  const confirmar = confirm(
+    "Deseja realmente excluir esta tarefa?"
+  )
+
+  if(!confirmar) return
+
+  console.log("🔴 EXCLUINDO:", id)
+
+  try{
+
+    const { error } =
+
+      await supabaseClient
+
+        .from("tarefas_checklist")
+
+        .delete()
+
+        .eq("id", id)
+
+    console.log("ERROR:", error)
+
+    if(error){
+
+      alert(
+        JSON.stringify(
+          error,
+          null,
+          2
+        )
+      )
+
+      return
+
+    }
+
+    await carregarTarefas(true)
+
+  }catch(err){
+
+    console.log(err)
+
+    alert(
+      "Erro ao excluir tarefa"
+    )
+
+  }
+
+}
+
+
+async function gerarPDFChecklist(){
+
+  try{
+
+    if(!window.jspdf || !window.jspdf.jsPDF){
+
+      alert("Erro: biblioteca jsPDF não carregada.")
+      return
+
+    }
+
+    const { jsPDF } = window.jspdf
+
+    const pdf = new jsPDF({
+      orientation:"p",
+      unit:"mm",
+      format:"a4"
+    })
+
+    const pageWidth =
+      pdf.internal.pageSize.getWidth()
+
+    const pageHeight =
+      pdf.internal.pageSize.getHeight()
+
+    const margem = 10
+    const largura = pageWidth - 20
+
+    const corAzulEscuro = [15, 76, 129]
+    const corAzul = [37, 99, 235]
+    const corAzulClaro = [219, 234, 254]
+    const corAzulFundo = [239, 246, 255]
+    const corTexto = [15, 23, 42]
+    const corCinza = [100, 116, 139]
+    const corLinha = [203, 213, 225]
+    const corVerde = [22, 163, 74]
+    const corVermelho = [220, 38, 38]
+    const corAmarelo = [245, 158, 11]
+    const corRoxo = [124, 58, 237]
+
+    let y = 0
+    let pagina = 1
+
+    const dataGeracao =
+      new Date().toLocaleString("pt-BR", {
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit"
+      })
+
+    function textoSeguro(valor){
+
+      return String(valor || "")
+        .replace(/\s+/g, " ")
+        .trim()
+
+    }
+
+    function parseJsonSeguro(valor, fallback = []){
+
+      try{
+
+        if(Array.isArray(valor)){
+          return valor
+        }
+
+        if(typeof valor === "string" && valor.trim()){
+          return JSON.parse(valor)
+        }
+
+        return fallback
+
+      }catch{
+
+        return fallback
+
+      }
+
+    }
+
+    function statusSeguro(valor){
+
+      return textoSeguro(valor || "PENDENTE")
+        .toUpperCase()
+
+    }
+
+    function corStatus(status){
+
+      const s = statusSeguro(status)
+
+      if(
+        s.includes("CONCLUIDO") ||
+        s.includes("CONCLUÍDO")
+      ){
+        return corVerde
+      }
+
+      if(
+        s.includes("ATRASADO") ||
+        s.includes("REPROVADO") ||
+        s.includes("CANCELADO")
+      ){
+        return corVermelho
+      }
+
+      if(s.includes("ANDAMENTO")){
+        return corAzul
+      }
+
+      if(
+        s.includes("VALIDACAO") ||
+        s.includes("VALIDAÇÃO") ||
+        s.includes("FINALIZACAO") ||
+        s.includes("FINALIZAÇÃO")
+      ){
+        return corRoxo
+      }
+
+      return corAmarelo
+
+    }
+
+    function formatarDataHora(valor){
+
+      if(!valor) return "-"
+
+      const data = new Date(valor)
+
+      if(isNaN(data.getTime())) return "-"
+
+      return data.toLocaleString("pt-BR", {
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit"
+      })
+
+    }
+
+    function getFiltros(){
+
+      return {
+
+        status:
+          textoSeguro(
+            document.getElementById("filtroStatus")?.value
+          ),
+
+        empresa:
+          textoSeguro(
+            document.getElementById("filtroEmpresa")?.value
+          ),
+
+        setor:
+          textoSeguro(
+            document.getElementById("filtroSetor")?.value
+          ),
+
+        prioridade:
+          textoSeguro(
+            document.getElementById("filtroPrioridade")?.value
+          ),
+
+        responsavel:
+          textoSeguro(
+            document.getElementById("filtroResponsavel")?.value
+          ),
+
+        dataDe:
+          textoSeguro(
+            document.getElementById("filtroDataDe")?.value
+          ),
+
+        horaDe:
+          textoSeguro(
+            document.getElementById("filtroHoraDe")?.value || "00:00"
+          ),
+
+        dataAte:
+          textoSeguro(
+            document.getElementById("filtroDataAte")?.value
+          ),
+
+        horaAte:
+          textoSeguro(
+            document.getElementById("filtroHoraAte")?.value || "23:59"
+          )
+
+      }
+
+    }
+
+    function tarefasFiltradasPDF(){
+
+      const filtros = getFiltros()
+
+      let lista =
+        Array.isArray(todasTarefas)
+          ? [...todasTarefas]
+          : []
+
+      if(filtros.status){
+
+        lista = lista.filter(t =>
+          statusSeguro(t.status) === filtros.status.toUpperCase()
+        )
+
+      }
+
+      if(filtros.empresa){
+
+        lista = lista.filter(t =>
+          textoSeguro(t.empresa).toUpperCase() === filtros.empresa.toUpperCase()
+        )
+
+      }
+
+      if(filtros.setor){
+
+        lista = lista.filter(t =>
+          textoSeguro(t.setor).toUpperCase() === filtros.setor.toUpperCase()
+        )
+
+      }
+
+      if(filtros.prioridade){
+
+        lista = lista.filter(t =>
+          textoSeguro(t.prioridade).toUpperCase() === filtros.prioridade.toUpperCase()
+        )
+
+      }
+
+      if(filtros.responsavel){
+
+        lista = lista.filter(t => {
+
+          const responsaveis =
+            parseJsonSeguro(t.responsaveis, [])
+
+          return responsaveis.some(r =>
+            textoSeguro(r.nome).toUpperCase() === filtros.responsavel.toUpperCase()
+          )
+
+        })
+
+      }
+
+      if(filtros.dataDe || filtros.dataAte){
+
+        lista = lista.filter(t => {
+
+          if(!t.data_limite) return false
+
+          const dataTarefa =
+            new Date(t.data_limite)
+
+          if(isNaN(dataTarefa.getTime())) return false
+
+          let inicio = null
+          let fim = null
+
+          if(filtros.dataDe){
+            inicio = new Date(`${filtros.dataDe}T${filtros.horaDe}`)
+          }
+
+          if(filtros.dataAte){
+            fim = new Date(`${filtros.dataAte}T${filtros.horaAte}`)
+          }
+
+          if(inicio && dataTarefa < inicio) return false
+          if(fim && dataTarefa > fim) return false
+
+          return true
+
+        })
+
+      }
+
+      lista.sort((a,b) => {
+
+        const dataA =
+          a.data_limite
+            ? new Date(a.data_limite).getTime()
+            : 9999999999999
+
+        const dataB =
+          b.data_limite
+            ? new Date(b.data_limite).getTime()
+            : 9999999999999
+
+        return dataA - dataB
+
+      })
+
+      return lista
+
+    }
+
+    function adicionarTarefaGrupo(grupo, tarefa){
+
+      const status = statusSeguro(tarefa.status)
+
+      grupo.total += 1
+
+      if(
+        status.includes("CONCLUIDO") ||
+        status.includes("CONCLUÍDO")
+      ){
+        grupo.concluidas += 1
+      }
+      else if(status.includes("ATRASADO")){
+        grupo.atrasadas += 1
+      }
+      else{
+        grupo.pendentes += 1
+      }
+
+      grupo.tarefas.push(tarefa)
+
+    }
+
+    function agruparPorColaborador(lista){
+
+      const mapa = new Map()
+
+      lista.forEach(tarefa => {
+
+        const responsaveis =
+          parseJsonSeguro(tarefa.responsaveis, [])
+
+        if(!responsaveis.length){
+
+          const nome = "SEM RESPONSÁVEL"
+
+          if(!mapa.has(nome)){
+
+            mapa.set(nome, {
+              nome,
+              empresa: textoSeguro(tarefa.empresa),
+              setor: textoSeguro(tarefa.setor),
+              cargo: "",
+              total: 0,
+              pendentes: 0,
+              atrasadas: 0,
+              concluidas: 0,
+              tarefas: []
+            })
+
+          }
+
+          adicionarTarefaGrupo(
+            mapa.get(nome),
+            tarefa
+          )
+
+          return
+
+        }
+
+        responsaveis.forEach(resp => {
+
+          const nome =
+            textoSeguro(resp.nome || "SEM RESPONSÁVEL")
+              .toUpperCase()
+
+          if(!mapa.has(nome)){
+
+            mapa.set(nome, {
+              nome,
+              empresa: textoSeguro(resp.empresa || tarefa.empresa),
+              setor: textoSeguro(resp.setor || tarefa.setor),
+              cargo: textoSeguro(resp.cargo || ""),
+              total: 0,
+              pendentes: 0,
+              atrasadas: 0,
+              concluidas: 0,
+              tarefas: []
+            })
+
+          }
+
+          adicionarTarefaGrupo(
+            mapa.get(nome),
+            tarefa
+          )
+
+        })
+
+      })
+
+      return [...mapa.values()].sort((a,b) =>
+        a.nome.localeCompare(b.nome, "pt-BR")
+      )
+
+    }
+
+    function fundo(){
+
+      pdf.setFillColor(248, 250, 252)
+      pdf.rect(0, 0, pageWidth, pageHeight, "F")
+
+      pdf.setFillColor(...corAzulFundo)
+      pdf.rect(0, 0, pageWidth, 42, "F")
+
+      pdf.setFillColor(...corAzulClaro)
+      pdf.rect(0, 42, pageWidth, 1.2, "F")
+
+    }
+
+    function rodape(){
+
+      pdf.setDrawColor(...corLinha)
+      pdf.line(margem, pageHeight - 12, pageWidth - margem, pageHeight - 12)
+
+      pdf.setTextColor(...corCinza)
+      pdf.setFont("helvetica", "normal")
+      pdf.setFontSize(7)
+
+      pdf.text(
+        `CHECKLIST OTTO • Gerado em ${dataGeracao}`,
+        margem,
+        pageHeight - 7
+      )
+
+      pdf.text(
+        `Página ${pagina}`,
+        pageWidth - margem,
+        pageHeight - 7,
+        { align:"right" }
+      )
+
+    }
+
+    function novaPagina(){
+
+      pdf.addPage()
+      pagina += 1
+      fundo()
+      rodape()
+      y = 18
+
+    }
+
+    function precisaEspaco(altura){
+
+      if(y + altura > pageHeight - 18){
+        novaPagina()
+      }
+
+    }
+
+    function header(totalTarefas, totalColaboradores){
+
+      fundo()
+
+      pdf.setFillColor(...corAzulEscuro)
+      pdf.roundedRect(
+        margem,
+        10,
+        largura,
+        25,
+        4,
+        4,
+        "F"
+      )
+
+      pdf.setTextColor(255, 255, 255)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(20)
+
+      pdf.text(
+        "CHECKLIST OTTO",
+        margem + 6,
+        22
+      )
+
+      pdf.setFont("helvetica", "normal")
+      pdf.setFontSize(8)
+
+      pdf.text(
+        `Relatório operacional por colaborador • ${dataGeracao}`,
+        margem + 6,
+        29
+      )
+
+      pdf.setFillColor(255, 255, 255)
+      pdf.roundedRect(
+        pageWidth - 52,
+        15,
+        34,
+        13,
+        3,
+        3,
+        "F"
+      )
+
+      pdf.setTextColor(...corAzulEscuro)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(8)
+
+      pdf.text(
+        "OTTO",
+        pageWidth - 45,
+        20
+      )
+
+      pdf.setTextColor(...corCinza)
+      pdf.setFontSize(6.5)
+
+      pdf.text(
+        "Checklist IA",
+        pageWidth - 45,
+        25
+      )
+
+      y = 48
+
+      kpis(totalTarefas, totalColaboradores)
+
+      rodape()
+
+    }
+
+    function kpis(totalTarefas, totalColaboradores){
+
+      const lista = tarefasFiltradasPDF()
+
+      const concluidas =
+        lista.filter(t => {
+          const s = statusSeguro(t.status)
+          return s.includes("CONCLUIDO") || s.includes("CONCLUÍDO")
+        }).length
+
+      const atrasadas =
+        lista.filter(t =>
+          statusSeguro(t.status).includes("ATRASADO")
+        ).length
+
+      const pendentes =
+        Math.max(
+          totalTarefas - concluidas - atrasadas,
+          0
+        )
+
+      const cards = [
+        {
+          label:"Tarefas",
+          valor:totalTarefas,
+          cor:corAzul
+        },
+        {
+          label:"Colaboradores",
+          valor:totalColaboradores,
+          cor:corAzulEscuro
+        },
+        {
+          label:"Pendentes",
+          valor:pendentes,
+          cor:corAmarelo
+        },
+        {
+          label:"Atrasadas",
+          valor:atrasadas,
+          cor:corVermelho
+        },
+        {
+          label:"Concluídas",
+          valor:concluidas,
+          cor:corVerde
+        }
+      ]
+
+      const gap = 3
+      const cardW =
+        (largura - gap * (cards.length - 1)) / cards.length
+
+      cards.forEach((card, index) => {
+
+        const x =
+          margem + index * (cardW + gap)
+
+        pdf.setFillColor(255, 255, 255)
+        pdf.roundedRect(x, y, cardW, 20, 3, 3, "F")
+
+        pdf.setDrawColor(...corLinha)
+        pdf.roundedRect(x, y, cardW, 20, 3, 3, "S")
+
+        pdf.setTextColor(...corCinza)
+        pdf.setFont("helvetica", "bold")
+        pdf.setFontSize(6.6)
+
+        pdf.text(
+          card.label.toUpperCase(),
+          x + 4,
+          y + 7
+        )
+
+        pdf.setTextColor(...card.cor)
+        pdf.setFont("helvetica", "bold")
+        pdf.setFontSize(14)
+
+        pdf.text(
+          String(card.valor),
+          x + 4,
+          y + 16
+        )
+
+      })
+
+      y += 28
+
+    }
+
+    function tituloSecao(titulo){
+
+      precisaEspaco(14)
+
+      pdf.setFillColor(...corAzulClaro)
+      pdf.roundedRect(
+        margem,
+        y,
+        largura,
+        10,
+        2.5,
+        2.5,
+        "F"
+      )
+
+      pdf.setTextColor(...corAzulEscuro)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(9.5)
+
+      pdf.text(
+        titulo,
+        margem + 4,
+        y + 6.8
+      )
+
+      y += 14
+
+    }
+
+    function resumoColaborador(col){
+
+      precisaEspaco(12)
+
+      pdf.setFillColor(255, 255, 255)
+      pdf.roundedRect(margem, y, largura, 9, 2, 2, "F")
+
+      pdf.setDrawColor(...corLinha)
+      pdf.roundedRect(margem, y, largura, 9, 2, 2, "S")
+
+      pdf.setTextColor(...corTexto)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(7.4)
+
+      pdf.text(
+        col.nome,
+        margem + 4,
+        y + 5.8
+      )
+
+      pdf.setTextColor(...corCinza)
+      pdf.setFont("helvetica", "normal")
+      pdf.setFontSize(6.8)
+
+      pdf.text(
+        `Total: ${col.total} | Pendentes: ${col.pendentes} | Atrasadas: ${col.atrasadas} | Concluídas: ${col.concluidas}`,
+        pageWidth - margem - 4,
+        y + 5.8,
+        { align:"right" }
+      )
+
+      y += 11
+
+    }
+
+    function cabecalhoColaborador(col){
+
+      precisaEspaco(33)
+
+      pdf.setFillColor(255, 255, 255)
+      pdf.roundedRect(
+        margem,
+        y,
+        largura,
+        24,
+        4,
+        4,
+        "F"
+      )
+
+      pdf.setDrawColor(...corLinha)
+      pdf.roundedRect(
+        margem,
+        y,
+        largura,
+        24,
+        4,
+        4,
+        "S"
+      )
+
+      pdf.setFillColor(...corAzul)
+      pdf.circle(
+        margem + 9,
+        y + 12,
+        6,
+        "F"
+      )
+
+      pdf.setTextColor(255, 255, 255)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(9)
+
+      pdf.text(
+        col.nome.substring(0, 1),
+        margem + 9,
+        y + 15,
+        { align:"center" }
+      )
+
+      pdf.setTextColor(...corTexto)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(11)
+
+      pdf.text(
+        col.nome,
+        margem + 19,
+        y + 9
+      )
+
+      const detalhe =
+        [
+          col.empresa,
+          col.setor,
+          col.cargo
+        ].filter(Boolean).join(" • ")
+
+      pdf.setTextColor(...corCinza)
+      pdf.setFont("helvetica", "normal")
+      pdf.setFontSize(7.5)
+
+      pdf.text(
+        detalhe || "Colaborador",
+        margem + 19,
+        y + 15
+      )
+
+      pdf.setTextColor(...corAzulEscuro)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(7.5)
+
+      pdf.text(
+        `Total ${col.total}  |  Pendentes ${col.pendentes}  |  Atrasadas ${col.atrasadas}  |  Concluídas ${col.concluidas}`,
+        margem + 19,
+        y + 21
+      )
+
+      y += 30
+
+    }
+
+    function desenharTarefa(tarefa, index){
+
+      const checklist =
+        parseJsonSeguro(tarefa.checklist, [])
+
+      const titulo =
+        textoSeguro(tarefa.titulo || "Sem título")
+
+      const descricao =
+        textoSeguro(tarefa.descricao || "")
+
+      const empresa =
+        textoSeguro(tarefa.empresa || "-")
+
+      const setor =
+        textoSeguro(tarefa.setor || "-")
+
+      const status =
+        statusSeguro(tarefa.status)
+
+      const prioridade =
+        textoSeguro(tarefa.prioridade || "-")
+
+      const limite =
+        formatarDataHora(tarefa.data_limite)
+
+      const linhasTitulo =
+        pdf.splitTextToSize(
+          titulo,
+          largura - 62
+        )
+
+      const linhasDescricao =
+        descricao
+          ? pdf.splitTextToSize(
+              descricao,
+              largura - 16
+            ).slice(0, 3)
+          : []
+
+      let altura = 27
+
+      altura +=
+        Math.max(
+          0,
+          linhasTitulo.length - 1
+        ) * 4
+
+      altura +=
+        linhasDescricao.length * 4
+
+      if(checklist.length){
+        altura += 8 + Math.min(checklist.length, 8) * 5
+      }
+
+      precisaEspaco(altura + 5)
+
+      const yInicial = y
+
+      pdf.setFillColor(255, 255, 255)
+      pdf.roundedRect(
+        margem,
+        y,
+        largura,
+        altura,
+        3,
+        3,
+        "F"
+      )
+
+      pdf.setDrawColor(...corLinha)
+      pdf.roundedRect(
+        margem,
+        y,
+        largura,
+        altura,
+        3,
+        3,
+        "S"
+      )
+
+      pdf.setFillColor(...corAzulFundo)
+      pdf.roundedRect(
+        margem + 3,
+        y + 3,
+        10,
+        10,
+        2,
+        2,
+        "F"
+      )
+
+      pdf.setTextColor(...corAzulEscuro)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(7.5)
+
+      pdf.text(
+        String(index).padStart(2, "0"),
+        margem + 8,
+        y + 9.5,
+        { align:"center" }
+      )
+
+      pdf.setTextColor(...corTexto)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(9)
+
+      pdf.text(
+        linhasTitulo,
+        margem + 17,
+        y + 7
+      )
+
+      const corDoStatus =
+        corStatus(status)
+
+      pdf.setFillColor(...corDoStatus)
+      pdf.roundedRect(
+        pageWidth - margem - 37,
+        y + 4,
+        31,
+        7,
+        2,
+        2,
+        "F"
+      )
+
+      pdf.setTextColor(255, 255, 255)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(5.7)
+
+      pdf.text(
+        status.substring(0, 18),
+        pageWidth - margem - 21.5,
+        y + 8.7,
+        { align:"center" }
+      )
+
+      let yy =
+        y + 13 + ((linhasTitulo.length - 1) * 4)
+
+      pdf.setTextColor(...corCinza)
+      pdf.setFont("helvetica", "normal")
+      pdf.setFontSize(7)
+
+      pdf.text(
+        `Empresa: ${empresa}`,
+        margem + 17,
+        yy
+      )
+
+      pdf.text(
+        `Setor: ${setor}`,
+        margem + 70,
+        yy
+      )
+
+      pdf.text(
+        `Prioridade: ${prioridade}`,
+        margem + 125,
+        yy
+      )
+
+      yy += 5
+
+      pdf.setTextColor(...corAzulEscuro)
+      pdf.setFont("helvetica", "bold")
+      pdf.setFontSize(7)
+
+      pdf.text(
+        `Limite: ${limite}`,
+        margem + 17,
+        yy
+      )
+
+      yy += 5
+
+      if(linhasDescricao.length){
+
+        pdf.setTextColor(...corCinza)
+        pdf.setFont("helvetica", "normal")
+        pdf.setFontSize(7)
+
+        pdf.text(
+          linhasDescricao,
+          margem + 7,
+          yy
+        )
+
+        yy += linhasDescricao.length * 4 + 1
+
+      }
+
+      if(checklist.length){
+
+        pdf.setFillColor(...corAzulFundo)
+        pdf.roundedRect(
+          margem + 6,
+          yy,
+          largura - 12,
+          7,
+          2,
+          2,
+          "F"
+        )
+
+        pdf.setTextColor(...corAzulEscuro)
+        pdf.setFont("helvetica", "bold")
+        pdf.setFontSize(7)
+
+        pdf.text(
+          "SUBTAREFAS / CHECKLIST",
+          margem + 9,
+          yy + 4.8
+        )
+
+        yy += 10
+
+        checklist.slice(0, 8).forEach((item, i) => {
+
+          const nomeItem =
+            textoSeguro(
+              item.titulo ||
+              item.nome ||
+              item.descricao ||
+              item.texto ||
+              item.item ||
+              `Subtarefa ${i + 1}`
+            )
+
+          const concluido =
+            item.concluido === true ||
+            statusSeguro(item.status) === "CONCLUIDO"
+
+          pdf.setFillColor(
+            ...(concluido ? corVerde : corAmarelo)
+          )
+
+          pdf.circle(
+            margem + 9,
+            yy - 1.5,
+            1.4,
+            "F"
+          )
+
+          pdf.setTextColor(...corTexto)
+          pdf.setFont("helvetica", "normal")
+          pdf.setFontSize(6.8)
+
+          const linha =
+            pdf.splitTextToSize(
+              nomeItem,
+              largura - 30
+            )[0]
+
+          pdf.text(
+            linha,
+            margem + 13,
+            yy
+          )
+
+          yy += 5
+
+        })
+
+        if(checklist.length > 8){
+
+          pdf.setTextColor(...corCinza)
+          pdf.setFont("helvetica", "italic")
+          pdf.setFontSize(6.5)
+
+          pdf.text(
+            `+ ${checklist.length - 8} subtarefa(s) não exibida(s) por espaço`,
+            margem + 13,
+            yy
+          )
+
+        }
+
+      }
+
+      y =
+        yInicial + altura + 4
+
+    }
+
+    const tarefas =
+      tarefasFiltradasPDF()
+
+    if(!tarefas.length){
+
+      alert("Nenhuma tarefa encontrada com os filtros atuais.")
+      return
+
+    }
+
+    const colaboradores =
+      agruparPorColaborador(tarefas)
+
+    header(
+      tarefas.length,
+      colaboradores.length
+    )
+
+    tituloSecao("RESUMO POR COLABORADOR")
+
+    colaboradores.forEach(col => {
+      resumoColaborador(col)
+    })
+
+    colaboradores.forEach(col => {
+
+      novaPagina()
+
+      cabecalhoColaborador(col)
+
+      col.tarefas.forEach((tarefa, index) => {
+
+        desenharTarefa(
+          tarefa,
+          index + 1
+        )
+
+      })
+
+    })
+
+    pdf.save(
+      `CHECKLIST_OTTO_${
+        new Date()
+          .toISOString()
+          .slice(0, 10)
+      }.pdf`
+    )
+
+  }catch(error){
+
+    console.log("ERRO AO GERAR PDF:", error)
+
+    alert("Erro ao gerar PDF. Veja o console.")
+
+  }
+
+}
+    </script>
+
+
+  </body>
+
+</html>

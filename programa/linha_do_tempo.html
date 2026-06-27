@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Linha do Tempo • Checklist Mercatto</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root{
+      --bg:#f3f6fa;
+      --surface:#ffffff;
+      --surface-2:#f8fafc;
+      --surface-3:#eef2f7;
+      --text:#0f172a;
+      --muted:#64748b;
+      --muted-2:#94a3b8;
+      --line:#dbe3ec;
+      --line-2:#e8eef5;
+      --dark:#111827;
+      --green:#16a34a;
+      --red:#dc2626;
+      --orange:#f59e0b;
+      --blue:#2563eb;
+      --purple:#7c3aed;
+      --gold:#d4af37;
+      --radius:14px;
+      --shadow:0 14px 34px rgba(15,23,42,.08);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+    html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);overflow:hidden}
+    button,input,select{font:inherit}
+    button{user-select:none;cursor:pointer}
+
+    .content{width:100%;height:100vh;overflow:auto;padding:18px 20px 34px}
+
+    .top{
+      position:sticky;top:0;z-index:60;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      min-height:74px;margin:-18px -20px 18px;padding:14px 20px;
+      background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)
+    }
+    .top h1{font-size:24px;line-height:1.05;font-weight:950;color:var(--dark);letter-spacing:-.4px}
+    .top p{margin-top:5px;color:var(--muted);font-size:12px;font-weight:750}
+
+    .actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .btn{
+      height:42px;border:1px solid var(--line);border-radius:10px;padding:0 14px;background:#fff;color:var(--dark);
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:900;transition:.16s
+    }
+    .btn:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(15,23,42,.08)}
+    .btn-dark{background:var(--dark);border-color:var(--dark);color:#fff}
+    .btn-gold{background:#fff7df;border-color:#f4dd94;color:#7a5400}
+    .btn-blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+
+    .filters{
+      display:grid;grid-template-columns:160px repeat(3,minmax(150px,1fr)) minmax(220px,1.2fr) auto;
+      gap:12px;align-items:end;margin-bottom:16px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)
+    }
+    .field{min-width:0;display:flex;flex-direction:column;gap:7px}
+    .field label{font-size:11px;font-weight:900;color:#475569;letter-spacing:.25px;text-transform:uppercase}
+    .field input,.field select{
+      width:100%;height:42px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text);padding:0 12px;
+      font-size:13px;font-weight:750;outline:none;transition:.15s
+    }
+    .field input:focus,.field select:focus{border-color:#334155;box-shadow:0 0 0 3px rgba(15,23,42,.10)}
+
+    .search-box{position:relative}
+    .search-box i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:18px;pointer-events:none}
+    .search-box input{padding-left:40px!important}
+
+    .kpis{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+    .kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 8px 22px rgba(15,23,42,.06);padding:14px 16px;min-width:0}
+    .kpi small{display:block;color:var(--muted);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.4px}
+    .kpi h3{margin-top:7px;color:var(--dark);font-size:25px;line-height:1;font-weight:950;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .kpi .sub{margin-top:6px;color:var(--muted);font-size:11px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .day-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;overflow:hidden}
+    .day-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .day-title{font-size:18px;font-weight:950;color:var(--dark)}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:11px;font-weight:850}
+    .legend span{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#f8fafc;border:1px solid var(--line)}
+    .dot{width:8px;height:8px;border-radius:999px;display:inline-block;background:var(--green)}
+    .dot.sub{background:var(--blue)}
+
+    .ruler-wrap{overflow:auto;padding-bottom:4px}
+    .ruler{min-width:920px;display:grid;grid-template-columns:repeat(24,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#f8fafc}
+    .hour{min-height:44px;border-right:1px solid var(--line-2);padding:8px 6px;position:relative}
+    .hour:last-child{border-right:0}
+    .hour strong{font-size:10px;font-weight:950;color:#475569}
+    .hour .count{position:absolute;right:5px;bottom:5px;min-width:20px;height:20px;border-radius:999px;background:#fff;color:var(--dark);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:950}
+    .hour.active{background:#ecfdf5}
+    .hour.active strong{color:#166534}
+
+    .people{display:grid;gap:14px}
+    .person-card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+    .person-head{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:16px;border-bottom:1px solid var(--line-2);background:linear-gradient(180deg,#fff,#fbfdff)}
+    .avatar{width:66px;height:66px;min-width:66px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 7px 20px rgba(15,23,42,.12);background:#eef2f7}
+    .person-title{min-width:0}
+    .person-title h2{font-size:18px;font-weight:950;color:var(--dark);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .person-title p{margin-top:6px;color:var(--muted);font-size:12px;font-weight:750;line-height:1.35}
+    .person-stats{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+    .chip{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 10px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-size:11px;font-weight:900;color:#334155;white-space:nowrap}
+    .chip.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534}
+    .chip.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+    .chip.gold{background:#fff7df;border-color:#f4dd94;color:#7a5400}
+
+    .timeline{position:relative;padding:16px 16px 18px 94px;display:grid;gap:12px}
+    .timeline:before{content:"";position:absolute;left:49px;top:18px;bottom:18px;width:3px;border-radius:999px;background:#e2e8f0}
+    .event{position:relative;display:grid;grid-template-columns:82px 1fr;gap:12px;align-items:start}
+    .event:before{content:"";position:absolute;left:-51px;top:14px;width:13px;height:13px;border-radius:999px;background:#16a34a;border:4px solid #dcfce7;box-shadow:0 0 0 3px #fff}
+    .event.subitem:before{background:#2563eb;border-color:#dbeafe}
+    .time-pill{height:34px;border-radius:999px;background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:950;white-space:nowrap}
+    .event-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px 14px;box-shadow:0 8px 18px rgba(15,23,42,.04)}
+    .event-card:hover{border-color:#cbd5e1;box-shadow:0 12px 24px rgba(15,23,42,.08)}
+    .event-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .event-title{font-size:14px;font-weight:950;color:#0f172a;line-height:1.3}
+    .event-desc{margin-top:6px;color:var(--muted);font-size:12px;font-weight:650;line-height:1.38;overflow-wrap:anywhere}
+    .event-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .badge{display:inline-flex;align-items:center;gap:5px;min-height:24px;padding:4px 8px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-size:10px;font-weight:900;color:#475569;white-space:nowrap}
+    .badge.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534}
+    .badge.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+    .badge.purple{background:#f3e8ff;border-color:#e9d5ff;color:#6b21a8}
+    .badge.orange{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+
+    .subtasks{margin-top:10px;display:grid;gap:7px}
+    .subtask{display:flex;align-items:flex-start;gap:8px;padding:9px 10px;border-radius:10px;background:#f8fafc;border:1px solid #e8eef5;color:#334155;font-size:11px;font-weight:750;line-height:1.35}
+    .subtask i{color:#2563eb;font-size:15px;margin-top:-1px}
+    .subtask strong{color:#0f172a;font-weight:950}
+
+    .empty{background:#fff;border:1px dashed #cbd5e1;border-radius:18px;padding:38px 18px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+    .empty i{font-size:42px;color:#94a3b8;display:block;margin-bottom:8px}
+    .empty h3{color:#334155;font-size:18px;font-weight:950;margin-bottom:6px}
+    .empty p{font-size:13px;font-weight:700}
+
+    #loadingOverlay{position:fixed;inset:0;background:rgba(15,23,42,.75);backdrop-filter:blur(8px);z-index:999999;display:none;align-items:center;justify-content:center}
+    .loading-box{display:flex;flex-direction:column;align-items:center;gap:18px}
+    .loading-spinner{width:70px;height:70px;border:5px solid rgba(255,255,255,.25);border-top:5px solid var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+    .loading-text{color:#fff;font-size:20px;font-weight:950;letter-spacing:.5px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{border:3px solid transparent;border-radius:999px;background:#aebccc;background-clip:padding-box}
+    ::-webkit-scrollbar-thumb:hover{background:#8796a8;background-clip:padding-box}
+
+    @media(max-width:1180px){
+      .filters{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    @media(max-width:820px){
+      html,body{overflow:auto}
+      .content{height:auto;min-height:100vh;padding:14px 12px 24px;overflow:visible}
+      .top{position:relative;margin:-14px -12px 14px;padding:14px 12px;align-items:flex-start;flex-direction:column}
+      .top h1{font-size:21px}
+      .actions,.actions .btn{width:100%}
+      .filters{grid-template-columns:1fr;padding:12px}
+      .kpis{grid-template-columns:1fr 1fr;gap:10px}
+      .person-head{grid-template-columns:auto 1fr;align-items:start}
+      .person-stats{grid-column:1 / -1;justify-content:flex-start}
+      .timeline{padding-left:16px}
+      .timeline:before{display:none}
+      .event{grid-template-columns:1fr;gap:8px}
+      .event:before{display:none}
+      .time-pill{width:92px}
+      .event-top{flex-direction:column}
+    }
+    @media(max-width:480px){.kpis{grid-template-columns:1fr}.avatar{width:56px;height:56px;min-width:56px}}
+  </style>
+</head>
+
+<body>
+  <div id="loadingOverlay">
+    <div class="loading-box">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Carregando linha do tempo...</div>
+    </div>
+  </div>
+
+  <main class="content">
+    <header class="top">
+      <div>
+        <h1>📍 Linha do Tempo do Checklist</h1>
+        <p>Dia inteiro • tarefas e subtarefas concluídas separadas por pessoa, horário e foto</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-blue" onclick="voltarHoje()"><i class="ri-calendar-check-line"></i>Hoje</button>
+        <button class="btn" onclick="mudarDia(-1)"><i class="ri-arrow-left-line"></i>Dia anterior</button>
+        <button class="btn" onclick="mudarDia(1)">Próximo dia<i class="ri-arrow-right-line"></i></button>
+        <button class="btn btn-gold" onclick="window.print()"><i class="ri-printer-line"></i>Imprimir</button>
+        <button class="btn btn-dark" onclick="carregarTudo()"><i class="ri-refresh-line"></i>Atualizar</button>
+      </div>
+    </header>
+
+    <section class="filters">
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="filtroData" onchange="carregarTudo()">
+      </div>
+      <div class="field">
+        <label>Empresa</label>
+        <select id="filtroEmpresa" onchange="aplicarFiltros()"><option value="">Todas</option></select>
+      </div>
+      <div class="field">
+        <label>Setor</label>
+        <select id="filtroSetor" onchange="aplicarFiltros()"><option value="">Todos</option></select>
+      </div>
+      <div class="field">
+        <label>Pessoa</label>
+        <select id="filtroPessoa" onchange="aplicarFiltros()"><option value="">Todas</option></select>
+      </div>
+      <div class="field">
+        <label>Buscar tarefa</label>
+        <div class="search-box">
+          <i class="ri-search-line"></i>
+          <input id="filtroBusca" placeholder="Título, empresa, setor ou subtarefa..." oninput="aplicarFiltros()">
+        </div>
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
+        <button class="btn btn-dark" onclick="limparFiltros()" style="height:42px"><i class="ri-filter-off-line"></i>Limpar</button>
+      </div>
+    </section>
+
+    <section class="kpis">
+      <div class="kpi"><small>Total concluído</small><h3 id="kpiTotal">0</h3><div class="sub">Eventos encontrados</div></div>
+      <div class="kpi"><small>Pessoas</small><h3 id="kpiPessoas">0</h3><div class="sub">Com conclusão no dia</div></div>
+      <div class="kpi"><small>Tarefas</small><h3 id="kpiTarefas">0</h3><div class="sub">Tarefas concluídas</div></div>
+      <div class="kpi"><small>Subtarefas</small><h3 id="kpiSubtarefas">0</h3><div class="sub">Itens concluídos</div></div>
+      <div class="kpi"><small>Pico do dia</small><h3 id="kpiPico">--:--</h3><div class="sub" id="kpiPicoSub">Sem movimento</div></div>
+    </section>
+
+    <section class="day-panel">
+      <div class="day-head">
+        <div class="day-title" id="tituloDia">Dia inteiro</div>
+        <div class="legend">
+          <span><i class="dot"></i>Tarefa concluída</span>
+          <span><i class="dot sub"></i>Subtarefa concluída</span>
+          <span><i class="ri-time-line"></i>00:00 até 23:59</span>
+        </div>
+      </div>
+      <div class="ruler-wrap">
+        <div class="ruler" id="ruler"></div>
+      </div>
+    </section>
+
+    <section id="listaPessoas" class="people"></section>
+  </main>
+
+<script>
+/* =====================================================
+   SUPABASE
+===================================================== */
+const supabaseClient = window.supabase.createClient(
+  "https://dxkszikemntfusfyrzos.supabase.co",
+  "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+)
+
+const FOTO_PADRAO = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+
+let tarefasDia = []
+let usuariosSistema = []
+let eventosBase = []
+let eventosFiltrados = []
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("filtroData").value = formatarDataInput(new Date())
+  carregarTudo()
+})
+
+function mostrarLoading(){ document.getElementById("loadingOverlay").style.display = "flex" }
+function esconderLoading(){ document.getElementById("loadingOverlay").style.display = "none" }
+
+function formatarDataInput(data){
+  const ano = data.getFullYear()
+  const mes = String(data.getMonth() + 1).padStart(2,"0")
+  const dia = String(data.getDate()).padStart(2,"0")
+  return `${ano}-${mes}-${dia}`
+}
+
+function dataSelecionada(){
+  const valor = document.getElementById("filtroData").value || formatarDataInput(new Date())
+  return valor
+}
+
+function inicioFimDiaLocal(dataISO){
+  const inicio = new Date(`${dataISO}T00:00:00`)
+  const fim = new Date(`${dataISO}T23:59:59.999`)
+  return { inicio, fim }
+}
+
+function mudarDia(qtd){
+  const atual = new Date(`${dataSelecionada()}T12:00:00`)
+  atual.setDate(atual.getDate() + qtd)
+  document.getElementById("filtroData").value = formatarDataInput(atual)
+  carregarTudo()
+}
+
+function voltarHoje(){
+  document.getElementById("filtroData").value = formatarDataInput(new Date())
+  carregarTudo()
+}
+
+function limparFiltros(){
+  document.getElementById("filtroEmpresa").value = ""
+  document.getElementById("filtroSetor").value = ""
+  document.getElementById("filtroPessoa").value = ""
+  document.getElementById("filtroBusca").value = ""
+  aplicarFiltros()
+}
+
+/* =====================================================
+   CARREGAMENTO
+===================================================== */
+async function carregarTudo(){
+  mostrarLoading()
+  try{
+    await carregarUsuariosSistema()
+    await carregarTarefasConcluidasDoDia()
+    eventosBase = montarEventos(tarefasDia)
+    popularFiltros(eventosBase)
+    aplicarFiltros()
+  }catch(err){
+    console.error(err)
+    alert("Erro ao carregar linha do tempo. Veja o console para detalhes.")
+  }finally{
+    esconderLoading()
+  }
+}
+
+async function carregarUsuariosSistema(){
+  const { data, error } = await supabaseClient
+    .from("usuarios_do_sistema")
+    .select("id,nome,email,empresa,setor,cargo,telefone,foto_url,ativo,status_funcionario")
+    .eq("ativo", true)
+    .order("nome", { ascending:true })
+
+  if(error){
+    console.error("Erro usuários:", error)
+    usuariosSistema = []
+    return
+  }
+
+  usuariosSistema = data || []
+}
+
+async function carregarTarefasConcluidasDoDia(){
+  const { inicio, fim } = inicioFimDiaLocal(dataSelecionada())
+
+  // Busca principal: tarefas concluídas pela data_conclusao.
+  let { data, error } = await supabaseClient
+    .from("tarefas_checklist")
+    .select("*")
+    .eq("status", "CONCLUIDO")
+    .gte("data_conclusao", inicio.toISOString())
+    .lte("data_conclusao", fim.toISOString())
+    .order("data_conclusao", { ascending:true })
+
+  if(error){
+    console.warn("Busca por data_conclusao falhou, tentando fallback:", error)
+    const fallback = await supabaseClient
+      .from("tarefas_checklist")
+      .select("*")
+      .eq("status", "CONCLUIDO")
+      .limit(1500)
+
+    if(fallback.error){
+      console.error("Erro tarefas:", fallback.error)
+      tarefasDia = []
+      return
+    }
+
+    data = fallback.data || []
+  }
+
+  // Filtro local garante dia inteiro mesmo se o banco retornar algo fora do intervalo.
+  tarefasDia = (data || []).filter(t => {
+    const dt = dataConclusaoDaTarefa(t)
+    return dt && dt >= inicio && dt <= fim
+  })
+}
+
+/* =====================================================
+   NORMALIZAÇÃO
+===================================================== */
+function parseJsonCampo(valor, fallback){
+  try{
+    if(Array.isArray(valor)) return valor
+    if(valor && typeof valor === "object") return valor
+    if(typeof valor === "string" && valor.trim()) return JSON.parse(valor)
+  }catch{}
+  return fallback
+}
+
+function texto(valor){
+  return String(valor || "").trim()
+}
+
+function upper(valor){
+  return texto(valor).toUpperCase()
+}
+
+function ajustarMenos3Horas(data){
+
+  if(!data) return null
+
+  const dt = new Date(data)
+
+  if(isNaN(dt)) return null
+
+  dt.setHours(dt.getHours() - 3)
+
+  return dt
+
+}
+
+function dataConclusaoDaTarefa(t){
+
+  const bruto =
+    t.data_conclusao ||
+    t.finalizado_em ||
+    (
+      t.status === "CONCLUIDO"
+        ? t.updated_at
+        : null
+    )
+
+  return ajustarMenos3Horas(bruto)
+
+}
+
+function dataConclusaoSubtarefa(sub, tarefa){
+
+  const bruto =
+    sub.concluido_em ||
+    sub.executado_em ||
+    sub.data_resposta ||
+    sub.fonte_respondida_em ||
+    sub.atualizado_em ||
+    tarefa.data_conclusao ||
+    tarefa.finalizado_em
+
+  return ajustarMenos3Horas(bruto)
+
+}
+
+function usuarioPorId(id){
+  if(!id) return null
+  return usuariosSistema.find(u => String(u.id) === String(id)) || null
+}
+
+function usuarioPorNome(nome){
+  if(!nome) return null
+  const n = upper(nome)
+  return usuariosSistema.find(u => upper(u.nome) === n) || null
+}
+
+function completarPessoa(base){
+  const porId = usuarioPorId(base.id)
+  const porNome = usuarioPorNome(base.nome)
+  const u = porId || porNome || {}
+
+  return {
+    id: texto(base.id || u.id || base.nome || "SEM_ID"),
+    nome: texto(base.nome || u.nome || "Sem responsável"),
+    empresa: texto(base.empresa || u.empresa || ""),
+    setor: texto(base.setor || u.setor || ""),
+    cargo: texto(base.cargo || u.cargo || ""),
+    telefone: texto(base.telefone || u.telefone || ""),
+    foto_url: texto(base.foto_url || u.foto_url || FOTO_PADRAO)
+  }
+}
+
+function responsaveisDaTarefa(t){
+  const lista = parseJsonCampo(t.responsaveis, []) || []
+
+  if(lista.length > 0){
+    return lista.map(r => completarPessoa({
+      id:r.id,
+      nome:r.nome,
+      empresa:r.empresa || t.empresa,
+      setor:r.setor || t.setor,
+      cargo:r.cargo,
+      telefone:r.telefone,
+      foto_url:r.foto_url
+    }))
+  }
+
+  if(t.concluido_por || t.concluido_por_nome){
+    return [completarPessoa({
+      id:t.concluido_por,
+      nome:t.concluido_por_nome,
+      empresa:t.empresa,
+      setor:t.setor
+    })]
+  }
+
+  return [completarPessoa({ nome:"Sem responsável", empresa:t.empresa, setor:t.setor })]
+}
+
+function pessoaDaSubtarefa(sub, tarefa, responsavelPadrao){
+  const executor = sub.usuario_executor || sub.respondido_por || sub.concluido_por || null
+
+  if(executor && typeof executor === "object"){
+    return completarPessoa({
+      id: executor.id,
+      nome: executor.nome || executor.name,
+      empresa: executor.empresa || tarefa.empresa,
+      setor: executor.setor || tarefa.setor,
+      cargo: executor.cargo,
+      foto_url: executor.foto_url
+    })
+  }
+
+  if(typeof executor === "string" && executor.trim()){
+    const uId = usuarioPorId(executor)
+    const uNome = usuarioPorNome(executor)
+    const u = uId || uNome
+    if(u) return completarPessoa(u)
+    return completarPessoa({nome:executor, empresa:tarefa.empresa, setor:tarefa.setor})
+  }
+
+  return responsavelPadrao
+}
+
+function montarEventos(lista){
+  const { inicio, fim } = inicioFimDiaLocal(dataSelecionada())
+  const eventos = []
+
+  lista.forEach(tarefa => {
+    const responsaveis = responsaveisDaTarefa(tarefa)
+    const dtTarefa = dataConclusaoDaTarefa(tarefa)
+    const checklist = parseJsonCampo(tarefa.checklist, []) || []
+    const subtarefasConcluidas = checklist.filter(s => s && s.concluido === true)
+
+    if(dtTarefa && dtTarefa >= inicio && dtTarefa <= fim){
+      responsaveis.forEach(pessoa => {
+        eventos.push({
+          tipo:"tarefa",
+          tarefaId:tarefa.id,
+          pessoa,
+          data:dtTarefa,
+          titulo:texto(tarefa.titulo || "Tarefa concluída"),
+          descricao:texto(tarefa.descricao),
+          empresa:texto(tarefa.empresa || pessoa.empresa),
+          setor:texto(tarefa.setor || pessoa.setor),
+          prioridade:texto(tarefa.prioridade),
+          status:texto(tarefa.status),
+          horario_execucao:texto(tarefa.horario_execucao),
+          total_subtarefas:Number(tarefa.total_subtarefas || checklist.length || 0),
+          total_concluidas:Number(tarefa.total_concluidas || subtarefasConcluidas.length || 0),
+          percentual_conclusao:Number(tarefa.percentual_conclusao || 0),
+          concluidoPor:texto(tarefa.concluido_por_nome || tarefa.finalizado_por_nome || pessoa.nome),
+          subtarefas:subtarefasConcluidas
+            .map(sub => ({
+              nome:texto(sub.item || sub.titulo || "Subtarefa"),
+              data:dataConclusaoSubtarefa(sub, tarefa),
+              foto_url:texto(sub.foto_url),
+              resposta:texto(sub.resposta || sub.observacao),
+              fonte:texto(sub.fonte_tipo || sub.fonte_valor)
+            }))
+            .sort((a,b)=>(a.data || dtTarefa) - (b.data || dtTarefa))
+        })
+      })
+    }
+
+    // Eventos individuais das subtarefas, quando elas têm horário próprio.
+    subtarefasConcluidas.forEach(sub => {
+      const dtSub = dataConclusaoSubtarefa(sub, tarefa)
+      if(!dtSub || dtSub < inicio || dtSub > fim) return
+
+      const padrao = responsaveis[0] || completarPessoa({nome:"Sem responsável", empresa:tarefa.empresa, setor:tarefa.setor})
+      const pessoa = pessoaDaSubtarefa(sub, tarefa, padrao)
+
+      eventos.push({
+        tipo:"subtarefa",
+        tarefaId:tarefa.id,
+        pessoa,
+        data:dtSub,
+        titulo:texto(sub.item || sub.titulo || "Subtarefa concluída"),
+        descricao:texto(sub.resposta || sub.observacao || tarefa.titulo),
+        empresa:texto(tarefa.empresa || pessoa.empresa),
+        setor:texto(tarefa.setor || pessoa.setor),
+        prioridade:texto(sub.prioridade || tarefa.prioridade),
+        status:"CONCLUIDO",
+        horario_execucao:texto(sub.hora || tarefa.horario_execucao),
+        total_subtarefas:0,
+        total_concluidas:1,
+        percentual_conclusao:100,
+        concluidoPor:pessoa.nome,
+        subtarefas:[],
+        midiaFoto:texto(sub.foto_url),
+        audio_url:texto(sub.audio_url),
+        video_url:texto(sub.video_url),
+        assinatura_url:texto(sub.assinatura_url),
+        fonte_tipo:texto(sub.fonte_tipo),
+        fonte_valor:texto(sub.fonte_valor)
+      })
+    })
+  })
+
+  return eventos.sort((a,b) => a.data - b.data)
+}
+
+/* =====================================================
+   FILTROS
+===================================================== */
+function popularFiltros(eventos){
+  const empresaAtual = document.getElementById("filtroEmpresa").value
+  const setorAtual = document.getElementById("filtroSetor").value
+  const pessoaAtual = document.getElementById("filtroPessoa").value
+
+  const empresas = [...new Set(eventos.map(e => e.empresa).filter(Boolean))].sort()
+  const setores = [...new Set(eventos.map(e => e.setor).filter(Boolean))].sort()
+  const pessoas = [...new Map(eventos.map(e => [e.pessoa.nome, e.pessoa])).values()].sort((a,b)=>a.nome.localeCompare(b.nome))
+
+  preencherSelect("filtroEmpresa", "Todas", empresas, empresaAtual)
+  preencherSelect("filtroSetor", "Todos", setores, setorAtual)
+
+  const selectPessoa = document.getElementById("filtroPessoa")
+  selectPessoa.innerHTML = `<option value="">Todas</option>`
+  pessoas.forEach(p => {
+    selectPessoa.innerHTML += `<option value="${escapeAttr(p.nome)}">${escapeHtml(p.nome)}</option>`
+  })
+  selectPessoa.value = [...selectPessoa.options].some(o=>o.value===pessoaAtual) ? pessoaAtual : ""
+}
+
+function preencherSelect(id, labelTodos, valores, valorAtual){
+  const select = document.getElementById(id)
+  select.innerHTML = `<option value="">${labelTodos}</option>`
+  valores.forEach(v => select.innerHTML += `<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`)
+  select.value = [...select.options].some(o=>o.value===valorAtual) ? valorAtual : ""
+}
+
+function aplicarFiltros(){
+  const empresa = upper(document.getElementById("filtroEmpresa").value)
+  const setor = upper(document.getElementById("filtroSetor").value)
+  const pessoa = upper(document.getElementById("filtroPessoa").value)
+  const busca = upper(document.getElementById("filtroBusca").value)
+
+  eventosFiltrados = eventosBase.filter(e => {
+    if(empresa && upper(e.empresa) !== empresa) return false
+    if(setor && upper(e.setor) !== setor) return false
+    if(pessoa && upper(e.pessoa.nome) !== pessoa) return false
+
+    if(busca){
+      const alvo = upper([
+        e.titulo,
+        e.descricao,
+        e.empresa,
+        e.setor,
+        e.pessoa.nome,
+        e.concluidoPor,
+        ...(e.subtarefas || []).map(s => `${s.nome} ${s.resposta} ${s.fonte}`)
+      ].join(" "))
+
+      if(!alvo.includes(busca)) return false
+    }
+
+    return true
+  })
+
+  renderizarTudo(eventosFiltrados)
+}
+
+/* =====================================================
+   RENDER
+===================================================== */
+function renderizarTudo(eventos){
+  atualizarTituloDia()
+  renderizarRegua(eventos)
+  atualizarKPIs(eventos)
+  renderizarPessoas(eventos)
+}
+
+function atualizarTituloDia(){
+  const dt = new Date(`${dataSelecionada()}T12:00:00`)
+  const label = dt.toLocaleDateString("pt-BR", { weekday:"long", day:"2-digit", month:"2-digit", year:"numeric" })
+  document.getElementById("tituloDia").innerText = `Dia inteiro • ${label}`
+}
+
+function renderizarRegua(eventos){
+  const ruler = document.getElementById("ruler")
+  const contagem = Array.from({length:24}, () => 0)
+
+  eventos.forEach(e => {
+    const h = e.data.getHours()
+    if(h >= 0 && h <= 23) contagem[h]++
+  })
+
+  ruler.innerHTML = contagem.map((qtd,h) => `
+    <div class="hour ${qtd > 0 ? "active" : ""}">
+      <strong>${String(h).padStart(2,"0")}:00</strong>
+      ${qtd > 0 ? `<div class="count">${qtd}</div>` : ""}
+    </div>
+  `).join("")
+}
+
+function atualizarKPIs(eventos){
+  const pessoas = new Set(eventos.map(e => e.pessoa.nome))
+  const tarefas = eventos.filter(e => e.tipo === "tarefa")
+  const subtarefas = eventos.filter(e => e.tipo === "subtarefa")
+
+  document.getElementById("kpiTotal").innerText = eventos.length
+  document.getElementById("kpiPessoas").innerText = pessoas.size
+  document.getElementById("kpiTarefas").innerText = tarefas.length
+  document.getElementById("kpiSubtarefas").innerText = subtarefas.length
+
+  const porHora = {}
+  eventos.forEach(e => {
+    const h = String(e.data.getHours()).padStart(2,"0") + ":00"
+    porHora[h] = (porHora[h] || 0) + 1
+  })
+
+  const pico = Object.entries(porHora).sort((a,b)=>b[1]-a[1])[0]
+  document.getElementById("kpiPico").innerText = pico ? pico[0] : "--:--"
+  document.getElementById("kpiPicoSub").innerText = pico ? `${pico[1]} conclusão(ões)` : "Sem movimento"
+}
+
+function agruparPorPessoa(eventos){
+  const map = new Map()
+
+  eventos.forEach(e => {
+    const chave = e.pessoa.id || e.pessoa.nome
+    if(!map.has(chave)){
+      map.set(chave, {
+        pessoa:e.pessoa,
+        eventos:[]
+      })
+    }
+    map.get(chave).eventos.push(e)
+  })
+
+  return [...map.values()]
+    .map(grupo => ({
+      ...grupo,
+      eventos:grupo.eventos.sort((a,b)=>a.data-b.data)
+    }))
+    .sort((a,b) => {
+      const ultimaA = a.eventos[a.eventos.length - 1]?.data || new Date(0)
+      const ultimaB = b.eventos[b.eventos.length - 1]?.data || new Date(0)
+      return ultimaB - ultimaA
+    })
+}
+
+function renderizarPessoas(eventos){
+  const box = document.getElementById("listaPessoas")
+
+  if(eventos.length === 0){
+    box.innerHTML = `
+      <div class="empty">
+        <i class="ri-calendar-close-line"></i>
+        <h3>Nenhuma conclusão encontrada</h3>
+        <p>Não há tarefas ou subtarefas concluídas para esse dia/filtro.</p>
+      </div>
+    `
+    return
+  }
+
+  const grupos = agruparPorPessoa(eventos)
+
+  box.innerHTML = grupos.map(grupo => {
+    const pessoa = grupo.pessoa
+    const eventosPessoa = grupo.eventos
+    const tarefas = eventosPessoa.filter(e => e.tipo === "tarefa").length
+    const subtarefas = eventosPessoa.filter(e => e.tipo === "subtarefa").length
+    const primeira = eventosPessoa[0]?.data
+    const ultima = eventosPessoa[eventosPessoa.length - 1]?.data
+
+    return `
+      <article class="person-card">
+        <div class="person-head">
+          <img class="avatar" src="${escapeAttr(pessoa.foto_url || FOTO_PADRAO)}" onerror="this.src='${FOTO_PADRAO}'" />
+          <div class="person-title">
+            <h2>${escapeHtml(pessoa.nome)}</h2>
+            <p>
+              ${escapeHtml(pessoa.cargo || "Colaborador")}
+              ${pessoa.setor ? ` • ${escapeHtml(pessoa.setor)}` : ""}
+              ${pessoa.empresa ? ` • ${escapeHtml(pessoa.empresa)}` : ""}
+            </p>
+          </div>
+          <div class="person-stats">
+            <span class="chip green"><i class="ri-check-double-line"></i>${eventosPessoa.length} conclusão(ões)</span>
+            <span class="chip blue"><i class="ri-task-line"></i>${tarefas} tarefa(s)</span>
+            <span class="chip gold"><i class="ri-list-check-3"></i>${subtarefas} subtarefa(s)</span>
+            <span class="chip"><i class="ri-time-line"></i>${formatarHora(primeira)} às ${formatarHora(ultima)}</span>
+          </div>
+        </div>
+
+        <div class="timeline">
+          ${eventosPessoa.map(renderEvento).join("")}
+        </div>
+      </article>
+    `
+  }).join("")
+}
+
+function renderEvento(e){
+  return `
+    <div class="event ${e.tipo === "subtarefa" ? "subitem" : ""}">
+      <div class="time-pill">${formatarHora(e.data)}</div>
+      <div class="event-card">
+        <div class="event-top">
+          <div>
+            <div class="event-title">
+              ${e.tipo === "subtarefa" ? "🔹" : "✅"} ${escapeHtml(e.titulo)}
+            </div>
+            ${e.descricao ? `<div class="event-desc">${escapeHtml(e.descricao)}</div>` : ""}
+          </div>
+          <span class="badge ${e.tipo === "subtarefa" ? "blue" : "green"}">
+            ${e.tipo === "subtarefa" ? "SUBTAREFA" : "TAREFA"}
+          </span>
+        </div>
+
+        <div class="event-meta">
+          ${e.empresa ? `<span class="badge"><i class="ri-building-4-line"></i>${escapeHtml(e.empresa)}</span>` : ""}
+          ${e.setor ? `<span class="badge"><i class="ri-map-pin-user-line"></i>${escapeHtml(e.setor)}</span>` : ""}
+          ${e.prioridade ? `<span class="badge orange"><i class="ri-flag-line"></i>${escapeHtml(e.prioridade)}</span>` : ""}
+          ${e.horario_execucao ? `<span class="badge purple"><i class="ri-calendar-schedule-line"></i>Previsto: ${escapeHtml(e.horario_execucao)}</span>` : ""}
+          ${e.concluidoPor ? `<span class="badge green"><i class="ri-user-check-line"></i>${escapeHtml(e.concluidoPor)}</span>` : ""}
+          ${e.total_subtarefas ? `<span class="badge blue"><i class="ri-list-check-2"></i>${e.total_concluidas}/${e.total_subtarefas} itens</span>` : ""}
+          ${e.midiaFoto ? `<span class="badge green"><i class="ri-image-line"></i>Foto enviada</span>` : ""}
+          ${e.audio_url ? `<span class="badge"><i class="ri-mic-line"></i>Áudio</span>` : ""}
+          ${e.video_url ? `<span class="badge"><i class="ri-video-line"></i>Vídeo</span>` : ""}
+          ${e.assinatura_url ? `<span class="badge"><i class="ri-pen-nib-line"></i>Assinatura</span>` : ""}
+          ${e.fonte_tipo || e.fonte_valor ? `<span class="badge"><i class="ri-database-2-line"></i>${escapeHtml([e.fonte_tipo,e.fonte_valor].filter(Boolean).join(" "))}</span>` : ""}
+        </div>
+
+        ${renderSubtarefasDentroDoEvento(e)}
+      </div>
+    </div>
+  `
+}
+
+function renderSubtarefasDentroDoEvento(e){
+  if(e.tipo !== "tarefa" || !e.subtarefas || e.subtarefas.length === 0) return ""
+
+  const itens = e.subtarefas.slice(0,8).map(sub => `
+    <div class="subtask">
+      <i class="ri-check-line"></i>
+      <div>
+        <strong>${formatarHora(sub.data || e.data)}</strong>
+        &nbsp;${escapeHtml(sub.nome)}
+        ${sub.resposta ? `<br><span>${escapeHtml(sub.resposta)}</span>` : ""}
+        ${sub.foto_url ? `<br><span>📸 Foto registrada</span>` : ""}
+        ${sub.fonte ? `<br><span>📊 ${escapeHtml(sub.fonte)}</span>` : ""}
+      </div>
+    </div>
+  `).join("")
+
+  const restante = e.subtarefas.length > 8
+    ? `<div class="subtask"><i class="ri-more-line"></i><div>Mais ${e.subtarefas.length - 8} subtarefa(s) concluída(s)</div></div>`
+    : ""
+
+  return `<div class="subtasks">${itens}${restante}</div>`
+}
+
+function formatarHora(dt){
+  if(!dt) return "--:--"
+  return dt.toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" })
+}
+
+function escapeHtml(valor){
+  return String(valor || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;")
+}
+
+function escapeAttr(valor){
+  return escapeHtml(valor).replaceAll("`","&#096;")
+}
+</script>
+</body>
+</html>

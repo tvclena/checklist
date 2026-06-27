@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<title>Galeria de Checklists</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --bg:#eef5ff;
+  --bg2:#f8fbff;
+  --card:#ffffff;
+  --text:#07111f;
+  --muted:#64748b;
+  --line:#dbe7f5;
+
+  --blue:#2563eb;
+  --blue2:#1d4ed8;
+  --blue-bg:#eff6ff;
+
+  --green:#16a34a;
+  --green-bg:#dcfce7;
+  --green-line:#bbf7d0;
+
+  --yellow:#d97706;
+  --yellow-bg:#fef3c7;
+  --yellow-line:#fde68a;
+
+  --red:#dc2626;
+  --red-bg:#fee2e2;
+  --red-line:#fecaca;
+
+  --dark:#0f172a;
+  --shadow:0 16px 38px rgba(15,23,42,.075);
+  --shadow2:0 8px 20px rgba(15,23,42,.06);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  width:100%;
+  min-height:100%;
+  background:
+    radial-gradient(circle at top left,#dbeafe 0,#eef5ff 34%,#f8fbff 100%);
+  color:var(--text);
+}
+
+body{
+  padding:12px;
+}
+
+button,
+input,
+select{
+  font-family:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  max-width:1280px;
+  margin:0 auto;
+}
+
+/* ======================================================
+TOPO
+====================================================== */
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  margin:-12px -12px 12px;
+  padding:12px;
+  background:rgba(238,245,255,.92);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(219,231,245,.9);
+}
+
+.hero{
+  background:
+    linear-gradient(135deg,#07111f 0%,#102443 50%,#1d4ed8 130%);
+  color:#fff;
+  border-radius:24px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  border-radius:999px;
+  background:rgba(96,165,250,.22);
+  right:-90px;
+  top:-100px;
+}
+
+.hero-top{
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+}
+
+.hero h1{
+  font-size:clamp(22px,5vw,34px);
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.8px;
+}
+
+.hero p{
+  margin-top:7px;
+  color:#dbeafe;
+  font-size:12px;
+  line-height:1.5;
+  max-width:620px;
+}
+
+.refresh-btn{
+  height:40px;
+  border:none;
+  border-radius:14px;
+  padding:0 14px;
+  background:#fff;
+  color:#0f172a;
+  font-size:12px;
+  font-weight:900;
+  flex-shrink:0;
+  box-shadow:0 8px 18px rgba(0,0,0,.12);
+}
+
+.refresh-btn:active{
+  transform:scale(.98);
+}
+
+.kpis{
+  position:relative;
+  z-index:2;
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+}
+
+.kpi{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:18px;
+  padding:11px;
+}
+
+.kpi .t{
+  font-size:10px;
+  color:#dbeafe;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.25px;
+}
+
+.kpi .v{
+  margin-top:6px;
+  font-size:24px;
+  font-weight:900;
+  line-height:1;
+}
+
+/* ======================================================
+FILTROS
+====================================================== */
+
+.filters{
+  margin-top:10px;
+  background:rgba(255,255,255,.96);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:10px;
+  display:grid;
+  grid-template-columns:1.45fr 1fr 1fr 1fr;
+  gap:10px;
+  box-shadow:var(--shadow2);
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width:0;
+}
+
+.field label{
+  font-size:10px;
+  font-weight:900;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.25px;
+}
+
+.field input,
+.field select{
+  height:42px;
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#f8fbff;
+  outline:none;
+  padding:0 10px;
+  font-size:12px;
+  color:var(--text);
+  font-weight:700;
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:#93c5fd;
+  box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+.period{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  align-items:end;
+}
+
+.clear{
+  width:100%;
+  height:42px;
+  border:1px solid #bfdbfe;
+  border-radius:14px;
+  background:var(--blue-bg);
+  color:var(--blue);
+  font-size:12px;
+  font-weight:900;
+}
+
+.clear:active{
+  transform:scale(.98);
+}
+
+/* ======================================================
+RESULTADO
+====================================================== */
+
+.result-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:12px 2px 10px;
+}
+
+.result-bar h2{
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:-.2px;
+}
+
+.result-bar span{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:800;
+}
+
+/* ======================================================
+GALERIA
+====================================================== */
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:13px;
+  padding-bottom:28px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow2);
+  overflow:hidden;
+  transition:.18s ease;
+}
+
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow);
+}
+
+.card-body{
+  padding:14px;
+}
+
+.card-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.title{
+  font-size:14px;
+  font-weight:900;
+  line-height:1.28;
+  letter-spacing:-.25px;
+}
+
+.code{
+  margin-top:7px;
+  display:inline-flex;
+  padding:5px 9px;
+  border-radius:999px;
+  background:var(--blue-bg);
+  color:var(--blue);
+  font-size:10px;
+  font-weight:900;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.status{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  padding:6px 9px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:900;
+  white-space:nowrap;
+  flex-shrink:0;
+  border:1px solid transparent;
+}
+
+.status.concluido{
+  background:var(--green-bg);
+  color:#166534;
+  border-color:var(--green-line);
+}
+
+.status.pendente{
+  background:var(--yellow-bg);
+  color:#92400e;
+  border-color:var(--yellow-line);
+}
+
+.status.atrasado{
+  background:var(--red-bg);
+  color:#991b1b;
+  border-color:var(--red-line);
+}
+
+.status.cancelado{
+  background:#f1f5f9;
+  color:#475569;
+  border-color:#e2e8f0;
+}
+
+.info-grid{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.info{
+  border:1px solid #e8f0fa;
+  background:#f8fbff;
+  border-radius:15px;
+  padding:9px;
+  min-width:0;
+}
+
+.info .t{
+  font-size:9px;
+  color:var(--muted);
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.info .v{
+  margin-top:4px;
+  font-size:11px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.info.full{
+  grid-column:1/-1;
+}
+
+.obs{
+  margin-top:10px;
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  border-radius:15px;
+  padding:10px;
+}
+
+.obs-title{
+  font-size:10px;
+  font-weight:900;
+  color:#9a3412;
+}
+
+.obs-text{
+  margin-top:5px;
+  font-size:11px;
+  line-height:1.45;
+  color:#7c2d12;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.photos{
+  border-top:1px solid #edf2f7;
+  padding:10px 14px 14px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+
+.photo{
+  position:relative;
+  background:#f1f5f9;
+  border:1px solid #e5e7eb;
+  border-radius:15px;
+  overflow:hidden;
+  aspect-ratio:1.25/1;
+  cursor:pointer;
+}
+
+.photo img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  transition:.18s ease;
+}
+
+.photo:hover img{
+  transform:scale(1.035);
+}
+
+.photo-more{
+  position:absolute;
+  inset:0;
+  background:rgba(15,23,42,.62);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  font-weight:900;
+}
+
+.photo-label{
+  position:absolute;
+  left:7px;
+  top:7px;
+  max-width:calc(100% - 14px);
+  padding:4px 7px;
+  border-radius:999px;
+  background:rgba(15,23,42,.72);
+  color:#fff;
+  font-size:9px;
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.no-photo{
+  border-top:1px solid #edf2f7;
+  padding:12px 14px 14px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+
+/* ======================================================
+MODAL FOTO
+====================================================== */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.9);
+  z-index:9999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modal img{
+  width:100%;
+  max-width:980px;
+  max-height:86vh;
+  object-fit:contain;
+  border-radius:18px;
+  background:#fff;
+}
+
+.close-modal{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:44px;
+  height:44px;
+  border:none;
+  border-radius:999px;
+  background:#fff;
+  color:#0f172a;
+  font-size:18px;
+  font-weight:900;
+}
+
+/* ======================================================
+VAZIO / LOADING
+====================================================== */
+
+.empty{
+  grid-column:1/-1;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:48px 20px;
+  text-align:center;
+  color:var(--muted);
+  font-weight:900;
+  box-shadow:var(--shadow2);
+}
+
+.skeleton{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:14px;
+  min-height:245px;
+  overflow:hidden;
+  position:relative;
+}
+
+.skeleton::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(226,232,240,.75),transparent);
+  animation:shine 1.1s infinite;
+}
+
+.sk-line{
+  height:13px;
+  border-radius:999px;
+  background:#e2e8f0;
+  margin-bottom:9px;
+}
+
+.sk-photo{
+  height:130px;
+  border-radius:15px;
+  background:#e2e8f0;
+  margin-top:14px;
+}
+
+@keyframes shine{
+  100%{transform:translateX(100%);}
+}
+
+/* ======================================================
+RESPONSIVO
+====================================================== */
+
+@media(max-width:1060px){
+  .gallery{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .filters{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:700px){
+  body{
+    padding:8px;
+  }
+
+  .header{
+    margin:-8px -8px 10px;
+    padding:8px;
+  }
+
+  .hero{
+    border-radius:20px;
+    padding:14px;
+  }
+
+  .hero-top{
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .refresh-btn{
+    width:100%;
+  }
+
+  .kpis{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .kpi{
+    border-radius:16px;
+    padding:10px;
+  }
+
+  .kpi .v{
+    font-size:22px;
+  }
+
+  .filters{
+    grid-template-columns:1fr;
+    border-radius:18px;
+  }
+
+  .period{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .gallery{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .card{
+    border-radius:19px;
+  }
+
+  .card-body{
+    padding:12px;
+  }
+
+  .title{
+    font-size:13px;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .photos{
+    padding:9px 12px 12px;
+  }
+
+  .result-bar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:2px;
+  }
+}
+
+@media(max-width:390px){
+  .period{
+    grid-template-columns:1fr;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="header">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Galeria de Checklists</h1>
+          <p>
+            Checklists concluídos com fotos, responsável, data real da conclusão e filtros rápidos.
+          </p>
+        </div>
+
+        <button class="refresh-btn" onclick="carregar(true)">
+          Atualizar
+        </button>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="t">Checklists</div>
+          <div class="v" id="kpiTotal">0</div>
+        </div>
+
+        <div class="kpi">
+          <div class="t">Com mídia</div>
+          <div class="v" id="kpiComMidia">0</div>
+        </div>
+
+        <div class="kpi">
+          <div class="t">Fotos</div>
+          <div class="v" id="kpiFotos">0</div>
+        </div>
+
+        <div class="kpi">
+          <div class="t">Responsáveis</div>
+          <div class="v" id="kpiResp">0</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="filters">
+      <div class="field">
+        <label>Período da conclusão</label>
+        <div class="period">
+          <input type="date" id="inicio" />
+          <input type="date" id="fim" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Mídia</label>
+        <select id="midia">
+          <option value="">Todas</option>
+          <option value="com">Com mídia</option>
+          <option value="sem">Sem mídia</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Responsável</label>
+        <select id="responsavel">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button class="clear" onclick="limparFiltros()">
+          Limpar filtros
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="result-bar">
+    <h2>Resultados</h2>
+    <span id="resultInfo">Carregando...</span>
+  </div>
+
+  <main class="gallery" id="galeria">
+    <div class="skeleton">
+      <div class="sk-line" style="width:70%"></div>
+      <div class="sk-line" style="width:38%"></div>
+      <div class="sk-photo"></div>
+    </div>
+
+    <div class="skeleton">
+      <div class="sk-line" style="width:70%"></div>
+      <div class="sk-line" style="width:38%"></div>
+      <div class="sk-photo"></div>
+    </div>
+
+    <div class="skeleton">
+      <div class="sk-line" style="width:70%"></div>
+      <div class="sk-line" style="width:38%"></div>
+      <div class="sk-photo"></div>
+    </div>
+  </main>
+
+</div>
+
+<div class="modal" id="modalFoto" onclick="fecharFoto()">
+  <button class="close-modal" onclick="fecharFoto()">×</button>
+  <img id="modalImg" src="" alt="" onclick="event.stopPropagation()" />
+</div>
+
+<script>
+/* ======================================================
+SUPABASE
+====================================================== */
+
+const SUPABASE_URL =
+  "https://dxkszikemntfusfyrzos.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+let TODOS = [];
+let renderTimer = null;
+
+/* ======================================================
+UTILITÁRIOS
+====================================================== */
+
+function esc(valor){
+  return String(valor ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function parseArray(valor){
+  try{
+    if(Array.isArray(valor)) return valor;
+    if(typeof valor === "string") return JSON.parse(valor || "[]");
+    return [];
+  }catch{
+    return [];
+  }
+}
+
+function hojeISO(){
+  const d = new Date();
+  const ano = d.getFullYear();
+  const mes = String(d.getMonth() + 1).padStart(2,"0");
+  const dia = String(d.getDate()).padStart(2,"0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+function dataDiasAtras(dias){
+  const d = new Date();
+  d.setDate(d.getDate() - dias);
+  const ano = d.getFullYear();
+  const mes = String(d.getMonth() + 1).padStart(2,"0");
+  const dia = String(d.getDate()).padStart(2,"0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+function aplicarPeriodoPadrao(){
+  document.getElementById("inicio").value =
+    dataDiasAtras(7);
+
+  document.getElementById("fim").value =
+    hojeISO();
+}
+
+/*
+  ======================================================
+  CONVERSÃO DE DATA SEM BAGUNÇAR FUSO
+  ------------------------------------------------------
+  O Supabase pode retornar:
+  - "2026-06-23 13:10:34"
+  - "2026-06-23T13:10:34.105"
+  - "2026-06-23T13:10:34.105+00"
+  - "2026-06-23T13:10:34.105+00:00"
+  - "2026-06-23T13:10:34.105Z"
+
+  Para o painel operacional, a intenção aqui é mostrar
+  a data/hora gravada no banco, sem jogar 3 horas para trás.
+  Por isso removemos Z e offsets antes de montar a data local.
+  ======================================================
+*/
+
+function converterData(data){
+  if(!data) return null;
+
+  let texto =
+    String(data).trim();
+
+  if(!texto) return null;
+
+  texto = texto
+    .replace("T"," ")
+    .replace(/Z$/i,"")
+    .replace(/[+-]\d{2}:?\d{2}$/,"")
+    .replace(/\.\d+$/,"");
+
+  const partes =
+    texto.split(/[- :]/).map(Number);
+
+  if(!partes[0] || !partes[1] || !partes[2]){
+    return null;
+  }
+
+  return new Date(
+    partes[0],
+    partes[1] - 1,
+    partes[2],
+    partes[3] || 0,
+    partes[4] || 0,
+    partes[5] || 0
+  );
+}
+
+function formatarData(data){
+  const d =
+    converterData(data);
+
+  if(!d || isNaN(d.getTime())) return "-";
+
+  return d.toLocaleDateString(
+    "pt-BR",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    }
+  );
+}
+
+function formatarHora(data){
+  const d =
+    converterData(data);
+
+  if(!d || isNaN(d.getTime())) return "-";
+
+  return d.toLocaleTimeString(
+    "pt-BR",
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+}
+
+function limitarTexto(texto, tamanho=120){
+  const t =
+    String(texto || "").trim();
+
+  if(t.length <= tamanho) return t;
+
+  return t.slice(0,tamanho).trim() + "...";
+}
+
+function maiorData(datas){
+  const validas =
+    datas
+    .map(converterData)
+    .filter(d=>d && !isNaN(d.getTime()));
+
+  if(!validas.length) return null;
+
+  validas.sort((a,b)=>b.getTime() - a.getTime());
+
+  return validas[0];
+}
+
+function dataParaTextoBanco(d){
+  if(!d) return null;
+
+  const ano = d.getFullYear();
+  const mes = String(d.getMonth() + 1).padStart(2,"0");
+  const dia = String(d.getDate()).padStart(2,"0");
+  const hora = String(d.getHours()).padStart(2,"0");
+  const min = String(d.getMinutes()).padStart(2,"0");
+  const seg = String(d.getSeconds()).padStart(2,"0");
+
+  return `${ano}-${mes}-${dia} ${hora}:${min}:${seg}`;
+}
+
+/* ======================================================
+DADOS DA TAREFA
+====================================================== */
+
+function obterResponsaveis(tarefa){
+  const lista =
+    parseArray(tarefa.responsaveis);
+
+  if(!lista.length){
+    return [{
+      nome:"Sem responsável",
+      cargo:"",
+      setor:"",
+      foto_url:""
+    }];
+  }
+
+  return lista.map(r=>({
+    nome:r.nome || r.usuario || "Sem responsável",
+    cargo:r.cargo || "",
+    setor:r.setor || "",
+    foto_url:r.foto_url || ""
+  }));
+}
+
+function obterResponsavelPrincipal(tarefa){
+  return obterResponsaveis(tarefa)[0]?.nome || "Sem responsável";
+}
+
+function obterFotos(tarefa){
+  const fotos = [];
+
+  const checklist =
+    parseArray(tarefa.checklist);
+
+  checklist.forEach((item,index)=>{
+    const urls = [
+      item.foto_url,
+      item.foto,
+      item.imagem,
+      item.url,
+      item.assinatura_url
+    ].filter(Boolean);
+
+    urls.forEach(url=>{
+      fotos.push({
+        url,
+        tipo:item.item || item.titulo || `Foto ${index + 1}`
+      });
+    });
+
+    const anexos =
+      parseArray(item.anexos);
+
+    anexos.forEach((a,i)=>{
+      const url = a.url || a.foto_url || a.publicUrl || a.path;
+      if(url){
+        fotos.push({
+          url,
+          tipo:a.nome || a.tipo || item.item || `Anexo ${i + 1}`
+        });
+      }
+    });
+
+    const midias =
+      parseArray(item.midias);
+
+    midias.forEach((m,i)=>{
+      const url = m.url || m.foto_url || m.publicUrl || m.path;
+      if(url){
+        fotos.push({
+          url,
+          tipo:m.nome || m.tipo || item.item || `Mídia ${i + 1}`
+        });
+      }
+    });
+  });
+
+  return fotos.filter(f=>String(f.url || "").trim());
+}
+
+function obterDataEvento(tarefa){
+  const checklist =
+    parseArray(tarefa.checklist);
+
+  const datasChecklist = [];
+
+  checklist.forEach(item=>{
+    datasChecklist.push(
+      item.respondido_em,
+      item.concluido_em,
+      item.executado_em,
+      item.atualizado_em
+    );
+  });
+
+  const melhor =
+    maiorData([
+      tarefa.finalizado_em,
+      tarefa.data_conclusao,
+      ...datasChecklist,
+      tarefa.ultima_resposta,
+      tarefa.updated_at,
+      tarefa.created_at
+    ]);
+
+  return melhor ? dataParaTextoBanco(melhor) : null;
+}
+
+function classeStatus(status){
+  const s =
+    String(status || "")
+    .toUpperCase();
+
+  if(s.includes("CONCL")) return "concluido";
+  if(s.includes("ATRAS")) return "atrasado";
+  if(s.includes("CANCEL")) return "cancelado";
+
+  return "pendente";
+}
+
+function textoStatus(status){
+  return String(status || "-").toUpperCase();
+}
+
+/* ======================================================
+FILTROS
+====================================================== */
+
+function listaFiltrada(){
+  const inicio =
+    document.getElementById("inicio").value;
+
+  const fim =
+    document.getElementById("fim").value;
+
+  const midia =
+    document.getElementById("midia").value;
+
+  const responsavel =
+    document.getElementById("responsavel").value;
+
+  let lista =
+    [...TODOS];
+
+  if(inicio){
+    const dInicio =
+      converterData(inicio + " 00:00:00");
+
+    lista = lista.filter(t=>{
+      const dataEvento =
+        converterData(obterDataEvento(t));
+
+      return dataEvento && dataEvento >= dInicio;
+    });
+  }
+
+  if(fim){
+    const dFim =
+      converterData(fim + " 23:59:59");
+
+    lista = lista.filter(t=>{
+      const dataEvento =
+        converterData(obterDataEvento(t));
+
+      return dataEvento && dataEvento <= dFim;
+    });
+  }
+
+  if(midia){
+    lista = lista.filter(t=>{
+      const total =
+        obterFotos(t).length;
+
+      if(midia === "com") return total > 0;
+      if(midia === "sem") return total === 0;
+
+      return true;
+    });
+  }
+
+  if(responsavel){
+    lista = lista.filter(t=>{
+      return obterResponsaveis(t)
+        .some(r=>r.nome === responsavel);
+    });
+  }
+
+  lista.sort((a,b)=>{
+    const da = converterData(obterDataEvento(a));
+    const db = converterData(obterDataEvento(b));
+
+    return (db?.getTime() || 0) - (da?.getTime() || 0);
+  });
+
+  return lista;
+}
+
+function carregarResponsaveis(){
+  const select =
+    document.getElementById("responsavel");
+
+  const atual =
+    select.value;
+
+  const nomes =
+    [...new Set(
+      TODOS
+      .flatMap(t=>obterResponsaveis(t))
+      .map(r=>r.nome)
+      .filter(Boolean)
+    )]
+    .sort((a,b)=>a.localeCompare(b,"pt-BR"));
+
+  select.innerHTML =
+    `<option value="">Todos</option>`;
+
+  nomes.forEach(nome=>{
+    const opt =
+      document.createElement("option");
+
+    opt.value = nome;
+    opt.textContent = nome;
+
+    select.appendChild(opt);
+  });
+
+  if(nomes.includes(atual)){
+    select.value = atual;
+  }
+}
+
+function limparFiltros(){
+  aplicarPeriodoPadrao();
+  document.getElementById("midia").value = "";
+  document.getElementById("responsavel").value = "";
+  renderizar();
+}
+
+function atualizarKPIs(lista){
+  const total =
+    lista.length;
+
+  const totalComMidia =
+    lista.filter(t=>obterFotos(t).length > 0).length;
+
+  const totalFotos =
+    lista.reduce((s,t)=>s + obterFotos(t).length,0);
+
+  const totalResp =
+    new Set(
+      lista
+      .flatMap(t=>obterResponsaveis(t))
+      .map(r=>r.nome)
+    ).size;
+
+  document.getElementById("kpiTotal").textContent =
+    total;
+
+  document.getElementById("kpiComMidia").textContent =
+    totalComMidia;
+
+  document.getElementById("kpiFotos").textContent =
+    totalFotos;
+
+  document.getElementById("kpiResp").textContent =
+    totalResp;
+}
+
+/* ======================================================
+RENDER
+====================================================== */
+
+function renderizar(){
+  const galeria =
+    document.getElementById("galeria");
+
+  const lista =
+    listaFiltrada();
+
+  atualizarKPIs(lista);
+
+  document.getElementById("resultInfo").textContent =
+    `${lista.length} checklist(s) encontrado(s)`;
+
+  if(!lista.length){
+    galeria.innerHTML = `
+      <div class="empty">
+        Nenhum checklist encontrado para os filtros selecionados.
+      </div>
+    `;
+    return;
+  }
+
+  galeria.innerHTML =
+    lista.map(tarefa=>cardHTML(tarefa)).join("");
+}
+
+function cardHTML(tarefa){
+  const fotos =
+    obterFotos(tarefa);
+
+  const responsavel =
+    obterResponsavelPrincipal(tarefa);
+
+  const fotosVisiveis =
+    fotos.slice(0,4);
+
+  const restantes =
+    Math.max(fotos.length - fotosVisiveis.length,0);
+
+  const obs =
+    tarefa.observacoes_finais ||
+    tarefa.observacoes ||
+    tarefa.descricao ||
+    "";
+
+  const dataEvento =
+    obterDataEvento(tarefa);
+
+  return `
+    <article class="card">
+      <div class="card-body">
+        <div class="card-head">
+          <div>
+            <div class="title">
+              ${esc(tarefa.titulo || "-")}
+            </div>
+
+            <div class="code">
+              ${esc(tarefa.codigo || "Sem código")}
+            </div>
+          </div>
+
+          <div class="status ${classeStatus(tarefa.status)}">
+            ${esc(textoStatus(tarefa.status))}
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info">
+            <div class="t">Data conclusão</div>
+            <div class="v">${esc(formatarData(dataEvento))}</div>
+          </div>
+
+          <div class="info">
+            <div class="t">Hora conclusão</div>
+            <div class="v">${esc(formatarHora(dataEvento))}</div>
+          </div>
+
+          <div class="info full">
+            <div class="t">Responsável</div>
+            <div class="v">${esc(responsavel)}</div>
+          </div>
+
+          <div class="info">
+            <div class="t">Fotos</div>
+            <div class="v">${fotos.length}</div>
+          </div>
+
+          <div class="info">
+            <div class="t">Atualizado</div>
+            <div class="v">${esc(formatarData(tarefa.updated_at))} ${esc(formatarHora(tarefa.updated_at))}</div>
+          </div>
+        </div>
+
+        ${
+          obs
+          ? `
+            <div class="obs">
+              <div class="obs-title">Observações</div>
+              <div class="obs-text">${esc(limitarTexto(obs,150))}</div>
+            </div>
+          `
+          : ""
+        }
+      </div>
+
+      ${
+        fotos.length
+        ? `
+          <div class="photos">
+            ${fotosVisiveis.map((f,index)=>`
+              <div class="photo" onclick="abrirFoto('${esc(f.url)}')">
+                <img
+                  src="${esc(f.url)}"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.parentElement.style.display='none'"
+                >
+                <div class="photo-label">${esc(limitarTexto(f.tipo,22))}</div>
+                ${
+                  index === fotosVisiveis.length - 1 && restantes > 0
+                  ? `<div class="photo-more">+${restantes}</div>`
+                  : ""
+                }
+              </div>
+            `).join("")}
+          </div>
+        `
+        : `
+          <div class="no-photo">
+            Sem fotos neste checklist.
+          </div>
+        `
+      }
+    </article>
+  `;
+}
+
+function renderDebounced(){
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(renderizar,80);
+}
+
+/* ======================================================
+FOTO MODAL
+====================================================== */
+
+function abrirFoto(url){
+  if(!url) return;
+
+  document.getElementById("modalImg").src = url;
+  document.getElementById("modalFoto").classList.add("open");
+}
+
+function fecharFoto(){
+  document.getElementById("modalFoto").classList.remove("open");
+  document.getElementById("modalImg").src = "";
+}
+
+/* ======================================================
+CARREGAMENTO
+====================================================== */
+
+function mostrarSkeleton(){
+  document.getElementById("galeria").innerHTML = `
+    <div class="skeleton">
+      <div class="sk-line" style="width:70%"></div>
+      <div class="sk-line" style="width:38%"></div>
+      <div class="sk-photo"></div>
+    </div>
+    <div class="skeleton">
+      <div class="sk-line" style="width:70%"></div>
+      <div class="sk-line" style="width:38%"></div>
+      <div class="sk-photo"></div>
+    </div>
+    <div class="skeleton">
+      <div class="sk-line" style="width:70%"></div>
+      <div class="sk-line" style="width:38%"></div>
+      <div class="sk-photo"></div>
+    </div>
+  `;
+}
+
+async function carregar(forcar=false){
+  if(forcar){
+    mostrarSkeleton();
+  }
+
+  document.getElementById("resultInfo").textContent =
+    "Carregando...";
+
+  /*
+    ======================================================
+    IMPORTANTE:
+    Não filtro pelo created_at no Supabase.
+    Primeiro busco os concluídos e depois filtro no front
+    pela data real da conclusão.
+    ======================================================
+  */
+
+  const {data,error} =
+    await supabaseClient
+      .from("tarefas_checklist")
+      .select(`
+        id,
+        codigo,
+        titulo,
+        descricao,
+        status,
+        created_at,
+        updated_at,
+        data_conclusao,
+        finalizado_em,
+        ultima_resposta,
+        observacoes,
+        observacoes_finais,
+        responsaveis,
+        checklist
+      `)
+      .eq("ativo",true)
+      .eq("deletado",false)
+      .eq("status","CONCLUIDO")
+      .order("updated_at",{ascending:false})
+      .limit(1000);
+
+  if(error){
+    console.log(error);
+
+    document.getElementById("galeria").innerHTML = `
+      <div class="empty">
+        Erro ao carregar checklists.
+        <br><br>
+        ${esc(error.message || "")}
+      </div>
+    `;
+
+    document.getElementById("resultInfo").textContent =
+      "Erro ao carregar";
+
+    return;
+  }
+
+  TODOS = data || [];
+
+  carregarResponsaveis();
+  renderizar();
+}
+
+/* ======================================================
+EVENTOS
+====================================================== */
+
+["inicio","fim"].forEach(id=>{
+  document.getElementById(id)
+  .addEventListener("change",renderDebounced);
+});
+
+["midia","responsavel"].forEach(id=>{
+  document.getElementById(id)
+  .addEventListener("change",renderDebounced);
+});
+
+document.addEventListener("keydown",(e)=>{
+  if(e.key === "Escape"){
+    fecharFoto();
+  }
+});
+
+/* ======================================================
+INIT
+====================================================== */
+
+aplicarPeriodoPadrao();
+carregar();
+</script>
+
+</body>
+</html>

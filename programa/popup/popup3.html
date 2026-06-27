@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="theme-color" content="#dbeafe" />
+  <title>Fontes de Dados • Checklist OTTO</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #eaf4ff;
+      --bg2: #f8fbff;
+      --card: #ffffff;
+      --card2: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+      --line: #d8e6f5;
+      --line2: #edf4fb;
+      --blue: #2563eb;
+      --blue2: #1d4ed8;
+      --blue3: #eff6ff;
+      --cyan: #0ea5e9;
+      --green: #16a34a;
+      --green2: #dcfce7;
+      --orange: #ea580c;
+      --orange2: #ffedd5;
+      --red: #dc2626;
+      --red2: #fee2e2;
+      --purple: #7c3aed;
+      --purple2: #f3e8ff;
+      --dark: #0f172a;
+      --shadow: 0 22px 70px rgba(15, 23, 42, .14);
+      --shadow2: 0 10px 28px rgba(15, 23, 42, .08);
+      --radius: 24px;
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 15% 10%, #dbeafe 0, #eff6ff 28%, #f8fbff 58%, #eaf4ff 100%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none
+    }
+
+    button,
+    input,
+    select {
+      font: inherit
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+      background: none
+    }
+
+    input,
+    select {
+      outline: none
+    }
+
+    .shell {
+      width: 100%;
+      height: 100vh;
+      padding: 14px;
+      display: flex;
+      overflow: hidden
+    }
+
+    .app {
+      width: min(1580px, 100%);
+      height: 100%;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, .9);
+      border: 1px solid rgba(216, 230, 245, .95);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative
+    }
+
+    .topbar {
+      min-height: 86px;
+      padding: 18px 22px;
+      background: linear-gradient(135deg, #eaf4ff 0%, #dbeafe 45%, #bfdbfe 100%);
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(147, 197, 253, .5)
+    }
+
+    .topbar:before {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -100px;
+      width: 310px;
+      height: 310px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, .11)
+    }
+
+    .topbar:after {
+      content: "";
+      position: absolute;
+      left: 42%;
+      bottom: -140px;
+      width: 310px;
+      height: 310px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, .12)
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+      min-width: 0
+    }
+
+    .logo {
+      width: 54px;
+      height: 54px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      box-shadow: 0 14px 34px rgba(37, 99, 235, .22);
+      flex: 0 0 auto;
+      color: #fff
+    }
+
+    .brand h1 {
+      font-size: clamp(21px, 2.2vw, 31px);
+      line-height: 1.04;
+      font-weight: 950;
+      letter-spacing: -.05em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .brand p {
+      font-size: 13px;
+      color: #475569;
+      font-weight: 800;
+      margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end
+    }
+
+    .btn {
+      height: 44px;
+      padding: 0 15px;
+      border-radius: 15px;
+      font-weight: 950;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: .16s transform, .16s filter, .16s background;
+      white-space: nowrap;
+      font-size: 13px
+    }
+
+    .btn:active {
+      transform: scale(.98)
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(37, 99, 235, .22)
+    }
+
+    .btn-white {
+      background: #fff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, .12)
+    }
+
+    .btn-soft {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe
+    }
+
+    .btn-dark {
+      background: #0f172a;
+      color: #fff
+    }
+
+    .btn-green {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0
+    }
+
+    .btn-red {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca
+    }
+
+    .filters {
+      padding: 14px 18px;
+      background: rgba(248, 251, 255, .96);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+      align-items: end
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0
+    }
+
+    .field label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+      color: var(--muted);
+      font-weight: 950
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      padding: 0 12px;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, .035)
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, .10)
+    }
+
+    .col-2 {
+      grid-column: span 2
+    }
+
+    .col-3 {
+      grid-column: span 3
+    }
+
+    .col-4 {
+      grid-column: span 4
+    }
+
+    .col-12 {
+      grid-column: span 12
+    }
+
+    .layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      overflow: hidden
+    }
+
+    .side {
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(248, 251, 255, .98));
+      min-width: 0;
+      overflow: auto;
+      padding: 16px
+    }
+
+    .main {
+      overflow: auto;
+      min-width: 0;
+      padding: 18px;
+      background: rgba(255, 255, 255, .5)
+    }
+
+    .side::-webkit-scrollbar,
+    .main::-webkit-scrollbar,
+    .modal-body::-webkit-scrollbar {
+      width: 8px;
+      height: 8px
+    }
+
+    .side::-webkit-scrollbar-thumb,
+    .main::-webkit-scrollbar-thumb,
+    .modal-body::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 99px
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    .kpi {
+      background: #fff;
+      border: 1px solid var(--line2);
+      border-radius: 19px;
+      padding: 13px;
+      box-shadow: var(--shadow2);
+      min-height: 88px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative
+    }
+
+    .kpi:after {
+      content: "";
+      position: absolute;
+      right: -22px;
+      top: -22px;
+      width: 74px;
+      height: 74px;
+      border-radius: 999px;
+      background: #eff6ff
+    }
+
+    .kpi .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      font-weight: 950;
+      position: relative
+    }
+
+    .kpi .value {
+      font-size: 24px;
+      font-weight: 950;
+      letter-spacing: -.04em;
+      margin-top: 8px;
+      position: relative
+    }
+
+    .kpi .hint {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 750;
+      margin-top: 2px;
+      position: relative
+    }
+
+    .value.blue {
+      color: var(--blue)
+    }
+
+    .value.green {
+      color: var(--green)
+    }
+
+    .value.orange {
+      color: var(--orange)
+    }
+
+    .value.purple {
+      color: var(--purple)
+    }
+
+    .panel-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      font-weight: 950;
+      margin: 16px 2px 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 950;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted)
+    }
+
+    .source-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px
+    }
+
+    .source-btn {
+      width: 100%;
+      text-align: left;
+      background: #fff;
+      border: 1px solid var(--line2);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 5px 14px rgba(15, 23, 42, .055);
+      transition: .16s border, .16s transform, .16s background;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start
+    }
+
+    .source-btn:hover {
+      border-color: #93c5fd;
+      transform: translateY(-1px)
+    }
+
+    .source-btn.active {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, .12)
+    }
+
+    .source-ico {
+      width: 40px;
+      height: 40px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      color: #1d4ed8;
+      font-weight: 950
+    }
+
+    .source-meta {
+      min-width: 0;
+      flex: 1
+    }
+
+    .source-name {
+      font-size: 13px;
+      font-weight: 950;
+      color: #0f172a;
+      line-height: 1.22;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden
+    }
+
+    .source-sub {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 8px;
+      flex-wrap: wrap
+    }
+
+    .mini {
+      font-size: 10px;
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-weight: 950;
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      white-space: nowrap
+    }
+
+    .mini.green {
+      background: var(--green2);
+      color: #15803d;
+      border-color: #bbf7d0
+    }
+
+    .mini.blue {
+      background: var(--blue3);
+      color: #1d4ed8;
+      border-color: #bfdbfe
+    }
+
+    .mini.orange {
+      background: var(--orange2);
+      color: #c2410c;
+      border-color: #fed7aa
+    }
+
+    .mini.purple {
+      background: var(--purple2);
+      color: #6d28d9;
+      border-color: #e9d5ff
+    }
+
+    .mini.red {
+      background: var(--red2);
+      color: #b91c1c;
+      border-color: #fecaca
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 16px
+    }
+
+    .summary-card {
+      background: #fff;
+      border: 1px solid var(--line2);
+      border-radius: 21px;
+      padding: 15px;
+      box-shadow: var(--shadow2);
+      position: relative;
+      overflow: hidden;
+      min-height: 84px
+    }
+
+    .summary-card:before {
+      content: "";
+      position: absolute;
+      right: -30px;
+      top: -30px;
+      width: 92px;
+      height: 92px;
+      border-radius: 999px;
+      background: #eff6ff
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 25px;
+      letter-spacing: -.05em;
+      font-weight: 950;
+      position: relative
+    }
+
+    .summary-card span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 850;
+      margin-top: 5px;
+      position: relative
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap
+    }
+
+    .toolbar h2 {
+      font-size: 23px;
+      letter-spacing: -.045em;
+      font-weight: 950;
+      line-height: 1.08
+    }
+
+    .toolbar p {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 750;
+      margin-top: 4px
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .groups {
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    .group {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 23px;
+      box-shadow: var(--shadow2);
+      overflow: hidden
+    }
+
+    .group-head {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line2);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      background: linear-gradient(180deg, #fff, #f8fbff)
+    }
+
+    .group-title {
+      display: flex;
+      gap: 12px;
+      min-width: 0;
+      align-items: flex-start
+    }
+
+    .group-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 17px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      color: #fff;
+      font-weight: 950;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, .22);
+      flex: 0 0 auto
+    }
+
+    .group h3 {
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 950;
+      letter-spacing: -.025em
+    }
+
+    .group-desc {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 780;
+      margin-top: 6px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .group-stats {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end
+    }
+
+    .stat {
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      font-size: 11px;
+      font-weight: 950;
+      color: #475569;
+      white-space: nowrap
+    }
+
+    .stat strong {
+      color: #0f172a
+    }
+
+    .stat.green {
+      background: var(--green2);
+      border-color: #bbf7d0;
+      color: #15803d
+    }
+
+    .stat.orange {
+      background: var(--orange2);
+      border-color: #fed7aa;
+      color: #c2410c
+    }
+
+    .stat.blue {
+      background: var(--blue3);
+      border-color: #bfdbfe;
+      color: #1d4ed8
+    }
+
+    .stat.purple {
+      background: var(--purple2);
+      border-color: #e9d5ff;
+      color: #6d28d9
+    }
+
+    .stat.red {
+      background: var(--red2);
+      border-color: #fecaca;
+      color: #b91c1c
+    }
+
+    .rows {
+      display: flex;
+      flex-direction: column
+    }
+
+    .data-row {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.6fr) 140px 154px minmax(150px, .9fr) 122px;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--line2);
+      transition: .15s background;
+      min-width: 0
+    }
+
+    .data-row:last-child {
+      border-bottom: 0
+    }
+
+    .data-row:hover {
+      background: #fbfdff
+    }
+
+    .data-row.clickable {
+      cursor: pointer
+    }
+
+    .data-row.clickable:hover {
+      background: #eff6ff
+    }
+
+    .cell-title {
+      min-width: 0
+    }
+
+    .item-name {
+      font-size: 13px;
+      font-weight: 950;
+      line-height: 1.25;
+      color: #0f172a;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden
+    }
+
+    .item-meta {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 780;
+      margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .amount {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      white-space: nowrap
+    }
+
+    .amount strong {
+      font-size: 23px;
+      font-weight: 950;
+      letter-spacing: -.04em;
+      color: #0f172a
+    }
+
+    .amount span {
+      font-size: 11px;
+      font-weight: 950;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 4px 7px
+    }
+
+    .date {
+      font-size: 12px;
+      font-weight: 850;
+      color: #334155
+    }
+
+    .responsavel {
+      font-size: 12px;
+      font-weight: 850;
+      color: #334155;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .open-btn {
+      height: 36px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 950;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%
+    }
+
+    .empty {
+      height: 100%;
+      min-height: 390px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      padding: 30px
+    }
+
+    .empty-card {
+      max-width: 510px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow2);
+      padding: 28px
+    }
+
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 22px;
+      background: #eff6ff;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      font-size: 28px
+    }
+
+    .empty h3 {
+      font-size: 20px;
+      font-weight: 950;
+      color: #0f172a;
+      letter-spacing: -.04em
+    }
+
+    .empty p {
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 8px;
+      font-weight: 750
+    }
+
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(248, 251, 255, .82);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50
+    }
+
+    .loading-box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      min-width: 290px;
+      text-align: center
+    }
+
+    .spinner {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 4px solid #dbeafe;
+      border-top-color: #2563eb;
+      margin: 0 auto 13px;
+      animation: spin .8s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .loading-box strong {
+      font-size: 15px;
+      font-weight: 950
+    }
+
+    .loading-box p {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 750;
+      margin-top: 5px
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .62);
+      backdrop-filter: blur(9px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 100
+    }
+
+    .modal.open {
+      display: flex
+    }
+
+    .modal-card {
+      width: min(980px, 100%);
+      max-height: 92vh;
+      background: #fff;
+      border-radius: 26px;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, .35);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column
+    }
+
+    .modal-card.wide {
+      width: min(1220px, 100%)
+    }
+
+    .modal-head {
+      padding: 16px 18px;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px
+    }
+
+    .modal-title {
+      min-width: 0
+    }
+
+    .modal-title strong {
+      display: block;
+      font-size: 16px;
+      font-weight: 950;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .modal-title span {
+      display: block;
+      font-size: 12px;
+      color: rgba(255, 255, 255, .75);
+      font-weight: 700;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .modal-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .14);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 950;
+      flex: 0 0 auto
+    }
+
+    .modal-body {
+      padding: 16px;
+      overflow: auto;
+      background: #f8fafc
+    }
+
+    .modal-summary {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    .modal-kpi {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 5px 14px rgba(15, 23, 42, .055)
+    }
+
+    .modal-kpi label {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .05em
+    }
+
+    .modal-kpi strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 22px;
+      font-weight: 950;
+      letter-spacing: -.04em;
+      color: #0f172a
+    }
+
+    .modal-section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #475569;
+      font-weight: 950;
+      margin: 14px 2px 9px
+    }
+
+    .stock-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px
+    }
+
+    .stock-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 5px 14px rgba(15, 23, 42, .055)
+    }
+
+    .stock-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start
+    }
+
+    .stock-name {
+      font-size: 13px;
+      font-weight: 950;
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: #0f172a
+    }
+
+    .stock-meta {
+      font-size: 10px;
+      font-weight: 850;
+      color: #64748b;
+      margin-top: 5px;
+      text-transform: uppercase
+    }
+
+    .stock-unit {
+      border-radius: 999px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 950;
+      padding: 5px 8px;
+      white-space: nowrap
+    }
+
+    .stock-values {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 11px
+    }
+
+    .stock-val {
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 14px;
+      padding: 10px
+    }
+
+    .stock-val span {
+      display: block;
+      font-size: 9px;
+      font-weight: 950;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .stock-val strong {
+      display: block;
+      font-size: 20px;
+      font-weight: 950;
+      letter-spacing: -.04em;
+      margin-top: 4px
+    }
+
+    .stock-val.green strong {
+      color: #15803d
+    }
+
+    .stock-val.blue strong {
+      color: #1d4ed8
+    }
+
+    .stock-val.orange strong {
+      color: #c2410c
+    }
+
+    .stock-status {
+      margin-top: 9px;
+      font-size: 10px;
+      font-weight: 950;
+      border-radius: 999px;
+      display: inline-flex;
+      padding: 5px 8px;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0
+    }
+
+    .stock-status.pending {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fecaca
+    }
+
+    .stock-status.warn {
+      background: #ffedd5;
+      color: #c2410c;
+      border-color: #fed7aa
+    }
+
+    .photo {
+      width: 100%;
+      max-height: 72vh;
+      object-fit: contain;
+      border-radius: 18px;
+      background: #020617
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + var(--safe-bottom));
+      transform: translateX(-50%) translateY(20px);
+      background: #0f172a;
+      color: #fff;
+      border-radius: 16px;
+      padding: 12px 15px;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: 0 16px 44px rgba(0, 0, 0, .24);
+      opacity: 0;
+      pointer-events: none;
+      transition: .22s;
+      z-index: 120;
+      max-width: min(540px, calc(100vw - 28px));
+      text-align: center
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0)
+    }
+
+    @media print {
+
+      html,
+      body {
+        height: auto;
+        overflow: visible;
+        background: #fff
+      }
+
+      .shell {
+        height: auto;
+        padding: 0
+      }
+
+      .app {
+        height: auto;
+        border: 0;
+        box-shadow: none;
+        border-radius: 0
+      }
+
+      .top-actions,
+      .filters,
+      .side,
+      .toolbar-actions {
+        display: none !important
+      }
+
+      .layout {
+        display: block
+      }
+
+      .main {
+        overflow: visible;
+        padding: 10px
+      }
+
+      .group {
+        break-inside: avoid
+      }
+
+      .modal,
+      .loading-overlay,
+      .toast {
+        display: none !important
+      }
+    }
+
+    @media(max-width:1280px) {
+      .layout {
+        grid-template-columns: 315px 1fr
+      }
+
+      .summary-row {
+        grid-template-columns: repeat(3, 1fr)
+      }
+
+      .data-row {
+        grid-template-columns: minmax(210px, 1.4fr) 120px 135px minmax(110px, .8fr) 105px
+      }
+
+      .stock-grid {
+        grid-template-columns: 1fr
+      }
+
+      .modal-summary {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+
+    @media(max-width:920px) {
+
+      html,
+      body {
+        overflow: auto
+      }
+
+      .shell {
+        height: 100dvh;
+        padding: 0
+      }
+
+      .app {
+        height: 100dvh;
+        border-radius: 0
+      }
+
+      .topbar {
+        min-height: auto;
+        padding: 14px
+      }
+
+      .brand h1 {
+        font-size: 18px
+      }
+
+      .brand p {
+        font-size: 11px
+      }
+
+      .logo {
+        width: 43px;
+        height: 43px;
+        border-radius: 15px
+      }
+
+      .filters {
+        grid-template-columns: repeat(6, 1fr);
+        padding: 10px
+      }
+
+      .col-2,
+      .col-3,
+      .col-4 {
+        grid-column: span 3
+      }
+
+      .layout {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden
+      }
+
+      .side {
+        max-height: 290px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 10px
+      }
+
+      .kpis {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px
+      }
+
+      .kpi {
+        min-height: 72px;
+        padding: 9px;
+        border-radius: 15px
+      }
+
+      .kpi .value {
+        font-size: 18px
+      }
+
+      .kpi .label {
+        font-size: 9px
+      }
+
+      .kpi .hint {
+        display: none
+      }
+
+      .source-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px
+      }
+
+      .source-btn {
+        padding: 9px;
+        border-radius: 15px
+      }
+
+      .source-ico {
+        display: none
+      }
+
+      .source-name {
+        font-size: 12px
+      }
+
+      .main {
+        padding: 10px
+      }
+
+      .summary-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px
+      }
+
+      .summary-card {
+        padding: 11px;
+        border-radius: 16px
+      }
+
+      .summary-card strong {
+        font-size: 20px
+      }
+
+      .toolbar h2 {
+        font-size: 17px
+      }
+
+      .group-head {
+        padding: 12px;
+        flex-direction: column
+      }
+
+      .group-stats {
+        justify-content: flex-start
+      }
+
+      .data-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px
+      }
+
+      .amount strong {
+        font-size: 22px
+      }
+
+      .modal-summary {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .stock-values {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media(max-width:560px) {
+      .topbar {
+        align-items: flex-start
+      }
+
+      .top-actions .btn {
+        height: 38px;
+        padding: 0 11px;
+        font-size: 12px
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .col-2,
+      .col-3,
+      .col-4,
+      .col-12 {
+        grid-column: span 2
+      }
+
+      .field label {
+        font-size: 9px
+      }
+
+      .field input,
+      .field select {
+        height: 39px;
+        border-radius: 12px;
+        font-size: 12px
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .side {
+        max-height: 320px
+      }
+
+      .source-list {
+        grid-template-columns: 1fr
+      }
+
+      .summary-row {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .brand {
+        gap: 9px
+      }
+
+      .logo {
+        width: 39px;
+        height: 39px
+      }
+
+      .brand h1 {
+        font-size: 16px
+      }
+
+      .brand p {
+        white-space: normal;
+        line-height: 1.25
+      }
+
+      .btn-white span,
+      .btn-primary span {
+        display: none
+      }
+
+      .modal {
+        padding: 8px
+      }
+
+      .modal-card {
+        border-radius: 20px;
+        max-height: 95vh
+      }
+
+      .modal-body {
+        padding: 10px
+      }
+
+      .modal-summary {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .stock-values {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <section class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">📊</div>
+          <div>
+            <h1>Fontes de Dados • Checklist OTTO</h1>
+            <p>Resultados do checklist, contagem de estoque e saldo atual da mercatto_estoque</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-white" onclick="selecionarFonte('TODAS')">📋 <span>Todas</span></button>
+          <button class="btn btn-primary" onclick="carregarDados()">🔄 <span>Atualizar</span></button>
+        </div>
+      </header>
+
+      <section class="filters">
+        <div class="field col-2"><label>Data inicial</label><input id="dataInicio" type="date" /></div>
+        <div class="field col-2"><label>Data final</label><input id="dataFim" type="date" /></div>
+        <div class="field col-2">
+          <label>Status</label><select id="filtroStatus"><option value="TODOS">Todos</option><option value="CONCLUIDO">Concluído</option><option value="PENDENTE">Pendente</option><option value="ATRASADO">Atrasado</option><option value="CANCELADO">Cancelado</option></select>
+        </div>
+        <div class="field col-2">
+          <label>Empresa</label><select id="filtroEmpresa"><option value="TODAS">Todas</option></select></div>
+        <div class="field col-2">
+          <label>Setor</label><select id="filtroSetor"><option value="TODOS">Todos</option></select></div>
+        <div class="field col-2"><label>Buscar</label><input id="busca" type="search" placeholder="Tarefa, produto, fonte..." />
+        </div>
+      </section>
+
+      <section class="layout">
+        <aside class="side">
+          <div class="kpis">
+            <div class="kpi">
+              <div>
+                <div class="label">Fontes</div>
+                <div id="kpiFontes" class="value blue">0</div>
+              </div>
+              <div class="hint">tarefas com fonte</div>
+            </div>
+            <div class="kpi">
+              <div>
+                <div class="label">Registros</div>
+                <div id="kpiRegistros" class="value green">0</div>
+              </div>
+              <div class="hint">lançamentos</div>
+            </div>
+            <div class="kpi">
+              <div>
+                <div class="label">Contagem</div>
+                <div id="kpiContagens" class="value orange">0</div>
+              </div>
+              <div class="hint">itens contados</div>
+            </div>
+            <div class="kpi">
+              <div>
+                <div class="label">Saldos</div>
+                <div id="kpiSaldos" class="value purple">0</div>
+              </div>
+              <div class="hint">localizados</div>
+            </div>
+          </div>
+
+          <div class="panel-title"><span>Fontes encontradas</span><span id="contadorFontes" class="pill">0</span></div>
+          <div id="listaFontes" class="source-list"></div>
+        </aside>
+
+        <main class="main">
+          <div class="summary-row">
+            <div class="summary-card"><strong id="sumRegistros">0</strong><span>Registros encontrados</span></div>
+            <div class="summary-card"><strong id="sumContagens">0</strong><span>Produtos de contagem</span></div>
+            <div class="summary-card"><strong id="sumSaldos">0</strong><span>Saldos localizados</span></div>
+            <div class="summary-card"><strong id="sumDivergentes">0</strong><span>Divergências contagem x saldo</span>
+            </div>
+            <div class="summary-card"><strong id="sumUnidades">0</strong><span>Unidades / tipos usados</span></div>
+          </div>
+
+          <div class="toolbar">
+            <div>
+              <h2 id="tituloResultado">Todas as fontes</h2>
+              <p id="subtituloResultado">Filtre por data para visualizar os resultados.</p>
+            </div>
+            <div class="toolbar-actions">
+              <button class="btn btn-soft" onclick="selecionarFonte('TODAS')">📋 Todas</button>
+              <button class="btn btn-soft" onclick="exportarCSV()">⬇️ CSV</button>
+              <button class="btn btn-soft" onclick="window.print()">🖨️ Imprimir</button>
+            </div>
+          </div>
+
+          <div id="resultado" class="groups"></div>
+        </main>
+      </section>
+
+      <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-box">
+          <div class="spinner"></div><strong>Buscando fontes...</strong>
+          <p>Carregando checklist e saldo atual da mercatto_estoque</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="modalDetalhe" class="modal" onclick="fecharModalDetalhe(event)">
+    <div id="modalDetalheCard" class="modal-card wide" onclick="event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title"><strong id="modalDetalheTitulo">Detalhe</strong><span id="modalDetalheSub">-</span>
+        </div>
+        <button class="modal-close" onclick="fecharModalDetalhe()">×</button>
+      </div>
+      <div id="modalDetalheBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="modalFoto" class="modal" onclick="fecharFoto(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title"><strong id="modalTitulo">Foto da fonte</strong><span>Imagem anexada ao checklist</span>
+        </div><button class="modal-close" onclick="fecharFoto()">×</button>
+      </div>
+      <div class="modal-body"><img id="modalImagem" class="photo" alt="Foto do checklist" /></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const supabaseClient = supabase.createClient(
+    "https://dxkszikemntfusfyrzos.supabase.co",
+    "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+  );
+
+  let tarefasBrutas = [];
+  let fontes = [];
+  let fonteSelecionada = "TODAS";
+  let saldosAtuais = new Map();
+
+  const $ = (id) => document.getElementById(id);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    iniciarDatas();
+    vincularEventos();
+    carregarDados();
+  });
+
+  function iniciarDatas(){
+    const hoje = new Date();
+    const inicio = new Date();
+    inicio.setDate(hoje.getDate() - 7);
+    $("dataInicio").value = isoDate(inicio);
+    $("dataFim").value = isoDate(hoje);
+  }
+
+  function vincularEventos(){
+    ["dataInicio","dataFim","filtroStatus"].forEach(id => $(id).addEventListener("change", carregarDados));
+    ["filtroEmpresa","filtroSetor","busca"].forEach(id => $(id).addEventListener("input", () => aplicarFiltrosLocais()));
+  }
+
+  function isoDate(data){
+    return `${data.getFullYear()}-${String(data.getMonth()+1).padStart(2,"0")}-${String(data.getDate()).padStart(2,"0")}`;
+  }
+  function mostrarLoading(){ $("loadingOverlay").style.display = "flex"; }
+  function esconderLoading(){ $("loadingOverlay").style.display = "none"; }
+  function toast(msg){ const el=$("toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>el.classList.remove("show"),2800); }
+
+  async function carregarDados(){
+    try{
+      mostrarLoading();
+      const inicio = $("dataInicio").value;
+      const fim = $("dataFim").value;
+      const status = $("filtroStatus").value;
+      if(!inicio || !fim){ toast("Informe o período para carregar."); return; }
+
+      let query = supabaseClient
+        .from("tarefas_checklist")
+        .select(`
+          id,titulo,empresa,unidade,setor,status,data_limite,created_at,updated_at,finalizado_em,data_conclusao,
+          criado_por_nome,concluido_por_nome,finalizado_por_nome,checklist,gerada_automaticamente,tarefa_pai,metadata
+        `)
+        .gte("data_limite", `${inicio}T00:00:00`)
+        .lte("data_limite", `${fim}T23:59:59`)
+        .order("data_limite", { ascending:false });
+
+      if(status !== "TODOS") query = query.eq("status", status);
+
+      const { data, error } = await query;
+      if(error) throw error;
+
+      tarefasBrutas = Array.isArray(data) ? data : [];
+      fontes = extrairFontes(tarefasBrutas);
+      await carregarSaldosAtuais();
+      preencherSelects();
+      aplicarFiltrosLocais(true);
+    }catch(err){
+      console.error(err);
+      renderErro(err.message || "Erro ao carregar dados.");
+    }finally{
+      esconderLoading();
+    }
+  }
+
+  function extrairFontes(tarefas){
+    const saida = [];
+
+    tarefas.forEach(tarefa => {
+      const checklist = Array.isArray(tarefa.checklist) ? tarefa.checklist : [];
+
+      checklist.forEach((item, index) => {
+        const fonteObrigatoria = Boolean(item?.fonte_obrigatoria);
+        const fonteTipo = String(item?.fonte_tipo || "").trim().toUpperCase();
+        const fonteValor = String(item?.fonte_valor ?? "").trim();
+        const foto = item?.foto_url || item?.foto_path || "";
+        const dataRef = tarefa.finalizado_em || tarefa.data_conclusao || item?.fonte_atualizada_em || item?.respondido_em || tarefa.data_limite || tarefa.created_at;
+        const isContagem = fonteTipo === "CONTAGEM_ESTOQUE";
+
+        if(isContagem){
+          const config = item?.fonte_config || {};
+          const itens = Array.isArray(config.itens) ? config.itens : [];
+          const resultados = Array.isArray(config.resultados) ? config.resultados : [];
+          const mapaResultados = new Map(resultados.map(r => [String(r.produto_id || r.id || r.estoque_id || r.mercatto_estoque_id || ""), r]));
+
+          const produtos = itens.map((produto, pos) => {
+            const produtoId = String(produto.id || produto.produto_id || produto.estoque_id || produto.mercatto_estoque_id || "");
+            const r = mapaResultados.get(produtoId) || resultados[pos] || {};
+            const quantidadeContada = r.quantidade_contada ?? r.quantidade ?? r.valor ?? "";
+            const unidade = r.unidade || produto.unidade || produto.und_compra || "UN";
+
+            return {
+              produto_id: produtoId,
+              estoque_id: String(r.estoque_id || r.mercatto_estoque_id || produto.estoque_id || produto.mercatto_estoque_id || produto.id || ""),
+              produto_ref_id: String(r.produto_id || produto.produto_id || produto.produto_ref_id || ""),
+              cod_barras: String(r.cod_barras || r.codigo_ean || produto.cod_barras || produto.codigo_ean || produto.ean || "").replace(/\D/g,""),
+              codigo_ean: String(r.codigo_ean || r.cod_barras || produto.codigo_ean || produto.cod_barras || produto.ean || "").replace(/\D/g,""),
+              produto: r.produto || produto.produto || produto.nome || `Produto ${pos + 1}`,
+              empresa: r.empresa || produto.empresa || tarefa.empresa || "",
+              local_saida: r.local_saida || produto.local_saida || produto.local || "",
+              unidade,
+              quantidade_contada: quantidadeContada,
+              quantidade_numero: numeroBR(quantidadeContada),
+              contado_em: r.contado_em || r.atualizado_em || item.fonte_atualizada_em || "",
+              contado_por: r.contado_por || r.usuario || tarefa.finalizado_por_nome || tarefa.concluido_por_nome || ""
+            };
+          });
+
+          const total = produtos.length;
+          const contados = produtos.filter(p => p.quantidade_contada !== "" && p.quantidade_contada !== null && p.quantidade_contada !== undefined).length;
+          saida.push({
+            tipo_registro:"CONTAGEM_ESTOQUE",
+            id:`${tarefa.id}_${item?.id || index}_contagem`,
+            tarefa_id:tarefa.id,
+            tarefa_pai:tarefa.tarefa_pai,
+            fonte_nome:tarefa.titulo || "Sem título",
+            titulo:tarefa.titulo || "Sem título",
+            empresa:tarefa.empresa || "",
+            unidade:tarefa.unidade || "",
+            setor:tarefa.setor || "",
+            status_tarefa:tarefa.status || "",
+            data_limite:tarefa.data_limite || "",
+            data_ref:dataRef || "",
+            criado_por_nome:tarefa.criado_por_nome || "",
+            concluido_por_nome:tarefa.concluido_por_nome || "",
+            finalizado_por_nome:tarefa.finalizado_por_nome || "",
+            item_id:item?.id || "",
+            item_nome:item?.item || item?.descricao || `Item ${index + 1}`,
+            ordem:Number(item?.ordem || index + 1),
+            resposta:item?.resposta ?? "",
+            concluido:item?.concluido,
+            observacao:item?.observacao || item?.observacoes || "",
+            foto_url:foto,
+            fonte_obrigatoria:fonteObrigatoria,
+            fonte_tipo:fonteTipo,
+            fonte_valor:fonteValor || `${contados}/${total} itens contados`,
+            fonte_numero:total,
+            fonte_respondida_em:item?.fonte_respondida_em || "",
+            fonte_atualizada_em:item?.fonte_atualizada_em || "",
+            gerada_automaticamente:Boolean(tarefa.gerada_automaticamente),
+            produtos,
+            total_produtos:total,
+            produtos_contados:contados
+          });
+          return;
+        }
+
+        const temFonte = fonteObrigatoria || fonteTipo || fonteValor;
+        if(!temFonte) return;
+
+        saida.push({
+          tipo_registro:"FONTE_COMUM",
+          id:`${tarefa.id}_${item?.id || index}`,
+          tarefa_id:tarefa.id,
+          tarefa_pai:tarefa.tarefa_pai,
+          fonte_nome:tarefa.titulo || "Sem título",
+          titulo:tarefa.titulo || "Sem título",
+          empresa:tarefa.empresa || "",
+          unidade:tarefa.unidade || "",
+          setor:tarefa.setor || "",
+          status_tarefa:tarefa.status || "",
+          data_limite:tarefa.data_limite || "",
+          data_ref:dataRef || "",
+          criado_por_nome:tarefa.criado_por_nome || "",
+          concluido_por_nome:tarefa.concluido_por_nome || "",
+          finalizado_por_nome:tarefa.finalizado_por_nome || "",
+          item_id:item?.id || "",
+          item_nome:item?.item || item?.descricao || `Item ${index + 1}`,
+          ordem:Number(item?.ordem || index + 1),
+          resposta:item?.resposta ?? "",
+          concluido:item?.concluido,
+          observacao:item?.observacao || item?.observacoes || "",
+          foto_url:foto,
+          fonte_obrigatoria:fonteObrigatoria,
+          fonte_tipo:fonteTipo,
+          fonte_valor:fonteValor,
+          fonte_numero:numeroBR(fonteValor),
+          fonte_respondida_em:item?.fonte_respondida_em || "",
+          fonte_atualizada_em:item?.fonte_atualizada_em || "",
+          gerada_automaticamente:Boolean(tarefa.gerada_automaticamente),
+          produtos:[]
+        });
+      });
+    });
+
+    return saida;
+  }
+
+  async function carregarSaldosAtuais(){
+    saldosAtuais = new Map();
+
+    const produtosContados = fontes.flatMap(f => f.produtos || []).filter(Boolean);
+    if(!produtosContados.length) return;
+
+    const ids = [...new Set(
+      produtosContados
+        .flatMap(p => [p.produto_id, p.estoque_id, p.produto_ref_id])
+        .map(v => String(v || "").trim())
+        .filter(Boolean)
+    )];
+
+    const codigos = [...new Set(
+      produtosContados
+        .flatMap(p => [p.cod_barras, p.codigo_ean])
+        .map(v => String(v || "").replace(/\D/g, "").trim())
+        .filter(Boolean)
+    )];
+
+    const nomes = [...new Set(
+      produtosContados
+        .map(p => String(p.produto || "").trim())
+        .filter(Boolean)
+    )];
+
+    const encontrados = [];
+
+    const SELECT_ESTOQUE = `
+      id,
+      produto,
+      produto_id,
+      unidade,
+      und_compra,
+      quantidade,
+      saldo,
+      estoque_minimo,
+      estoque_ideal,
+      empresa,
+      ativo,
+      local_saida,
+      cod_barras,
+      codigo_ean,
+      preco,
+      obs_cadastro,
+      criado_em,
+      atualizado_em
+    `;
+
+    async function buscarPorCampo(campo, valores){
+      if(!valores.length) return;
+
+      for(let i = 0; i < valores.length; i += 35){
+        const chunk = valores.slice(i, i + 35);
+
+        const { data, error } = await supabaseClient
+          .from("mercatto_estoque")
+          .select(SELECT_ESTOQUE)
+          .eq("ativo", true)
+          .in(campo, chunk);
+
+        if(error){
+          console.warn(`Erro ao buscar mercatto_estoque por ${campo}:`, {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+            valores: chunk
+          });
+          continue;
+        }
+
+        encontrados.push(...(data || []));
+      }
+    }
+
+    await buscarPorCampo("id", ids);
+    await buscarPorCampo("produto_id", ids);
+    await buscarPorCampo("cod_barras", codigos);
+    await buscarPorCampo("codigo_ean", codigos);
+    await buscarPorCampo("produto", nomes);
+
+    const vistos = new Set();
+    encontrados.forEach(row => {
+      if(!row || !row.id || vistos.has(row.id)) return;
+      vistos.add(row.id);
+      registrarSaldo(row);
+    });
+  }
+
+  function registrarSaldo(row){
+    const chaves = [
+      row.id,
+      row.produto_id,
+      row.cod_barras,
+      row.codigo_ean,
+      criarChaveProduto(row),
+      criarChaveProdutoSemLocal(row)
+    ].map(v => String(v || "").trim()).filter(Boolean);
+
+    chaves.forEach(chave => saldosAtuais.set(chave, row));
+  }
+
+  function criarChaveProduto(p){
+    return [normalizar(p.produto || ""), normalizar(p.empresa || ""), normalizar(p.local_saida || "")].join("|");
+  }
+
+  function criarChaveProdutoSemLocal(p){
+    return [normalizar(p.produto || ""), normalizar(p.empresa || "")].join("|");
+  }
+
+  function encontrarSaldoAtualProduto(p){
+    const tentativas = [
+      p.estoque_id,
+      p.produto_id,
+      p.produto_ref_id,
+      p.cod_barras,
+      p.codigo_ean,
+      criarChaveProduto(p),
+      criarChaveProdutoSemLocal(p)
+    ].map(v => String(v || "").trim()).filter(Boolean);
+
+    for(const chave of tentativas){
+      if(saldosAtuais.has(chave)) return saldosAtuais.get(chave);
+    }
+
+    return null;
+  }
+
+  function numeroBR(valor){
+    if(valor === null || valor === undefined || valor === "") return null;
+    const limpo = String(valor).replace(/[^0-9,.-]/g,"").replace(/\.(?=\d{3}(\D|$))/g,"").replace(",",".");
+    if(!limpo || limpo === "-" || limpo === ".") return null;
+    const n = Number(limpo);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function preencherSelects(){
+    const empresaAtual = $("filtroEmpresa").value;
+    const setorAtual = $("filtroSetor").value;
+    preencherSelect("filtroEmpresa","TODAS","Todas",[...new Set(fontes.map(f => f.empresa).filter(Boolean))].sort(),empresaAtual);
+    preencherSelect("filtroSetor","TODOS","Todos",[...new Set(fontes.map(f => f.setor).filter(Boolean))].sort(),setorAtual);
+  }
+
+  function preencherSelect(id, valorTodos, labelTodos, itens, atual){
+    const select = $(id);
+    select.innerHTML = `<option value="${valorTodos}">${labelTodos}</option>`;
+    itens.forEach(item => { const opt=document.createElement("option"); opt.value=item; opt.textContent=item; select.appendChild(opt); });
+    if([...select.options].some(o => o.value === atual)) select.value = atual;
+  }
+
+  function aplicarFiltrosLocais(resetFonte=false){
+    if(resetFonte) fonteSelecionada = "TODAS";
+    const empresa = $("filtroEmpresa").value;
+    const setor = $("filtroSetor").value;
+    const busca = normalizar($("busca").value);
+    const dados = fontes.filter(f => {
+      if(empresa !== "TODAS" && f.empresa !== empresa) return false;
+      if(setor !== "TODOS" && f.setor !== setor) return false;
+      if(fonteSelecionada !== "TODAS" && f.fonte_nome !== fonteSelecionada) return false;
+      if(busca){
+        const texto = normalizar([f.fonte_nome,f.item_nome,f.empresa,f.setor,f.fonte_tipo,f.fonte_valor,f.status_tarefa,f.observacao,...(f.produtos||[]).map(p => `${p.produto} ${p.local_saida} ${p.unidade} ${p.quantidade_contada}`)].join(" "));
+        if(!texto.includes(busca)) return false;
+      }
+      return true;
+    });
+    renderTudo(dados);
+  }
+
+  function normalizar(txt){ return String(txt || "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim(); }
+
+  function renderTudo(dados){ renderKPIs(dados); renderListaFontes(); renderResumo(dados); renderResultados(dados); }
+
+  function fontesFiltradasSemFonte(){
+    const empresa = $("filtroEmpresa").value;
+    const setor = $("filtroSetor").value;
+    const busca = normalizar($("busca").value);
+    return fontes.filter(f => {
+      if(empresa !== "TODAS" && f.empresa !== empresa) return false;
+      if(setor !== "TODOS" && f.setor !== setor) return false;
+      if(busca){
+        const texto = normalizar([f.fonte_nome,f.item_nome,f.empresa,f.setor,f.fonte_tipo,f.fonte_valor,f.status_tarefa,f.observacao,...(f.produtos||[]).map(p => `${p.produto} ${p.local_saida}`)].join(" "));
+        if(!texto.includes(busca)) return false;
+      }
+      return true;
+    });
+  }
+
+  function agruparPorFonte(dados){
+    const map = new Map();
+    dados.forEach(f => { if(!map.has(f.fonte_nome)) map.set(f.fonte_nome, []); map.get(f.fonte_nome).push(f); });
+    return [...map.entries()].map(([nome,itens]) => ({nome,itens})).sort((a,b)=>b.itens.length-a.itens.length || a.nome.localeCompare(b.nome));
+  }
+
+  function totalProdutosContagem(dados){ return dados.reduce((acc,d) => acc + (d.tipo_registro === "CONTAGEM_ESTOQUE" ? (d.produtos || []).length : 0), 0); }
+  function totalProdutosContados(dados){ return dados.reduce((acc,d) => acc + (d.tipo_registro === "CONTAGEM_ESTOQUE" ? (d.produtos || []).filter(p => p.quantidade_contada !== "" && p.quantidade_contada !== null && p.quantidade_contada !== undefined).length : 0), 0); }
+  function totalSaldosLocalizados(dados){ return dados.reduce((acc,d) => acc + (d.tipo_registro === "CONTAGEM_ESTOQUE" ? (d.produtos || []).filter(p => encontrarSaldoAtualProduto(p)).length : 0), 0); }
+  function totalDivergencias(dados){ return dados.reduce((acc,d) => acc + (d.tipo_registro === "CONTAGEM_ESTOQUE" ? (d.produtos || []).filter(produtoTemDivergencia).length : 0), 0); }
+
+  function produtoTemDivergencia(p){
+    const atual = encontrarSaldoAtualProduto(p);
+    if(!atual) return false;
+    const contado = numeroBR(p.quantidade_contada);
+    const saldo = numeroBR(atual.saldo ?? atual.quantidade);
+    if(!Number.isFinite(contado) || !Number.isFinite(saldo)) return false;
+    return Math.abs(contado - saldo) > 0.0001;
+  }
+
+  function renderKPIs(dados){
+    const grupos = agruparPorFonte(dados);
+    $("kpiFontes").textContent = grupos.length;
+    $("kpiRegistros").textContent = dados.length;
+    $("kpiContagens").textContent = `${totalProdutosContados(dados)}/${totalProdutosContagem(dados)}`;
+    $("kpiSaldos").textContent = `${totalSaldosLocalizados(dados)}/${totalProdutosContagem(dados)}`;
+    $("contadorFontes").textContent = grupos.length;
+  }
+
+  function renderResumo(dados){
+    const unidades = new Set(dados.flatMap(d => d.tipo_registro === "CONTAGEM_ESTOQUE" ? (d.produtos||[]).map(p=>p.unidade) : [d.fonte_tipo]).filter(Boolean)).size;
+    $("sumRegistros").textContent = dados.length;
+    $("sumContagens").textContent = `${totalProdutosContados(dados)}/${totalProdutosContagem(dados)}`;
+    $("sumSaldos").textContent = `${totalSaldosLocalizados(dados)}/${totalProdutosContagem(dados)}`;
+    $("sumDivergentes").textContent = totalDivergencias(dados);
+    $("sumUnidades").textContent = unidades;
+    $("tituloResultado").textContent = fonteSelecionada === "TODAS" ? "Todas as fontes" : fonteSelecionada;
+    $("subtituloResultado").textContent = `${dados.length} registro(s) no período • ${totalProdutosContagem(dados)} produto(s) de contagem • ${totalSaldosLocalizados(dados)} saldo(s) localizado(s)`;
+  }
+
+  function renderListaFontes(){
+    const lista = $("listaFontes");
+    const grupos = agruparPorFonte(fontesFiltradasSemFonte());
+    if(!grupos.length){ lista.innerHTML = `<div class="empty-card" style="padding:16px;border-radius:18px"><strong>Nenhuma fonte encontrada</strong><p style="font-size:12px;color:#64748b;margin-top:6px;font-weight:750">Tente outro período.</p></div>`; return; }
+    lista.innerHTML = grupos.map(g => {
+      const contagem = totalProdutosContagem(g.itens);
+      const contados = totalProdutosContados(g.itens);
+      const saldos = totalSaldosLocalizados(g.itens);
+      const active = fonteSelecionada === g.nome ? "active" : "";
+      return `<button class="source-btn ${active}" onclick="selecionarFonte('${escapeAttr(g.nome)}')"><div class="source-ico">${g.itens.length}</div><div class="source-meta"><div class="source-name">${escapeHTML(g.nome)}</div><div class="source-sub"><span class="mini blue">${g.itens.length} registro(s)</span>${contagem ? `<span class="mini orange">${contados}/${contagem} contagem</span><span class="mini purple">${saldos}/${contagem} saldos</span>` : `<span class="mini green">Fonte comum</span>`}</div></div></button>`;
+    }).join("");
+  }
+
+  function selecionarFonte(nome){ fonteSelecionada = nome; aplicarFiltrosLocais(); }
+
+  function renderResultados(dados){
+    const el = $("resultado");
+    if(!dados.length){ el.innerHTML = `<div class="empty"><div class="empty-card"><div class="empty-icon">📭</div><h3>Nenhuma fonte para mostrar</h3><p>Não encontrei valores nesse período ou filtro. Ajuste datas, empresa, setor ou busca.</p></div></div>`; return; }
+    el.innerHTML = agruparPorFonte(dados).map(renderGrupo).join("");
+  }
+
+  function renderGrupo(grupo){
+    const itens = grupo.itens.slice().sort((a,b) => new Date(b.data_ref || b.data_limite) - new Date(a.data_ref || a.data_limite));
+    const fotos = itens.filter(i => i.foto_url).length;
+    const contagem = totalProdutosContagem(itens);
+    const contados = totalProdutosContados(itens);
+    const saldos = totalSaldosLocalizados(itens);
+    const divergentes = totalDivergencias(itens);
+    return `<section class="group"><div class="group-head"><div class="group-title"><div class="group-icon">${contagem ? "📦" : "📌"}</div><div><h3>${escapeHTML(grupo.nome)}</h3><div class="group-desc"><span>${contagem ? "Contagem de estoque" : "Fonte de dados"}</span><span>•</span><span>${itens.length} registro(s)</span></div></div></div><div class="group-stats"><span class="stat blue"><strong>${itens.length}</strong> registros</span>${contagem ? `<span class="stat orange"><strong>${contados}/${contagem}</strong> contados</span><span class="stat purple"><strong>${saldos}/${contagem}</strong> saldos</span><span class="stat red"><strong>${divergentes}</strong> divergências</span>` : `<span class="stat green"><strong>OK</strong> fonte comum</span>`}<span class="stat"><strong>${fotos}</strong> fotos</span></div></div><div class="rows">${itens.map(renderLinha).join("")}</div></section>`;
+  }
+
+  function renderLinha(item){
+    const responsavel = item.finalizado_por_nome || item.concluido_por_nome || item.criado_por_nome || "Sem responsável";
+    if(item.tipo_registro === "CONTAGEM_ESTOQUE"){
+      const total = item.total_produtos || 0;
+      const contados = item.produtos_contados || 0;
+      const saldos = (item.produtos || []).filter(p => encontrarSaldoAtualProduto(p)).length;
+      return `<article class="data-row clickable" onclick="abrirDetalhe('${escapeAttr(item.id)}')"><div class="cell-title"><div class="item-name">${escapeHTML(item.item_nome)}</div><div class="item-meta">${escapeHTML(item.empresa || "Sem empresa")} ${item.setor ? "• " + escapeHTML(item.setor) : ""}</div></div><div class="amount"><strong>${contados}/${total}</strong><span>ITENS</span></div><div class="date">${formatDataHora(item.data_ref || item.data_limite)}<div class="item-meta">Saldos: ${saldos}/${total}</div></div><div class="responsavel" title="${escapeAttr(responsavel)}">${escapeHTML(responsavel)}</div><div><button class="open-btn" type="button">👁️ Abrir</button></div></article>`;
+    }
+    const valor = item.fonte_valor || "0";
+    const unidade = item.fonte_tipo || "";
+    return `<article class="data-row clickable" onclick="abrirDetalhe('${escapeAttr(item.id)}')"><div class="cell-title"><div class="item-name">${escapeHTML(item.item_nome)}</div><div class="item-meta">${escapeHTML(item.empresa || "Sem empresa")} ${item.setor ? "• " + escapeHTML(item.setor) : ""}</div></div><div class="amount"><strong>${escapeHTML(valor)}</strong><span>${escapeHTML(unidade)}</span></div><div class="date">${formatDataHora(item.data_ref || item.data_limite)}<div class="item-meta">Limite: ${formatDataHora(item.data_limite)}</div></div><div class="responsavel" title="${escapeAttr(responsavel)}">${escapeHTML(responsavel)}</div><div><button class="open-btn" type="button">👁️ Abrir</button></div></article>`;
+  }
+
+  function abrirDetalhe(id){
+    const item = fontes.find(f => f.id === id);
+    if(!item) return;
+    $("modalDetalheTitulo").textContent = item.item_nome || item.fonte_nome || "Detalhe";
+    $("modalDetalheSub").textContent = `${item.fonte_nome} • ${item.empresa || "Sem empresa"} • ${formatDataHora(item.data_ref || item.data_limite)}`;
+    $("modalDetalheBody").innerHTML = item.tipo_registro === "CONTAGEM_ESTOQUE" ? renderModalContagem(item) : renderModalFonteComum(item);
+    $("modalDetalhe").classList.add("open");
+  }
+
+  function fecharModalDetalhe(ev){ if(ev && ev.target && ev.target.id !== "modalDetalhe") return; $("modalDetalhe").classList.remove("open"); }
+
+  function renderModalContagem(item){
+    const total = item.total_produtos || 0;
+    const contados = item.produtos_contados || 0;
+    const saldos = (item.produtos || []).filter(p => encontrarSaldoAtualProduto(p)).length;
+    const divergentes = (item.produtos || []).filter(produtoTemDivergencia).length;
+    const pendentes = Math.max(total - contados, 0);
+    const responsavel = item.finalizado_por_nome || item.concluido_por_nome || item.criado_por_nome || "Sem responsável";
+    return `<div class="modal-summary"><div class="modal-kpi"><label>Itens contados</label><strong>${contados}/${total}</strong></div><div class="modal-kpi"><label>Saldo localizado</label><strong>${saldos}/${total}</strong></div><div class="modal-kpi"><label>Divergências</label><strong>${divergentes}</strong></div><div class="modal-kpi"><label>Pendentes</label><strong>${pendentes}</strong></div><div class="modal-kpi"><label>Responsável</label><strong style="font-size:16px">${escapeHTML(responsavel)}</strong></div></div><div class="modal-section-title">Produtos da contagem e saldo atual na mercatto_estoque</div><div class="stock-grid">${(item.produtos || []).map(renderProdutoContagem).join("")}</div>`;
+  }
+
+  function renderProdutoContagem(p){
+    const atual = encontrarSaldoAtualProduto(p) || {};
+    const achouSaldo = Boolean(atual && atual.id);
+    const saldoAtual = atual.saldo ?? atual.quantidade ?? "-";
+    const unidadeAtual = atual.unidade || atual.und_compra || p.unidade || "UN";
+    const contado = p.quantidade_contada === "" || p.quantidade_contada === null || p.quantidade_contada === undefined ? "-" : p.quantidade_contada;
+    const nContado = numeroBR(contado);
+    const nSaldo = numeroBR(saldoAtual);
+    const diferenca = Number.isFinite(nContado) && Number.isFinite(nSaldo) ? nContado - nSaldo : null;
+    const temDivergencia = Number.isFinite(diferenca) && Math.abs(diferenca) > 0.0001;
+
+    let status = `<span class="stock-status pending">Não informado</span>`;
+    if(contado !== "-" && achouSaldo && !temDivergencia) status = `<span class="stock-status">Contado e igual ao saldo</span>`;
+    if(contado !== "-" && achouSaldo && temDivergencia) status = `<span class="stock-status warn">Divergente do saldo</span>`;
+    if(contado !== "-" && !achouSaldo) status = `<span class="stock-status pending">Contado, mas saldo não localizado</span>`;
+
+    return `<article class="stock-card"><div class="stock-head"><div><div class="stock-name">${escapeHTML(p.produto)}</div><div class="stock-meta">${escapeHTML(p.empresa || atual.empresa || "")} ${p.local_saida || atual.local_saida ? "• " + escapeHTML(p.local_saida || atual.local_saida) : ""}</div></div><div class="stock-unit">${escapeHTML(p.unidade || unidadeAtual)}</div></div><div class="stock-values"><div class="stock-val green"><span>Quantidade contada</span><strong>${escapeHTML(formatValorExibicao(contado))}</strong></div><div class="stock-val blue"><span>Saldo atual</span><strong>${escapeHTML(formatValorExibicao(saldoAtual))}</strong></div><div class="stock-val orange"><span>Diferença</span><strong>${escapeHTML(diferenca === null ? "-" : formatNumero(diferenca))}</strong></div></div>${status}${!achouSaldo ? `<div style="margin-top:8px;font-size:10px;font-weight:900;color:#b91c1c;background:#fee2e2;border:1px solid #fecaca;border-radius:999px;display:inline-flex;padding:5px 8px">Não localizado na mercatto_estoque</div>` : `<div style="margin-top:8px;font-size:10px;font-weight:900;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;display:inline-flex;padding:5px 8px">ID estoque: ${escapeHTML(atual.id || "-")}</div>`}</article>`;
+  }
+
+  function renderModalFonteComum(item){
+    const responsavel = item.finalizado_por_nome || item.concluido_por_nome || item.criado_por_nome || "Sem responsável";
+    return `<div class="modal-summary"><div class="modal-kpi"><label>Valor informado</label><strong>${escapeHTML(item.fonte_valor || "-")}</strong></div><div class="modal-kpi"><label>Tipo / unidade</label><strong>${escapeHTML(item.fonte_tipo || "-")}</strong></div><div class="modal-kpi"><label>Data</label><strong style="font-size:16px">${formatDataHora(item.data_ref || item.data_limite)}</strong></div><div class="modal-kpi"><label>Status</label><strong style="font-size:16px">${escapeHTML(item.status_tarefa || "-")}</strong></div><div class="modal-kpi"><label>Responsável</label><strong style="font-size:16px">${escapeHTML(responsavel)}</strong></div></div><div class="modal-section-title">Detalhes</div><div class="stock-card"><div class="stock-name">${escapeHTML(item.item_nome)}</div><div class="stock-meta">${escapeHTML(item.empresa || "")} ${item.setor ? "• " + escapeHTML(item.setor) : ""}</div><div style="margin-top:12px;font-size:13px;color:#334155;font-weight:750;line-height:1.5">${escapeHTML(item.observacao || "Sem observação.")}</div>${item.foto_url ? `<button style="margin-top:12px" class="btn btn-soft" onclick="abrirFoto('${escapeAttr(item.foto_url)}','${escapeAttr(item.item_nome)}')">📷 Ver foto</button>` : ""}</div>`;
+  }
+
+  function abrirFoto(url, titulo){ $("modalTitulo").textContent = titulo || "Foto da fonte"; $("modalImagem").src = url; $("modalFoto").classList.add("open"); }
+  function fecharFoto(ev){ if(ev && ev.target && ev.target.id !== "modalFoto") return; $("modalFoto").classList.remove("open"); $("modalImagem").src = ""; }
+
+  function exportarCSV(){
+    const empresa = $("filtroEmpresa").value;
+    const setor = $("filtroSetor").value;
+    const busca = normalizar($("busca").value);
+    const dados = fontes.filter(f => {
+      if(empresa !== "TODAS" && f.empresa !== empresa) return false;
+      if(setor !== "TODOS" && f.setor !== setor) return false;
+      if(fonteSelecionada !== "TODAS" && f.fonte_nome !== fonteSelecionada) return false;
+      if(busca && !normalizar([f.fonte_nome,f.item_nome,f.empresa,f.setor,f.fonte_tipo,f.fonte_valor].join(" ")).includes(busca)) return false;
+      return true;
+    });
+    if(!dados.length){ toast("Não há dados para exportar."); return; }
+
+    const headers = ["tipo","fonte_nome","item","produto","valor_contado","saldo_atual","diferenca","unidade","empresa","local_saida","setor","status_tarefa","data_limite","data_resposta","responsavel","estoque_id","tarefa_id"];
+    const linhas = [];
+    dados.forEach(d => {
+      const resp = d.finalizado_por_nome || d.concluido_por_nome || d.criado_por_nome || "";
+      if(d.tipo_registro === "CONTAGEM_ESTOQUE"){
+        (d.produtos || []).forEach(p => {
+          const atual = encontrarSaldoAtualProduto(p) || {};
+          const saldo = atual.saldo ?? atual.quantidade ?? "";
+          const contado = p.quantidade_contada;
+          const nc = numeroBR(contado);
+          const ns = numeroBR(saldo);
+          const diff = Number.isFinite(nc) && Number.isFinite(ns) ? nc - ns : "";
+          linhas.push(["CONTAGEM_ESTOQUE", d.fonte_nome, d.item_nome, p.produto, contado, saldo, diff, p.unidade || atual.unidade || atual.und_compra || "", d.empresa || p.empresa || atual.empresa || "", p.local_saida || atual.local_saida || "", d.setor, d.status_tarefa, d.data_limite, d.data_ref, resp, atual.id || p.estoque_id || p.produto_id || "", d.tarefa_id]);
+        });
+      }else{
+        linhas.push(["FONTE_COMUM", d.fonte_nome, d.item_nome, "", d.fonte_valor, "", "", d.fonte_tipo, d.empresa, "", d.setor, d.status_tarefa, d.data_limite, d.data_ref, resp, "", d.tarefa_id]);
+      }
+    });
+    const csv = [headers, ...linhas].map(row => row.map(campoCSV).join(";")).join("\n");
+    const blob = new Blob(["\ufeff" + csv], { type:"text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `fontes_dados_mercatto_estoque_${$("dataInicio").value}_${$("dataFim").value}.csv`;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    toast("CSV gerado com sucesso.");
+  }
+
+  function campoCSV(valor){ return `"${String(valor ?? "").replace(/"/g,'""')}"`; }
+  function renderErro(msg){ $("resultado").innerHTML = `<div class="empty"><div class="empty-card"><div class="empty-icon">⚠️</div><h3>Erro ao carregar</h3><p>${escapeHTML(msg)}</p></div></div>`; }
+  function formatNumero(n){ if(!Number.isFinite(Number(n))) return "0"; return Number(n).toLocaleString("pt-BR",{minimumFractionDigits:Number.isInteger(Number(n))?0:2,maximumFractionDigits:2}); }
+  function formatValorExibicao(v){ const n = numeroBR(v); return Number.isFinite(n) ? formatNumero(n) : String(v ?? "-"); }
+  function formatDataHora(valor){ if(!valor) return "-"; const d = new Date(valor); if(Number.isNaN(d.getTime())) return String(valor); return d.toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",year:"2-digit",hour:"2-digit",minute:"2-digit"}); }
+  function escapeHTML(str){ return String(str ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+  function escapeAttr(str){ return escapeHTML(str).replace(/`/g,"&#096;"); }
+  </script>
+</body>
+
+</html>

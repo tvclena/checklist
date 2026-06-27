@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>Ranking Operacional</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --blue:#2563eb;
+  --blue-dark:#1d4ed8;
+  --green:#16a34a;
+  --green-bg:#dcfce7;
+  --yellow:#f59e0b;
+  --yellow-bg:#fef3c7;
+  --red:#dc2626;
+  --red-bg:#fee2e2;
+  --slate:#334155;
+  --shadow:0 10px 28px rgba(15,23,42,.06);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Inter, sans-serif;
+}
+
+html,
+body{
+  width:100%;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+}
+
+body{
+  padding:14px;
+}
+
+button,
+input,
+select{
+  font-family:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+}
+
+/* ======================================================
+TOPO
+====================================================== */
+
+.hero{
+  background:
+    linear-gradient(135deg,#0f172a,#1e293b);
+  color:#fff;
+  border-radius:26px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  right:-90px;
+  top:-110px;
+  background:rgba(37,99,235,.22);
+}
+
+.hero-main{
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+}
+
+.hero-title{
+  font-size:clamp(24px,5vw,38px);
+  font-weight:900;
+  letter-spacing:-.8px;
+  line-height:1.05;
+}
+
+.hero-sub{
+  margin-top:10px;
+  max-width:760px;
+  color:#cbd5e1;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.hero-actions{
+  display:flex;
+  gap:10px;
+  flex-shrink:0;
+}
+
+.btn{
+  height:42px;
+  border:none;
+  border-radius:14px;
+  padding:0 14px;
+  background:#fff;
+  color:#0f172a;
+  font-size:12px;
+  font-weight:900;
+}
+
+.btn.primary{
+  background:#2563eb;
+  color:#fff;
+}
+
+.rule{
+  position:relative;
+  z-index:2;
+  margin-top:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
+  color:#e2e8f0;
+  font-size:12px;
+  font-weight:800;
+}
+
+/* ======================================================
+KPIS
+====================================================== */
+
+.kpis{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.kpi{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+
+.kpi-label{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+
+.kpi-value{
+  margin-top:8px;
+  font-size:30px;
+  font-weight:900;
+  line-height:1;
+}
+
+.kpi-sub{
+  margin-top:8px;
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* ======================================================
+FILTROS
+====================================================== */
+
+.filtros{
+  margin-top:14px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:14px;
+  display:grid;
+  grid-template-columns:1.2fr 1fr 1fr 1fr;
+  gap:12px;
+  box-shadow:var(--shadow);
+}
+
+.filtro{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.filtro label{
+  font-size:11px;
+  font-weight:800;
+  color:var(--muted);
+}
+
+.filtro input,
+.filtro select{
+  width:100%;
+  height:42px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#f8fafc;
+  padding:0 12px;
+  outline:none;
+  font-size:13px;
+  color:var(--text);
+}
+
+/* ======================================================
+RANKING
+====================================================== */
+
+.section-title{
+  margin:18px 2px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.section-title h2{
+  font-size:18px;
+  font-weight:900;
+}
+
+.section-title span{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.ranking{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:16px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.user{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  min-width:0;
+}
+
+.avatar{
+  width:54px;
+  height:54px;
+  min-width:54px;
+  border-radius:18px;
+  background:
+    linear-gradient(135deg,#2563eb,#1d4ed8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+  overflow:hidden;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.user-name{
+  font-size:16px;
+  font-weight:900;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:280px;
+}
+
+.user-sub{
+  margin-top:4px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.position{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#eff6ff;
+  color:#1d4ed8;
+  font-size:11px;
+  font-weight:900;
+}
+
+.score{
+  text-align:right;
+  flex-shrink:0;
+}
+
+.score-value{
+  font-size:34px;
+  font-weight:900;
+  color:var(--blue);
+  line-height:1;
+}
+
+.score-label{
+  margin-top:4px;
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+}
+
+.performance{
+  margin-top:14px;
+}
+
+.performance-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+.performance-line strong{
+  font-size:12px;
+  font-weight:900;
+}
+
+.performance-line span{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:800;
+}
+
+.bar{
+  width:100%;
+  height:10px;
+  border-radius:999px;
+  background:#e2e8f0;
+  overflow:hidden;
+}
+
+.fill{
+  height:100%;
+  border-radius:999px;
+  background:
+    linear-gradient(90deg,#2563eb,#60a5fa);
+}
+
+.metrics{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.metric{
+  border:1px solid #edf2f7;
+  background:#f8fafc;
+  border-radius:16px;
+  padding:10px;
+}
+
+.metric .t{
+  font-size:10px;
+  color:var(--muted);
+  font-weight:800;
+}
+
+.metric .v{
+  margin-top:6px;
+  font-size:18px;
+  font-weight:900;
+}
+
+.metric.good .v{
+  color:var(--green);
+}
+
+.metric.bad .v{
+  color:var(--red);
+}
+
+/* ======================================================
+NÃO FEITAS
+====================================================== */
+
+.not-done{
+  margin-top:14px;
+  border-top:1px dashed #cbd5e1;
+  padding-top:12px;
+}
+
+.not-title{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:12px;
+  font-weight:900;
+  color:#334155;
+}
+
+.task-list{
+  margin-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.task{
+  background:#f8fafc;
+  border:1px solid #edf2f7;
+  border-radius:16px;
+  padding:10px;
+}
+
+.task-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.task-title{
+  font-size:12px;
+  font-weight:800;
+  line-height:1.35;
+}
+
+.task-meta{
+  margin-top:6px;
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.badge.concluido{
+  background:var(--green-bg);
+  color:#166534;
+}
+
+.badge.pendente{
+  background:var(--yellow-bg);
+  color:#92400e;
+}
+
+.badge.atrasado{
+  background:var(--red-bg);
+  color:#991b1b;
+}
+
+.badge.andamento{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.badge.cancelado{
+  background:#f1f5f9;
+  color:#475569;
+}
+
+.empty{
+  grid-column:1/-1;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:50px 20px;
+  text-align:center;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.loading{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:50px 20px;
+  text-align:center;
+  color:var(--muted);
+  font-weight:800;
+}
+
+/* ======================================================
+RESPONSIVO
+====================================================== */
+
+@media(max-width:900px){
+  body{
+    padding:10px;
+  }
+
+  .hero{
+    border-radius:22px;
+    padding:18px;
+  }
+
+  .hero-main{
+    flex-direction:column;
+  }
+
+  .hero-actions{
+    width:100%;
+  }
+
+  .hero-actions .btn{
+    flex:1;
+  }
+
+  .kpis{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .filtros{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .ranking{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:520px){
+  body{
+    padding:8px;
+  }
+
+  .hero{
+    padding:16px;
+  }
+
+  .hero-title{
+    font-size:25px;
+  }
+
+  .hero-sub{
+    font-size:12px;
+  }
+
+  .rule{
+    border-radius:16px;
+    line-height:1.4;
+    align-items:flex-start;
+  }
+
+  .kpis{
+    gap:8px;
+  }
+
+  .kpi{
+    padding:12px;
+    border-radius:18px;
+  }
+
+  .kpi-value{
+    font-size:24px;
+  }
+
+  .filtros{
+    grid-template-columns:1fr;
+    padding:12px;
+    border-radius:18px;
+  }
+
+  .section-title{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:3px;
+  }
+
+  .card{
+    padding:13px;
+    border-radius:20px;
+  }
+
+  .avatar{
+    width:46px;
+    height:46px;
+    min-width:46px;
+    border-radius:15px;
+    font-size:17px;
+  }
+
+  .user-name{
+    max-width:170px;
+    font-size:14px;
+  }
+
+  .score-value{
+    font-size:28px;
+  }
+
+  .metrics{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .metric{
+    padding:9px;
+  }
+
+  .task{
+    border-radius:14px;
+  }
+}
+
+@media print{
+  body{
+    background:#fff;
+    padding:0;
+  }
+
+  .hero-actions,
+  .filtros{
+    display:none;
+  }
+
+  .card,
+  .kpi,
+  .hero{
+    box-shadow:none;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="app" id="relatorio">
+
+  <section class="hero">
+    <div class="hero-main">
+      <div>
+        <div class="hero-title">🏆 Ranking Operacional</div>
+        <div class="hero-sub">
+          Ranking simples por execução. A pontuação é direta: cada tarefa concluída vale 1 ponto.
+          O desempenho mostra a taxa de tarefas feitas sobre o total de tarefas atribuídas.
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn" onclick="limparFiltros()">Limpar filtros</button>
+        <button class="btn primary" onclick="gerarPDF()">Gerar PDF</button>
+      </div>
+    </div>
+
+    <div class="rule">
+      ⭐ Regra oficial: tarefa CONCLUÍDA = 1 ponto. Pendentes, atrasadas, em andamento e canceladas = 0 ponto.
+    </div>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi">
+      <div class="kpi-label">Pontos</div>
+      <div class="kpi-value" id="kpiPontos">0</div>
+      <div class="kpi-sub">Total de concluídas</div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-label">Concluídas</div>
+      <div class="kpi-value" id="kpiFeitas">0</div>
+      <div class="kpi-sub">Tarefas feitas</div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-label">Não feitas</div>
+      <div class="kpi-value" id="kpiNaoFeitas">0</div>
+      <div class="kpi-sub">Pendentes/atrasadas</div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-label">Desempenho</div>
+      <div class="kpi-value" id="kpiDesempenho">0%</div>
+      <div class="kpi-sub">Feitas ÷ total</div>
+    </div>
+  </section>
+
+  <section class="filtros">
+    <div class="filtro">
+      <label>Responsável</label>
+      <select id="responsavel">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <div class="filtro">
+      <label>Data inicial</label>
+      <input type="date" id="inicio" />
+    </div>
+
+    <div class="filtro">
+      <label>Data final</label>
+      <input type="date" id="fim" />
+    </div>
+
+    <div class="filtro">
+      <label>Status</label>
+      <select id="statusFiltro">
+        <option value="">Todos</option>
+        <option value="CONCLUIDO">Concluídas</option>
+        <option value="NAO_FEITAS">Não feitas</option>
+        <option value="PENDENTE">Pendentes</option>
+        <option value="ATRASADO">Atrasadas</option>
+        <option value="EM_ANDAMENTO">Em andamento</option>
+        <option value="CANCELADO">Canceladas</option>
+      </select>
+    </div>
+  </section>
+
+  <div class="section-title">
+    <h2>Ranking por responsável</h2>
+    <span id="periodoTexto">Período selecionado</span>
+  </div>
+
+  <section class="ranking" id="ranking">
+    <div class="loading">Carregando ranking...</div>
+  </section>
+
+</div>
+
+<script>
+/* ======================================================
+SUPABASE
+====================================================== */
+
+const SUPABASE_URL =
+  "https://dxkszikemntfusfyrzos.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+let TODAS_TAREFAS = [];
+let USUARIOS = [];
+
+/* ======================================================
+UTILITÁRIOS
+====================================================== */
+
+function esc(valor){
+  return String(valor ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function dataInput(date){
+  return date.toISOString().slice(0,10);
+}
+
+function iniciarPeriodoPadrao(){
+  const hoje = new Date();
+  const primeiroDia = new Date(
+    hoje.getFullYear(),
+    hoje.getMonth(),
+    1
+  );
+
+  document.getElementById("inicio").value =
+    dataInput(primeiroDia);
+
+  document.getElementById("fim").value =
+    dataInput(hoje);
+}
+
+function converterData(data){
+  if(!data) return null;
+
+  const texto = String(data).trim();
+
+  if(
+    texto.includes("Z") ||
+    /[+-]\d{2}:\d{2}$/.test(texto)
+  ){
+    return new Date(texto);
+  }
+
+  const partes =
+    texto.split(/[- :T]/);
+
+  return new Date(
+    Number(partes[0]),
+    Number(partes[1] || 1) - 1,
+    Number(partes[2] || 1),
+    Number(partes[3] || 0),
+    Number(partes[4] || 0),
+    Number(partes[5] || 0)
+  );
+}
+
+function formatarData(data){
+  if(!data) return "-";
+
+  const d = converterData(data);
+
+  if(!d || isNaN(d.getTime())) return "-";
+
+  return d.toLocaleString(
+    "pt-BR",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"2-digit",
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+}
+
+function parseArray(valor){
+  try{
+    if(Array.isArray(valor)) return valor;
+    if(typeof valor === "string") return JSON.parse(valor || "[]");
+    return [];
+  }catch{
+    return [];
+  }
+}
+
+/* ======================================================
+RESPONSÁVEIS
+====================================================== */
+
+function obterResponsaveis(tarefa){
+  const lista =
+    parseArray(tarefa.responsaveis);
+
+  if(!lista.length){
+    return [{
+      id:null,
+      nome:"Sem responsável",
+      cargo:"",
+      setor:"",
+      foto_url:""
+    }];
+  }
+
+  return lista.map(r=>({
+    id:r.id || null,
+    nome:r.nome || r.usuario || "Sem responsável",
+    cargo:r.cargo || "",
+    setor:r.setor || "",
+    usuario:r.usuario || "",
+    foto_url:r.foto_url || ""
+  }));
+}
+
+function buscarUsuario(responsavel){
+  const nome =
+    String(responsavel.nome || "")
+    .trim()
+    .toUpperCase();
+
+  const usuario =
+    String(responsavel.usuario || "")
+    .trim()
+    .toUpperCase();
+
+  const id =
+    String(responsavel.id || "")
+    .trim();
+
+  return USUARIOS.find(u=>{
+    const uNome =
+      String(u.nome || "")
+      .trim()
+      .toUpperCase();
+
+    const uUsuario =
+      String(u.usuario || "")
+      .trim()
+      .toUpperCase();
+
+    const uId =
+      String(u.id || "")
+      .trim();
+
+    return (
+      (id && uId === id) ||
+      (nome && uNome === nome) ||
+      (usuario && uUsuario === usuario)
+    );
+  });
+}
+
+function fotoResponsavel(responsavel){
+  const usuario =
+    buscarUsuario(responsavel);
+
+  return (
+    responsavel.foto_url ||
+    usuario?.foto_url ||
+    ""
+  );
+}
+
+function cargoSetorResponsavel(responsavel){
+  const usuario =
+    buscarUsuario(responsavel);
+
+  const cargo =
+    responsavel.cargo ||
+    usuario?.cargo ||
+    "";
+
+  const setor =
+    responsavel.setor ||
+    usuario?.setor ||
+    "";
+
+  const partes =
+    [cargo,setor].filter(Boolean);
+
+  return partes.length
+    ? partes.join(" • ")
+    : "Performance operacional";
+}
+
+/* ======================================================
+STATUS E PONTUAÇÃO
+====================================================== */
+
+function obterStatusReal(tarefa){
+  const status =
+    String(tarefa.status || "")
+    .trim()
+    .toUpperCase();
+
+  if(status === "CONCLUIDO") return "CONCLUIDO";
+  if(status === "CANCELADO") return "CANCELADO";
+  if(status === "ATRASADO") return "ATRASADO";
+
+  const percentual =
+    Number(tarefa.percentual_conclusao || 0);
+
+  if(percentual > 0) return "EM_ANDAMENTO";
+
+  const limite =
+    tarefa.data_limite
+      ? converterData(tarefa.data_limite)
+      : null;
+
+  if(
+    limite &&
+    !isNaN(limite.getTime()) &&
+    new Date() > limite
+  ){
+    return "ATRASADO";
+  }
+
+  return "PENDENTE";
+}
+
+function calcularPontos(tarefa){
+  return obterStatusReal(tarefa) === "CONCLUIDO"
+    ? 1
+    : 0;
+}
+
+function badge(status){
+  const mapa = {
+    CONCLUIDO:["concluido","CONCLUÍDA"],
+    PENDENTE:["pendente","PENDENTE"],
+    ATRASADO:["atrasado","ATRASADA"],
+    EM_ANDAMENTO:["andamento","EM ANDAMENTO"],
+    CANCELADO:["cancelado","CANCELADA"]
+  };
+
+  const item =
+    mapa[status] ||
+    ["pendente",status || "PENDENTE"];
+
+  return `
+    <span class="badge ${item[0]}">
+      ${item[1]}
+    </span>
+  `;
+}
+
+/* ======================================================
+FILTROS
+====================================================== */
+
+function tarefasFiltradas(){
+  let lista =
+    [...TODAS_TAREFAS];
+
+  const inicio =
+    document.getElementById("inicio").value;
+
+  const fim =
+    document.getElementById("fim").value;
+
+  const responsavel =
+    document.getElementById("responsavel").value;
+
+  const statusFiltro =
+    document.getElementById("statusFiltro").value;
+
+  if(inicio){
+    const dInicio =
+      converterData(inicio + " 00:00:00");
+
+    lista = lista.filter(t=>{
+      const criado =
+        converterData(t.created_at);
+
+      return criado && criado >= dInicio;
+    });
+  }
+
+  if(fim){
+    const dFim =
+      converterData(fim + " 23:59:59");
+
+    lista = lista.filter(t=>{
+      const criado =
+        converterData(t.created_at);
+
+      return criado && criado <= dFim;
+    });
+  }
+
+  if(responsavel){
+    lista = lista.filter(t=>{
+      return obterResponsaveis(t)
+        .some(r => r.nome === responsavel);
+    });
+  }
+
+  if(statusFiltro){
+    lista = lista.filter(t=>{
+      const status =
+        obterStatusReal(t);
+
+      if(statusFiltro === "NAO_FEITAS"){
+        return status !== "CONCLUIDO";
+      }
+
+      return status === statusFiltro;
+    });
+  }
+
+  return lista;
+}
+
+function carregarResponsaveis(){
+  const select =
+    document.getElementById("responsavel");
+
+  const nomes =
+    [...new Set(
+      TODAS_TAREFAS
+      .flatMap(t=>obterResponsaveis(t))
+      .map(r=>r.nome)
+      .filter(Boolean)
+    )]
+    .sort((a,b)=>a.localeCompare(b,"pt-BR"));
+
+  select.innerHTML =
+    `<option value="">Todos</option>`;
+
+  nomes.forEach(nome=>{
+    const option =
+      document.createElement("option");
+
+    option.value = nome;
+    option.textContent = nome;
+
+    select.appendChild(option);
+  });
+}
+
+function limparFiltros(){
+  iniciarPeriodoPadrao();
+  document.getElementById("responsavel").value = "";
+  document.getElementById("statusFiltro").value = "";
+  renderizar();
+}
+
+/* ======================================================
+AGRUPAMENTO
+====================================================== */
+
+function montarRanking(lista){
+  const grupos = {};
+
+  lista.forEach(tarefa=>{
+    const status =
+      obterStatusReal(tarefa);
+
+    const pontos =
+      calcularPontos(tarefa);
+
+    const responsaveis =
+      obterResponsaveis(tarefa);
+
+    responsaveis.forEach(resp=>{
+      const chave =
+        resp.id ||
+        resp.nome ||
+        "Sem responsável";
+
+      if(!grupos[chave]){
+        grupos[chave] = {
+          chave,
+          responsavel:resp,
+          nome:resp.nome || "Sem responsável",
+          pontos:0,
+          concluidas:0,
+          naoFeitas:0,
+          pendentes:0,
+          atrasadas:0,
+          andamento:0,
+          canceladas:0,
+          total:0,
+          tarefas:[],
+          naoFeitasLista:[]
+        };
+      }
+
+      const g = grupos[chave];
+
+      g.pontos += pontos;
+      g.total++;
+
+      if(status === "CONCLUIDO"){
+        g.concluidas++;
+      }else{
+        g.naoFeitas++;
+        g.naoFeitasLista.push({
+          ...tarefa,
+          statusReal:status
+        });
+      }
+
+      if(status === "PENDENTE") g.pendentes++;
+      if(status === "ATRASADO") g.atrasadas++;
+      if(status === "EM_ANDAMENTO") g.andamento++;
+      if(status === "CANCELADO") g.canceladas++;
+
+      g.tarefas.push({
+        ...tarefa,
+        pontos,
+        statusReal:status
+      });
+    });
+  });
+
+  return Object.values(grupos)
+    .map(g=>({
+      ...g,
+      desempenho:g.total
+        ? Math.round((g.concluidas / g.total) * 100)
+        : 0
+    }))
+    .sort((a,b)=>
+      b.pontos - a.pontos ||
+      b.desempenho - a.desempenho ||
+      a.naoFeitas - b.naoFeitas ||
+      a.nome.localeCompare(b.nome,"pt-BR")
+    );
+}
+
+/* ======================================================
+RENDER
+====================================================== */
+
+function renderizar(){
+  const rankingEl =
+    document.getElementById("ranking");
+
+  const lista =
+    tarefasFiltradas();
+
+  const ranking =
+    montarRanking(lista);
+
+  const totalTarefas =
+    ranking.reduce((s,g)=>s + g.total,0);
+
+  const totalPontos =
+    ranking.reduce((s,g)=>s + g.pontos,0);
+
+  const totalFeitas =
+    ranking.reduce((s,g)=>s + g.concluidas,0);
+
+  const totalNaoFeitas =
+    ranking.reduce((s,g)=>s + g.naoFeitas,0);
+
+  const desempenhoGeral =
+    totalTarefas
+      ? Math.round((totalFeitas / totalTarefas) * 100)
+      : 0;
+
+  document.getElementById("kpiPontos").textContent =
+    totalPontos;
+
+  document.getElementById("kpiFeitas").textContent =
+    totalFeitas;
+
+  document.getElementById("kpiNaoFeitas").textContent =
+    totalNaoFeitas;
+
+  document.getElementById("kpiDesempenho").textContent =
+    desempenhoGeral + "%";
+
+  const inicio =
+    document.getElementById("inicio").value;
+
+  const fim =
+    document.getElementById("fim").value;
+
+  document.getElementById("periodoTexto").textContent =
+    inicio && fim
+      ? `De ${inicio.split("-").reverse().join("/")} até ${fim.split("-").reverse().join("/")}`
+      : "Período selecionado";
+
+  if(!ranking.length){
+    rankingEl.innerHTML = `
+      <div class="empty">
+        Nenhum resultado encontrado para os filtros selecionados.
+      </div>
+    `;
+    return;
+  }
+
+  rankingEl.innerHTML =
+    ranking.map((g,index)=>{
+      const posicao = index + 1;
+      const foto = fotoResponsavel(g.responsavel);
+      const cargoSetor = cargoSetorResponsavel(g.responsavel);
+
+      const naoFeitas =
+        g.naoFeitasLista
+        .sort((a,b)=>{
+          const peso = {
+            ATRASADO:1,
+            PENDENTE:2,
+            EM_ANDAMENTO:3,
+            CANCELADO:4
+          };
+
+          return (
+            (peso[a.statusReal] || 9) -
+            (peso[b.statusReal] || 9)
+          );
+        })
+        .slice(0,4);
+
+      return `
+        <article class="card">
+          <div class="card-top">
+            <div class="user">
+              <div class="avatar">
+                ${
+                  foto
+                  ? `<img src="${esc(foto)}" alt="">`
+                  : esc((g.nome || "?").charAt(0).toUpperCase())
+                }
+              </div>
+
+              <div>
+                <div class="user-name">${esc(g.nome)}</div>
+                <div class="user-sub">${esc(cargoSetor)}</div>
+                <div class="position">
+                  ${
+                    posicao === 1
+                    ? "🥇"
+                    : posicao === 2
+                    ? "🥈"
+                    : posicao === 3
+                    ? "🥉"
+                    : "#" + posicao
+                  }
+                  ${posicao}º lugar
+                </div>
+              </div>
+            </div>
+
+            <div class="score">
+              <div class="score-value">${g.pontos}</div>
+              <div class="score-label">pontos</div>
+            </div>
+          </div>
+
+          <div class="performance">
+            <div class="performance-line">
+              <strong>Desempenho</strong>
+              <span>${g.desempenho}% feito</span>
+            </div>
+            <div class="bar">
+              <div class="fill" style="width:${g.desempenho}%"></div>
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric good">
+              <div class="t">Concluídas</div>
+              <div class="v">${g.concluidas}</div>
+            </div>
+
+            <div class="metric bad">
+              <div class="t">Não feitas</div>
+              <div class="v">${g.naoFeitas}</div>
+            </div>
+
+            <div class="metric">
+              <div class="t">Atrasadas</div>
+              <div class="v">${g.atrasadas}</div>
+            </div>
+
+            <div class="metric">
+              <div class="t">Total</div>
+              <div class="v">${g.total}</div>
+            </div>
+          </div>
+
+          <div class="not-done">
+            <div class="not-title">
+              <span>Não feitas</span>
+              <span>${g.naoFeitas} tarefa(s)</span>
+            </div>
+
+            <div class="task-list">
+              ${
+                naoFeitas.length
+                ? naoFeitas.map(t=>`
+                    <div class="task">
+                      <div class="task-top">
+                        <div class="task-title">
+                          ${esc(t.titulo || "-")}
+                        </div>
+                        ${badge(t.statusReal)}
+                      </div>
+
+                      <div class="task-meta">
+                        Criada: ${esc(formatarData(t.created_at))}
+                        <br>
+                        Limite: ${esc(formatarData(t.data_limite))}
+                        <br>
+                        Prioridade: ${esc(t.prioridade || "-")}
+                      </div>
+                    </div>
+                  `).join("")
+                : `
+                  <div class="task">
+                    <div class="task-title">
+                      Tudo feito neste período.
+                    </div>
+                    <div class="task-meta">
+                      Nenhuma tarefa pendente, atrasada ou em andamento.
+                    </div>
+                  </div>
+                `
+              }
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+}
+
+/* ======================================================
+PDF
+====================================================== */
+
+async function gerarPDF(){
+  const opt = {
+    margin:0.25,
+    filename:"ranking-operacional.pdf",
+    image:{
+      type:"jpeg",
+      quality:0.98
+    },
+    html2canvas:{
+      scale:2,
+      useCORS:true
+    },
+    jsPDF:{
+      unit:"in",
+      format:"a4",
+      orientation:"portrait"
+    }
+  };
+
+  await html2pdf()
+    .set(opt)
+    .from(document.getElementById("relatorio"))
+    .save();
+}
+
+/* ======================================================
+CARREGAMENTO
+====================================================== */
+
+async function carregar(){
+  iniciarPeriodoPadrao();
+
+  const rankingEl =
+    document.getElementById("ranking");
+
+  rankingEl.innerHTML =
+    `<div class="loading">Carregando ranking...</div>`;
+
+  const {data,error} =
+    await supabaseClient
+    .from("tarefas_checklist")
+    .select("*")
+    .eq("ativo",true)
+    .eq("deletado",false)
+    .order("created_at",{ascending:false});
+
+  if(error){
+    console.log(error);
+    rankingEl.innerHTML = `
+      <div class="empty">
+        Erro ao carregar ranking.
+        <br><br>
+        ${esc(error.message || "")}
+      </div>
+    `;
+    return;
+  }
+
+  const usuariosResponse =
+    await supabaseClient
+    .from("usuarios_do_sistema")
+    .select(`
+      id,
+      usuario,
+      nome,
+      cargo,
+      setor,
+      foto_url
+    `)
+    .eq("ativo",true);
+
+  USUARIOS =
+    usuariosResponse.data || [];
+
+  TODAS_TAREFAS =
+    data || [];
+
+  carregarResponsaveis();
+  renderizar();
+}
+
+/* ======================================================
+EVENTOS
+====================================================== */
+
+["inicio","fim","responsavel","statusFiltro"]
+.forEach(id=>{
+  document
+  .getElementById(id)
+  .addEventListener("change",renderizar);
+});
+
+carregar();
+</script>
+</body>
+</html>

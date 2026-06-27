@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"
+>
+
+<title>Mercatto • Checklist OTTO</title>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+  rel="stylesheet"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+:root{
+
+  --bg:#f3f7fc;
+
+  --card:#ffffff;
+
+  --line:#e5e7eb;
+
+  --text:#0f172a;
+
+  --muted:#64748b;
+
+  --blue:#2563eb;
+  --green:#16a34a;
+  --red:#dc2626;
+  --gold:#d4af37;
+  --orange:#f59e0b;
+  --purple:#7c3aed;
+
+  --shadow:
+    0 10px 40px rgba(15,23,42,.08);
+
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Inter;
+}
+
+html,
+body{
+
+  width:100%;
+  min-height:100%;
+
+  background:
+
+    radial-gradient(
+      circle at top left,
+      rgba(37,99,235,.05),
+      transparent 20%
+    ),
+
+    radial-gradient(
+      circle at top right,
+      rgba(124,58,237,.05),
+      transparent 20%
+    ),
+
+    var(--bg);
+
+  color:var(--text);
+
+  overflow-x:hidden;
+}
+
+body{
+  padding:22px;
+}
+
+/* ======================================================
+TOP
+====================================================== */
+
+.top{
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  gap:20px;
+
+  flex-wrap:wrap;
+
+  margin-bottom:24px;
+}
+
+.top-left h1{
+
+  font-size:44px;
+
+  font-weight:900;
+
+  letter-spacing:-2px;
+}
+
+.top-left p{
+
+  margin-top:8px;
+
+  color:var(--muted);
+
+  font-size:14px;
+}
+
+.top-right{
+
+  display:flex;
+  gap:12px;
+}
+
+.btn{
+
+  height:52px;
+
+  padding:0 22px;
+
+  border:none;
+
+  border-radius:18px;
+
+  cursor:pointer;
+
+  font-size:13px;
+
+  font-weight:800;
+
+  transition:.2s;
+}
+
+.btn-white{
+
+  background:#fff;
+
+  border:1px solid #e5e7eb;
+
+  color:#111827;
+
+  box-shadow:var(--shadow);
+}
+
+.btn-gold{
+
+  background:
+    linear-gradient(
+      135deg,
+      #d4af37,
+      #f7d774
+    );
+
+  color:#000;
+
+  box-shadow:
+    0 10px 30px rgba(212,175,55,.28);
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+}
+
+/* ======================================================
+HEADER ANALYTICS
+====================================================== */
+
+.hero{
+
+  width:100%;
+
+  border-radius:36px;
+
+  padding:30px;
+
+  margin-bottom:24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+
+  position:relative;
+
+  overflow:hidden;
+
+  color:#fff;
+
+  box-shadow:
+    0 20px 60px rgba(37,99,235,.25);
+}
+
+.hero::before{
+
+  content:"";
+
+  position:absolute;
+
+  right:-80px;
+  top:-80px;
+
+  width:260px;
+  height:260px;
+
+  border-radius:50%;
+
+  background:
+    rgba(255,255,255,.08);
+}
+
+.hero h2{
+
+  font-size:34px;
+
+  font-weight:900;
+
+  letter-spacing:-1px;
+}
+
+.hero p{
+
+  margin-top:10px;
+
+  max-width:700px;
+
+  line-height:1.7;
+
+  font-size:14px;
+
+  opacity:.92;
+}
+
+.hero-stats{
+
+  margin-top:26px;
+
+  display:flex;
+  gap:14px;
+
+  flex-wrap:wrap;
+}
+
+.hero-box{
+
+  min-width:180px;
+
+  padding:18px;
+
+  border-radius:24px;
+
+  background:
+    rgba(255,255,255,.12);
+
+  backdrop-filter:blur(10px);
+}
+
+.hero-box small{
+
+  font-size:11px;
+
+  opacity:.8;
+}
+
+.hero-box h3{
+
+  margin-top:10px;
+
+  font-size:28px;
+
+  font-weight:900;
+}
+
+/* ======================================================
+KPIS
+====================================================== */
+
+.kpis{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(240px,1fr)
+    );
+
+  gap:18px;
+
+  margin-bottom:24px;
+}
+
+.kpi{
+
+  position:relative;
+
+  overflow:hidden;
+
+  border-radius:32px;
+
+  padding:24px;
+
+  background:#fff;
+
+  border:1px solid #edf2f7;
+
+  box-shadow:var(--shadow);
+}
+
+.kpi::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:120px;
+  height:120px;
+
+  border-radius:50%;
+
+  background:
+    rgba(37,99,235,.04);
+
+  right:-40px;
+  top:-40px;
+}
+
+.kpi small{
+
+  color:#64748b;
+
+  font-size:12px;
+
+  font-weight:700;
+}
+
+.kpi h2{
+
+  margin-top:16px;
+
+  font-size:42px;
+
+  font-weight:900;
+}
+
+.kpi span{
+
+  margin-top:14px;
+
+  display:inline-flex;
+
+  padding:9px 14px;
+
+  border-radius:999px;
+
+  font-size:10px;
+
+  font-weight:900;
+}
+
+.success{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.info{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.warning{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.danger{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+/* ======================================================
+GRID
+====================================================== */
+
+.grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(380px,1fr)
+    );
+
+  gap:22px;
+
+  margin-bottom:22px;
+}
+
+.card{
+
+  background:#fff;
+
+  border-radius:34px;
+
+  padding:24px;
+
+  border:1px solid #edf2f7;
+
+  box-shadow:var(--shadow);
+}
+
+.card.large{
+  grid-column:span 2;
+}
+
+.card-header{
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  margin-bottom:24px;
+}
+
+.card-header h3{
+
+  font-size:20px;
+
+  font-weight:900;
+}
+
+.badge{
+
+  padding:10px 14px;
+
+  border-radius:999px;
+
+  background:#eff6ff;
+
+  color:#2563eb;
+
+  font-size:10px;
+
+  font-weight:900;
+}
+
+.chart-box{
+
+  position:relative;
+
+  width:100%;
+  height:360px;
+}
+
+/* ======================================================
+INDICADORES
+====================================================== */
+
+.progress-group{
+
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+.progress-item{
+
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.progress-top{
+
+  display:flex;
+  justify-content:space-between;
+
+  font-size:12px;
+
+  font-weight:800;
+}
+
+.progress{
+
+  width:100%;
+  height:14px;
+
+  border-radius:999px;
+
+  overflow:hidden;
+
+  background:#edf2f7;
+}
+
+.progress div{
+
+  height:100%;
+
+  border-radius:999px;
+}
+
+/* ======================================================
+RANKING
+====================================================== */
+
+.list{
+
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.item{
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:18px;
+
+  border-radius:24px;
+
+  background:#f8fafc;
+
+  border:1px solid #edf2f7;
+}
+
+.item-left{
+
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.avatar{
+
+  width:58px;
+  height:58px;
+
+  border-radius:50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:18px;
+
+  font-weight:900;
+
+  color:#fff;
+}
+
+.item-info b{
+
+  font-size:15px;
+}
+
+.item-info p{
+
+  margin-top:5px;
+
+  font-size:12px;
+
+  color:#64748b;
+}
+
+.score{
+
+  min-width:74px;
+  height:48px;
+
+  border-radius:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f59e0b,
+      #fbbf24
+    );
+
+  color:#000;
+
+  font-size:15px;
+
+  font-weight:900;
+}
+
+/* ======================================================
+TABLE
+====================================================== */
+
+.table-wrap{
+
+  overflow:auto;
+
+  border-radius:34px;
+
+  background:#fff;
+
+  border:1px solid #edf2f7;
+
+  box-shadow:var(--shadow);
+}
+
+.table-head{
+
+  padding:24px;
+
+  border-bottom:
+    1px solid #edf2f7;
+}
+
+.table-head h3{
+
+  font-size:22px;
+
+  font-weight:900;
+}
+
+.table-head p{
+
+  margin-top:8px;
+
+  font-size:13px;
+
+  color:#64748b;
+}
+
+table{
+
+  width:100%;
+
+  border-collapse:collapse;
+}
+
+thead{
+
+  background:#0f172a;
+
+  color:#fff;
+}
+
+th{
+
+  padding:18px;
+
+  text-align:left;
+
+  font-size:11px;
+
+  font-weight:900;
+}
+
+td{
+
+  padding:18px;
+
+  border-top:
+    1px solid #edf2f7;
+
+  font-size:13px;
+}
+
+tr:hover{
+  background:#f8fafc;
+}
+
+/* ======================================================
+STATUS
+====================================================== */
+
+.status{
+
+  display:inline-flex;
+
+  padding:8px 14px;
+
+  border-radius:999px;
+
+  font-size:10px;
+
+  font-weight:900;
+}
+
+.ok{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.alerta{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.med{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+/* ======================================================
+RESPONSIVO
+====================================================== */
+
+@media(max-width:980px){
+
+  .card.large{
+    grid-column:span 1;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:700px){
+
+  body{
+    padding:14px;
+  }
+
+  .top-left h1{
+    font-size:30px;
+  }
+
+  .hero h2{
+    font-size:28px;
+  }
+
+  .chart-box{
+    height:300px;
+  }
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- ======================================================
+TOP
+====================================================== -->
+
+<div class="top">
+
+  <div class="top-left">
+
+    <h1>
+      Checklist OTTO
+    </h1>
+
+    <p>
+      Dashboard • Mercatto Delícia
+    </p>
+
+  </div>
+
+  <div class="top-right">
+
+    <button
+      class="btn btn-white"
+      onclick="carregarDados()"
+    >
+      Atualizar
+    </button>
+
+    <button class="btn btn-gold">
+      Exportar Relatório
+    </button>
+
+  </div>
+
+</div>
+
+<!-- ======================================================
+HERO
+====================================================== -->
+
+<div class="hero">
+
+  <h2>
+    Central Inteligente de Indicadores
+  </h2>
+
+  <p>
+
+    Acompanhe produtividade operacional,
+    eficiência da equipe, indicadores
+    avançados, desempenho por setor,
+    evolução em tempo real e tarefas do dia.
+
+  </p>
+
+  <div class="hero-stats">
+
+    <div class="hero-box">
+
+      <small>
+        Eficiência Operacional
+      </small>
+
+      <h3 id="heroEf">
+        0%
+      </h3>
+
+    </div>
+
+    <div class="hero-box">
+
+      <small>
+        Tarefas Hoje
+      </small>
+
+      <h3 id="heroHoje">
+        0
+      </h3>
+
+    </div>
+
+    <div class="hero-box">
+
+      <small>
+        Setores Ativos
+      </small>
+
+      <h3 id="heroSetores">
+        0
+      </h3>
+
+    </div>
+
+    <div class="hero-box">
+
+      <small>
+        Melhor Setor
+      </small>
+
+      <h3 id="heroTop">
+        -
+      </h3>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ======================================================
+KPIS
+====================================================== -->
+
+<div class="kpis">
+
+  <div class="kpi">
+
+    <small>
+      Total registros
+    </small>
+
+    <h2 id="kpiTotal">
+      0
+    </h2>
+
+    <span class="info">
+      Operacional
+    </span>
+
+  </div>
+
+  <div class="kpi">
+
+    <small>
+      Concluídos
+    </small>
+
+    <h2 id="kpiConcluidos">
+      0
+    </h2>
+
+    <span class="success">
+      Alta performance
+    </span>
+
+  </div>
+
+  <div class="kpi">
+
+    <small>
+      Pendentes
+    </small>
+
+    <h2 id="kpiPendentes">
+      0
+    </h2>
+
+    <span class="warning">
+      Fluxo ativo
+    </span>
+
+  </div>
+
+  <div class="kpi">
+
+    <small>
+      Atrasados
+    </small>
+
+    <h2 id="kpiAtrasados">
+      0
+    </h2>
+
+    <span class="danger">
+      Atenção
+    </span>
+
+  </div>
+
+</div>
+
+<!-- ======================================================
+GRID
+====================================================== -->
+
+<div class="grid">
+
+  <!-- STATUS -->
+
+  <div class="card large">
+
+    <div class="card-header">
+
+      <h3>
+        Status operacional
+      </h3>
+
+      <div class="badge">
+        Tempo real
+      </div>
+
+    </div>
+
+    <div class="chart-box">
+
+      <canvas id="graficoStatus"></canvas>
+
+    </div>
+
+  </div>
+
+  <!-- SETORES -->
+
+  <div class="card large">
+
+    <div class="card-header">
+
+      <h3>
+        Performance por setor
+      </h3>
+
+      <div class="badge">
+        Operacional
+      </div>
+
+    </div>
+
+    <div class="chart-box">
+
+      <canvas id="graficoSetores"></canvas>
+
+    </div>
+
+  </div>
+
+  <!-- INDICADORES -->
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h3>
+        Indicadores avançados
+      </h3>
+
+    </div>
+
+    <div
+      class="progress-group"
+      id="indicadores"
+    ></div>
+
+  </div>
+
+  <!-- RANKING -->
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h3>
+        Ranking operacional
+      </h3>
+
+    </div>
+
+    <div
+      class="list"
+      id="ranking"
+    ></div>
+
+  </div>
+
+</div>
+
+<!-- ======================================================
+TABLE
+====================================================== -->
+
+<div class="table-wrap">
+
+  <div class="table-head">
+
+    <h3>
+      Tarefas do dia
+    </h3>
+
+    <p>
+      Apenas tarefas registradas hoje
+    </p>
+
+  </div>
+
+  <table>
+
+    <thead>
+
+      <tr>
+
+        <th>Status</th>
+        <th>Título</th>
+        <th>Empresa</th>
+        <th>Setor</th>
+        <th>Prioridade</th>
+        <th>Data</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody id="tbody"></tbody>
+
+  </table>
+
+</div>
+
+<script>
+
+/* ======================================================
+SUPABASE
+====================================================== */
+
+const supabaseClient =
+  window.supabase.createClient(
+
+    "https://dxkszikemntfusfyrzos.supabase.co",
+
+    "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+
+)
+
+let graficoStatus
+let graficoSetores
+
+carregarDados()
+
+/* ======================================================
+LOAD
+====================================================== */
+
+async function carregarDados(){
+
+  const { data, error } =
+
+    await supabaseClient
+
+      .from("tarefas_checklist")
+
+      .select("*")
+      .order("created_at",{ascending:false})
+
+  if(error){
+
+    console.log(error)
+
+    return
+  }
+
+  const lista = data || []
+
+  atualizarKPIS(lista)
+
+  montarTabela(lista)
+
+  montarGraficos(lista)
+
+  montarIndicadores(lista)
+
+  montarRanking(lista)
+
+  atualizarHero(lista)
+
+}
+
+/* ======================================================
+KPIS
+====================================================== */
+
+function atualizarKPIS(lista){
+
+  const concluidos =
+    lista.filter(
+      x=>x.status === "CONCLUIDO"
+    ).length
+
+  const pendentes =
+    lista.filter(
+      x=>x.status === "PENDENTE"
+    ).length
+
+  const atrasados =
+    lista.filter(
+      x=>x.status === "ATRASADO"
+    ).length
+
+  document.getElementById(
+    "kpiTotal"
+  ).innerText =
+    lista.length
+
+  document.getElementById(
+    "kpiConcluidos"
+  ).innerText =
+    concluidos
+
+  document.getElementById(
+    "kpiPendentes"
+  ).innerText =
+    pendentes
+
+  document.getElementById(
+    "kpiAtrasados"
+  ).innerText =
+    atrasados
+
+}
+
+/* ======================================================
+HERO
+====================================================== */
+
+function atualizarHero(lista){
+
+  const hoje =
+    new Date()
+      .toLocaleDateString("pt-BR")
+
+  const tarefasHoje =
+
+    lista.filter(t=>{
+
+      if(!t.created_at)
+        return false
+
+      return new Date(
+        t.created_at
+      ).toLocaleDateString("pt-BR")
+      === hoje
+
+    })
+
+  const concluidos =
+    lista.filter(
+      x=>x.status === "CONCLUIDO"
+    ).length
+
+  const eficiencia =
+
+    lista.length > 0
+
+    ? Math.round(
+        (concluidos/lista.length)*100
+      )
+
+    : 0
+
+  const setores = {}
+
+  lista.forEach(t=>{
+
+    const s =
+      t.setor || "Outros"
+
+    if(!setores[s])
+      setores[s] = 0
+
+    if(t.status === "CONCLUIDO"){
+
+      setores[s]++
+    }
+
+  })
+
+  const top =
+
+    Object.entries(setores)
+
+      .sort(
+        (a,b)=>
+          b[1]-a[1]
+      )[0]
+
+  document.getElementById(
+    "heroEf"
+  ).innerText =
+    eficiencia + "%"
+
+  document.getElementById(
+    "heroHoje"
+  ).innerText =
+    tarefasHoje.length
+
+  document.getElementById(
+    "heroSetores"
+  ).innerText =
+    Object.keys(setores).length
+
+  document.getElementById(
+    "heroTop"
+  ).innerText =
+    top
+      ? top[0]
+      : "-"
+
+}
+
+/* ======================================================
+TABLE DIA
+====================================================== */
+
+function montarTabela(lista){
+
+  const tbody =
+    document.getElementById(
+      "tbody"
+    )
+
+  tbody.innerHTML = ""
+
+  const hoje =
+    new Date()
+      .toLocaleDateString("pt-BR")
+
+  const tarefasHoje =
+
+    lista.filter(t=>{
+
+      if(!t.created_at)
+        return false
+
+      return new Date(
+        t.created_at
+      ).toLocaleDateString("pt-BR")
+      === hoje
+
+    })
+
+  tarefasHoje.forEach(t=>{
+
+    tbody.innerHTML += `
+
+      <tr>
+
+        <td>
+
+          <span class="
+            status
+            ${
+              t.status === "CONCLUIDO"
+
+              ? "ok"
+
+              : t.status === "ATRASADO"
+
+              ? "alerta"
+
+              : "med"
+            }
+          ">
+
+            ${t.status || "-"}
+
+          </span>
+
+        </td>
+
+        <td>
+
+          <b>
+            ${t.titulo || "-"}
+          </b>
+
+        </td>
+
+        <td>
+
+          ${t.empresa || "-"}
+
+        </td>
+
+        <td>
+
+          ${t.setor || "-"}
+
+        </td>
+
+        <td>
+
+          ${t.prioridade || "-"}
+
+        </td>
+
+        <td>
+
+          ${
+            t.created_at
+
+            ? new Date(
+                t.created_at
+              ).toLocaleString("pt-BR")
+
+            : "-"
+          }
+
+        </td>
+
+      </tr>
+
+    `
+
+  })
+
+}
+
+/* ======================================================
+GRAFICOS
+====================================================== */
+
+function montarGraficos(lista){
+
+  const pendentes =
+    lista.filter(
+      x=>x.status === "PENDENTE"
+    ).length
+
+  const concluidos =
+    lista.filter(
+      x=>x.status === "CONCLUIDO"
+    ).length
+
+  const atrasados =
+    lista.filter(
+      x=>x.status === "ATRASADO"
+    ).length
+
+  if(graficoStatus)
+    graficoStatus.destroy()
+
+  graficoStatus =
+    new Chart(
+
+      document.getElementById(
+        "graficoStatus"
+      ),
+
+      {
+
+        type:"doughnut",
+
+        data:{
+
+          labels:[
+            "Concluídos",
+            "Pendentes",
+            "Atrasados"
+          ],
+
+          datasets:[{
+
+            data:[
+              concluidos,
+              pendentes,
+              atrasados
+            ],
+
+            backgroundColor:[
+              "#16a34a",
+              "#2563eb",
+              "#dc2626"
+            ],
+
+            borderWidth:0
+
+          }]
+
+        },
+
+        options:{
+          responsive:true,
+          maintainAspectRatio:false
+        }
+
+      }
+
+    )
+
+  const mapa = {}
+
+  lista.forEach(t=>{
+
+    const setor =
+      t.setor || "Outros"
+
+    if(!mapa[setor]){
+
+      mapa[setor] = 0
+    }
+
+    mapa[setor]++
+
+  })
+
+  if(graficoSetores)
+    graficoSetores.destroy()
+
+  graficoSetores =
+    new Chart(
+
+      document.getElementById(
+        "graficoSetores"
+      ),
+
+      {
+
+        type:"bar",
+
+        data:{
+
+          labels:
+            Object.keys(mapa),
+
+          datasets:[{
+
+            label:"Total",
+
+            data:
+              Object.values(mapa),
+
+            borderRadius:14,
+
+            backgroundColor:"#2563eb"
+
+          }]
+
+        },
+
+        options:{
+          responsive:true,
+          maintainAspectRatio:false
+        }
+
+      }
+
+    )
+
+}
+
+/* ======================================================
+INDICADORES
+====================================================== */
+
+function montarIndicadores(lista){
+
+  const total =
+    lista.length
+
+  const concluidos =
+    lista.filter(
+      x=>x.status === "CONCLUIDO"
+    ).length
+
+  const atrasados =
+    lista.filter(
+      x=>x.status === "ATRASADO"
+    ).length
+
+  const eficiencia =
+
+    total > 0
+
+    ? Math.round(
+        (concluidos/total)*100
+      )
+
+    : 0
+
+  const atraso =
+
+    total > 0
+
+    ? Math.round(
+        (atrasados/total)*100
+      )
+
+    : 0
+
+  const pontualidade =
+    100 - atraso
+
+  document.getElementById(
+    "indicadores"
+  ).innerHTML = `
+
+    <div class="progress-item">
+
+      <div class="progress-top">
+
+        <span>
+          Eficiência operacional
+        </span>
+
+        <b>
+          ${eficiencia}%
+        </b>
+
+      </div>
+
+      <div class="progress">
+
+        <div style="
+          width:${eficiencia}%;
+          background:linear-gradient(
+            90deg,
+            #16a34a,
+            #4ade80
+          );
+        "></div>
+
+      </div>
+
+    </div>
+
+    <div class="progress-item">
+
+      <div class="progress-top">
+
+        <span>
+          Pontualidade
+        </span>
+
+        <b>
+          ${pontualidade}%
+        </b>
+
+      </div>
+
+      <div class="progress">
+
+        <div style="
+          width:${pontualidade}%;
+          background:linear-gradient(
+            90deg,
+            #2563eb,
+            #60a5fa
+          );
+        "></div>
+
+      </div>
+
+    </div>
+
+    <div class="progress-item">
+
+      <div class="progress-top">
+
+        <span>
+          Taxa atraso
+        </span>
+
+        <b>
+          ${atraso}%
+        </b>
+
+      </div>
+
+      <div class="progress">
+
+        <div style="
+          width:${atraso}%;
+          background:linear-gradient(
+            90deg,
+            #dc2626,
+            #f87171
+          );
+        "></div>
+
+      </div>
+
+    </div>
+
+  `
+
+}
+
+/* ======================================================
+RANKING
+====================================================== */
+
+function montarRanking(lista){
+
+  const mapa = {}
+
+  lista.forEach(t=>{
+
+    const setor =
+      t.setor || "Outros"
+
+    if(!mapa[setor]){
+
+      mapa[setor] = 0
+    }
+
+    if(t.status === "CONCLUIDO"){
+
+      mapa[setor]++
+    }
+
+  })
+
+  const ranking =
+
+    Object.entries(mapa)
+
+      .sort(
+        (a,b)=>
+          b[1]-a[1]
+      )
+
+      .slice(0,5)
+
+  const box =
+    document.getElementById(
+      "ranking"
+    )
+
+  box.innerHTML = ""
+
+  ranking.forEach(item=>{
+
+    box.innerHTML += `
+
+      <div class="item">
+
+        <div class="item-left">
+
+          <div class="avatar">
+
+            ${item[0].charAt(0)}
+
+          </div>
+
+          <div class="item-info">
+
+            <b>
+              ${item[0]}
+            </b>
+
+            <p>
+              Melhor desempenho operacional
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="score">
+
+          ${item[1]}
+
+        </div>
+
+      </div>
+
+    `
+
+  })
+
+}
+
+</script>
+</body>
+</html>

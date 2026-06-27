@@ -1,0 +1,2584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f4f8ff">
+
+<title>Checklist • Evidências OTTO</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --bg:#f4f8ff;
+  --card:#ffffff;
+  --card2:#f8fbff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --muted2:#94a3b8;
+  --line:#dbeafe;
+
+  --blue:#2563eb;
+  --blue-dark:#1d4ed8;
+  --blue-soft:#eff6ff;
+
+  --green:#16a34a;
+  --green-soft:#dcfce7;
+
+  --red:#dc2626;
+  --red-soft:#fee2e2;
+
+  --orange:#ea580c;
+  --orange-soft:#ffedd5;
+
+  --purple:#7c3aed;
+  --purple-soft:#f3e8ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fef9c3;
+
+  --dark:#0f172a;
+
+  --shadow:0 8px 24px rgba(15,23,42,.08);
+  --shadow2:0 4px 14px rgba(15,23,42,.06);
+  --safe-bottom:env(safe-area-inset-bottom);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  width:100%;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+body{
+  padding:7px;
+  padding-bottom:calc(18px + var(--safe-bottom));
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  border:none;
+  cursor:pointer;
+}
+
+input,
+select{
+  outline:none;
+}
+
+.app{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+}
+
+/* =========================================================
+TOPO
+========================================================= */
+
+.top{
+  position:sticky;
+  top:6px;
+  z-index:30;
+  background:rgba(255,255,255,.96);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:8px;
+  margin-bottom:8px;
+  backdrop-filter:blur(16px);
+}
+
+.top-main{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  min-width:0;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+.logo{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#2563eb,#60a5fa);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:17px;
+  box-shadow:0 8px 20px rgba(37,99,235,.25);
+  flex:0 0 auto;
+}
+
+.brand-text{
+  min-width:0;
+}
+
+.brand-text small{
+  display:inline-flex;
+  align-items:center;
+  height:18px;
+  padding:0 7px;
+  border-radius:999px;
+  background:var(--blue-soft);
+  color:var(--blue);
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.35px;
+  max-width:100%;
+}
+
+.brand-text h1{
+  margin-top:3px;
+  font-size:15px;
+  line-height:1.05;
+  font-weight:900;
+  letter-spacing:-.45px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:210px;
+}
+
+.periodo-texto{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:230px;
+}
+
+.refresh{
+  width:39px;
+  height:39px;
+  flex:0 0 auto;
+  border-radius:14px;
+  background:var(--blue);
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  box-shadow:0 8px 18px rgba(37,99,235,.22);
+}
+
+.refresh:active{
+  transform:scale(.96);
+}
+
+/* =========================================================
+FILTROS
+========================================================= */
+
+.filters{
+  margin-top:8px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:7px;
+}
+
+.search-line{
+  display:grid;
+  grid-template-columns:1fr 118px;
+  gap:6px;
+}
+
+.search{
+  height:38px;
+  border:1px solid var(--line);
+  background:#f8fafc;
+  border-radius:14px;
+  padding:0 11px;
+  font-size:12px;
+  font-weight:800;
+  color:var(--text);
+  min-width:0;
+}
+
+.select{
+  height:38px;
+  border:1px solid var(--line);
+  background:#f8fafc;
+  border-radius:14px;
+  padding:0 9px;
+  font-size:11px;
+  font-weight:900;
+  color:#334155;
+  min-width:0;
+}
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+
+.chips{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding-bottom:1px;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+
+.chips::-webkit-scrollbar{
+  display:none;
+}
+
+.chip{
+  flex:0 0 auto;
+  height:34px;
+  padding:0 11px;
+  border-radius:999px;
+  background:#f8fafc;
+  border:1px solid var(--line);
+  color:#334155;
+  font-size:10.5px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.chip.active{
+  background:var(--blue);
+  color:#fff;
+  border-color:var(--blue);
+  box-shadow:0 8px 18px rgba(37,99,235,.18);
+}
+
+/* =========================================================
+KPIS
+========================================================= */
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom:8px;
+}
+
+.kpi{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:8px 4px;
+  box-shadow:var(--shadow2);
+  text-align:center;
+  min-height:58px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.kpi b{
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:-.6px;
+  line-height:1;
+}
+
+.kpi span{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:7.8px;
+  font-weight:900;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.kpi.total b{
+  color:var(--blue);
+}
+
+.kpi.ok b{
+  color:var(--green);
+}
+
+.kpi.media b{
+  color:var(--purple);
+}
+
+.kpi.fonte b{
+  color:var(--orange);
+}
+
+/* =========================================================
+PROGRESSO
+========================================================= */
+
+.progress-card{
+  background:#fff;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow2);
+  border-radius:16px;
+  padding:9px;
+  margin-bottom:8px;
+}
+
+.progress-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-size:11px;
+  font-weight:900;
+  margin-bottom:7px;
+}
+
+.progress-top span{
+  color:#334155;
+}
+
+.progress-top b{
+  color:var(--green);
+  font-size:13px;
+}
+
+.bar{
+  width:100%;
+  height:9px;
+  background:#e2e8f0;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.bar div{
+  width:0%;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#16a34a,#22c55e);
+  transition:.25s;
+}
+
+/* =========================================================
+TÍTULOS
+========================================================= */
+
+.section-title{
+  margin:11px 2px 7px;
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:8px;
+}
+
+.section-title h2{
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:-.35px;
+}
+
+.section-title span{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+/* =========================================================
+RANKING
+========================================================= */
+
+.ranking{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.rank{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:9px;
+  box-shadow:var(--shadow2);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:9px;
+}
+
+.rank-left{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+
+.rank-pos{
+  width:34px;
+  height:34px;
+  border-radius:13px;
+  background:var(--blue-soft);
+  color:var(--blue);
+  font-size:12px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+}
+
+.rank-name{
+  min-width:0;
+}
+
+.rank-name b{
+  display:block;
+  font-size:12.5px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:190px;
+}
+
+.rank-name small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:9.5px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.rank-score{
+  text-align:right;
+  flex:0 0 auto;
+}
+
+.rank-score b{
+  display:block;
+  color:var(--green);
+  font-size:14px;
+  font-weight:900;
+}
+
+.rank-score small{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800;
+}
+
+/* =========================================================
+LISTA DE TAREFAS
+========================================================= */
+
+.task-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.task-line{
+  background:#fff;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  border-radius:18px;
+  padding:8px;
+  display:grid;
+  grid-template-columns:74px minmax(0,1fr);
+  gap:9px;
+  align-items:stretch;
+  overflow:hidden;
+}
+
+.thumb{
+  width:74px;
+  min-height:104px;
+  height:100%;
+  border-radius:15px;
+  overflow:hidden;
+  background:#f1f5f9;
+  position:relative;
+  border:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.thumb img,
+.thumb video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.thumb-empty{
+  color:#94a3b8;
+  font-size:22px;
+  font-weight:900;
+}
+
+.media-badge{
+  position:absolute;
+  left:5px;
+  bottom:5px;
+  min-height:22px;
+  padding:0 7px;
+  border-radius:999px;
+  background:rgba(15,23,42,.76);
+  color:#fff;
+  font-size:9px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+
+.task-info{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.task-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:7px;
+}
+
+.task-title{
+  font-size:12.8px;
+  font-weight:900;
+  line-height:1.22;
+  color:#0f172a;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.status{
+  flex:0 0 auto;
+  min-height:23px;
+  padding:0 7px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:7.5px;
+  font-weight:900;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.status.ok{
+  background:var(--green-soft);
+  color:#166534;
+}
+
+.status.pending{
+  background:var(--yellow-soft);
+  color:#854d0e;
+}
+
+.status.late{
+  background:var(--red-soft);
+  color:#991b1b;
+}
+
+.status.other{
+  background:#f1f5f9;
+  color:#475569;
+}
+
+.meta-line{
+  margin-top:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+}
+
+.meta{
+  min-height:22px;
+  padding:0 7px;
+  display:flex;
+  align-items:center;
+  border-radius:999px;
+  background:#f8fafc;
+  border:1px solid var(--line);
+  color:#334155;
+  font-size:8.8px;
+  font-weight:800;
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.meta.source{
+  background:var(--orange-soft);
+  border-color:#fed7aa;
+  color:#c2410c;
+}
+
+.meta.media{
+  background:var(--purple-soft);
+  border-color:#ddd6fe;
+  color:#6d28d9;
+}
+
+.meta.green{
+  background:var(--green-soft);
+  border-color:#bbf7d0;
+  color:#15803d;
+}
+
+.meta.blue{
+  background:var(--blue-soft);
+  border-color:#bfdbfe;
+  color:#1d4ed8;
+}
+
+.fontes-box{
+  margin-top:6px;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.fonte-card{
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  border-radius:12px;
+  padding:7px;
+}
+
+.fonte-card small{
+  display:block;
+  color:#9a3412;
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:3px;
+}
+
+.fonte-card b{
+  display:block;
+  color:#7c2d12;
+  font-size:11.5px;
+  font-weight:900;
+  line-height:1.2;
+  word-break:break-word;
+}
+
+.fonte-card span{
+  display:block;
+  margin-top:3px;
+  color:#9a3412;
+  font-size:9px;
+  font-weight:700;
+  line-height:1.25;
+}
+
+.task-actions{
+  margin-top:auto;
+  padding-top:7px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+}
+
+.action{
+  height:31px;
+  border-radius:12px;
+  background:#f8fafc;
+  border:1px solid var(--line);
+  color:#334155;
+  font-size:10px;
+  font-weight:900;
+}
+
+.action.primary{
+  background:var(--blue-soft);
+  color:var(--blue);
+  border-color:#bfdbfe;
+}
+
+.action.disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+/* =========================================================
+ESTADOS
+========================================================= */
+
+.empty,
+.loading,
+.error{
+  background:#fff;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  border-radius:18px;
+  padding:22px 12px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  line-height:1.45;
+}
+
+.error{
+  background:var(--red-soft);
+  border-color:#fecaca;
+  color:#991b1b;
+}
+
+/* =========================================================
+MODAL
+========================================================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(15,23,42,.88);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modal-card{
+  width:100%;
+  max-width:560px;
+  max-height:92vh;
+  background:#020617;
+  border-radius:22px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,.48);
+}
+
+.modal-head{
+  min-height:50px;
+  padding:0 11px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#fff;
+  border-bottom:1px solid rgba(255,255,255,.12);
+  gap:8px;
+}
+
+.modal-head b{
+  font-size:12.5px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.modal-close{
+  width:37px;
+  height:37px;
+  border-radius:14px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:21px;
+  font-weight:900;
+}
+
+.modal-body{
+  min-height:290px;
+  max-height:80vh;
+  overflow:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#020617;
+}
+
+.modal-body img,
+.modal-body video{
+  width:100%;
+  height:auto;
+  max-height:80vh;
+  object-fit:contain;
+}
+
+.modal-file{
+  color:#fff;
+  padding:24px 15px;
+  text-align:center;
+  line-height:1.45;
+}
+
+.modal-file a{
+  margin-top:12px;
+  height:42px;
+  padding:0 16px;
+  border-radius:13px;
+  background:var(--blue);
+  color:#fff;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:900;
+}
+
+/* =========================================================
+DESKTOP
+========================================================= */
+
+@media(min-width:760px){
+  body{
+    padding:12px;
+    padding-bottom:22px;
+  }
+
+  .top{
+    padding:10px;
+  }
+
+  .brand-text h1{
+    font-size:18px;
+    max-width:none;
+  }
+
+  .periodo-texto{
+    max-width:none;
+    font-size:11px;
+  }
+
+  .filters{
+    grid-template-columns:1fr auto auto;
+    align-items:center;
+  }
+
+  .search-line{
+    grid-template-columns:minmax(260px,360px) 140px;
+  }
+
+  .filter-grid{
+    grid-template-columns:140px 150px;
+  }
+
+  .chips{
+    justify-content:flex-end;
+  }
+
+  .kpis{
+    gap:9px;
+  }
+
+  .kpi{
+    min-height:72px;
+  }
+
+  .kpi b{
+    font-size:25px;
+  }
+
+  .kpi span{
+    font-size:10px;
+  }
+
+  .task-list{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+
+  .ranking{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px;
+  }
+
+  .task-line{
+    grid-template-columns:92px minmax(0,1fr);
+    padding:10px;
+  }
+
+  .thumb{
+    width:92px;
+    min-height:122px;
+  }
+
+  .task-title{
+    font-size:14px;
+  }
+
+  .meta{
+    font-size:10px;
+    min-height:24px;
+  }
+
+  .action{
+    height:34px;
+    font-size:11px;
+  }
+}
+
+/* =========================================================
+CELULAR PEQUENO
+========================================================= */
+
+@media(max-width:390px){
+  body{
+    padding:5px;
+    padding-bottom:14px;
+  }
+
+  .top{
+    top:5px;
+    padding:6px;
+    border-radius:16px;
+    margin-bottom:6px;
+  }
+
+  .logo{
+    width:34px;
+    height:34px;
+    border-radius:12px;
+    font-size:15px;
+  }
+
+  .brand{
+    gap:6px;
+  }
+
+  .brand-text small{
+    height:17px;
+    padding:0 6px;
+    font-size:7.3px;
+  }
+
+  .brand-text h1{
+    font-size:13px;
+    max-width:170px;
+  }
+
+  .periodo-texto{
+    font-size:9.2px;
+    max-width:170px;
+  }
+
+  .refresh{
+    width:35px;
+    height:35px;
+    border-radius:12px;
+  }
+
+  .filters{
+    margin-top:7px;
+    gap:6px;
+  }
+
+  .search-line{
+    grid-template-columns:1fr 104px;
+    gap:5px;
+  }
+
+  .search,
+  .select{
+    height:35px;
+    border-radius:12px;
+    font-size:10.5px;
+  }
+
+  .filter-grid{
+    gap:5px;
+  }
+
+  .chip{
+    height:32px;
+    padding:0 10px;
+    font-size:9.8px;
+  }
+
+  .kpis{
+    gap:5px;
+    margin-bottom:6px;
+  }
+
+  .kpi{
+    min-height:52px;
+    padding:7px 3px;
+    border-radius:13px;
+  }
+
+  .kpi b{
+    font-size:16px;
+  }
+
+  .kpi span{
+    font-size:7.1px;
+  }
+
+  .progress-card{
+    padding:8px;
+    margin-bottom:6px;
+    border-radius:15px;
+  }
+
+  .progress-top{
+    font-size:10px;
+  }
+
+  .section-title{
+    margin:9px 2px 6px;
+  }
+
+  .section-title h2{
+    font-size:13.5px;
+  }
+
+  .section-title span{
+    font-size:9px;
+  }
+
+  .rank{
+    padding:8px;
+    border-radius:15px;
+  }
+
+  .rank-pos{
+    width:29px;
+    height:29px;
+    border-radius:11px;
+    font-size:11px;
+  }
+
+  .rank-name b{
+    font-size:11.5px;
+    max-width:150px;
+  }
+
+  .rank-name small{
+    font-size:8.6px;
+  }
+
+  .rank-score b{
+    font-size:12px;
+  }
+
+  .rank-score small{
+    font-size:8.2px;
+  }
+
+  .task-list{
+    gap:7px;
+  }
+
+  .task-line{
+    grid-template-columns:66px minmax(0,1fr);
+    gap:7px;
+    padding:6px;
+    border-radius:15px;
+  }
+
+  .thumb{
+    width:66px;
+    min-height:92px;
+    border-radius:13px;
+  }
+
+  .task-title{
+    font-size:11.8px;
+  }
+
+  .status{
+    min-height:21px;
+    padding:0 6px;
+    font-size:7px;
+  }
+
+  .meta-line{
+    margin-top:4px;
+    gap:3px;
+  }
+
+  .meta{
+    min-height:20px;
+    padding:0 6px;
+    font-size:8.1px;
+  }
+
+  .fontes-box{
+    margin-top:4px;
+    gap:4px;
+  }
+
+  .fonte-card{
+    padding:5px;
+    border-radius:10px;
+  }
+
+  .fonte-card b{
+    font-size:10.3px;
+  }
+
+  .task-actions{
+    padding-top:5px;
+    gap:4px;
+  }
+
+  .action{
+    height:28px;
+    border-radius:10px;
+    font-size:9.2px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <section class="top" id="topo">
+
+    <div class="top-main">
+
+      <div class="brand">
+
+        <div class="logo">
+          ✓
+        </div>
+
+        <div class="brand-text">
+          <small>Checklist OTTO</small>
+          <h1>Evidências Operacionais</h1>
+          <p id="periodoTexto" class="periodo-texto">
+            Ontem operacional das 05:00 até 04:30.
+          </p>
+        </div>
+
+      </div>
+
+      <button class="refresh" onclick="carregarDados()" title="Atualizar">
+        ↻
+      </button>
+
+    </div>
+
+    <div class="filters">
+
+      <div class="search-line">
+
+        <input
+          id="busca"
+          class="search"
+          placeholder="Buscar tarefa, pessoa, empresa..."
+          oninput="aplicarFiltros()"
+        >
+
+        <select id="filtroStatus" class="select" onchange="aplicarFiltros()">
+          <option value="">Status</option>
+          <option value="CONCLUIDO">Concluído</option>
+          <option value="PENDENTE">Pendente</option>
+          <option value="ATRASADO">Atrasado</option>
+          <option value="EM_ANDAMENTO">Andamento</option>
+          <option value="AGUARDANDO_VALIDACAO">Validação</option>
+          <option value="AGUARDANDO_FINALIZACAO">Finalização</option>
+          <option value="CANCELADO">Cancelado</option>
+          <option value="REPROVADO">Reprovado</option>
+          <option value="IGNORADO">Ignorado</option>
+        </select>
+
+      </div>
+
+      <div class="filter-grid">
+
+        <select id="filtroEmpresa" class="select" onchange="aplicarFiltros()">
+          <option value="">Empresas</option>
+        </select>
+
+        <select id="filtroResponsavel" class="select" onchange="aplicarFiltros()">
+          <option value="">Responsável</option>
+        </select>
+
+      </div>
+
+      <div class="chips">
+
+        <button class="chip" onclick="setPeriodo('hoje',this)">
+          Hoje
+        </button>
+
+        <button class="chip active" onclick="setPeriodo('ontem',this)">
+          Ontem
+        </button>
+
+        <button class="chip" onclick="setPeriodo('7',this)">
+          7 dias
+        </button>
+
+        <button class="chip" onclick="setPeriodo('30',this)">
+          30 dias
+        </button>
+
+        <button class="chip" onclick="setPeriodo('midias',this)">
+          Com mídias
+        </button>
+
+        <button class="chip" onclick="setPeriodo('fontes',this)">
+          Com fontes
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="kpis">
+
+    <div class="kpi total">
+      <b id="kpiTotal">0</b>
+      <span>Total</span>
+    </div>
+
+    <div class="kpi ok">
+      <b id="kpiConcluidas">0</b>
+      <span>Feitas</span>
+    </div>
+
+    <div class="kpi media">
+      <b id="kpiMidias">0</b>
+      <span>Mídias</span>
+    </div>
+
+    <div class="kpi fonte">
+      <b id="kpiFontes">0</b>
+      <span>Fontes</span>
+    </div>
+
+  </section>
+
+  <section class="progress-card">
+
+    <div class="progress-top">
+      <span>Conclusão do filtro</span>
+      <b id="percentualConclusao">0%</b>
+    </div>
+
+    <div class="bar">
+      <div id="barraConclusao"></div>
+    </div>
+
+  </section>
+
+  <div class="section-title" id="rankingTopo">
+    <h2>Ranking de colaborador</h2>
+    <span id="rankingInfo">0 pessoas</span>
+  </div>
+
+  <section id="ranking" class="ranking">
+    <div class="loading">Carregando ranking...</div>
+  </section>
+
+  <div class="section-title" id="listaTopo">
+    <h2>Tarefas em linha</h2>
+    <span id="listaInfo">0 registros</span>
+  </div>
+
+  <section id="lista" class="task-list">
+    <div class="loading">Carregando tarefas...</div>
+  </section>
+
+</div>
+
+<div id="modal" class="modal" onclick="fecharModalFora(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+
+    <div class="modal-head">
+      <b id="modalTitulo">Mídia</b>
+      <button class="modal-close" onclick="fecharModal()">×</button>
+    </div>
+
+    <div id="modalBody" class="modal-body"></div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL =
+  "https://dxkszikemntfusfyrzos.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+let registros = [];
+let filtrados = [];
+let periodoAtual = "ontem";
+
+carregarDados();
+
+async function carregarDados(){
+
+  document.getElementById("lista").innerHTML =
+    '<div class="loading">Carregando tarefas...</div>';
+
+  document.getElementById("ranking").innerHTML =
+    '<div class="loading">Carregando ranking...</div>';
+
+  const { data, error } =
+    await supabaseClient
+      .from("tarefas_checklist")
+      .select("*")
+      .eq("ativo", true)
+      .eq("deletado", false)
+      .order("data_limite", { ascending:false });
+
+  if(error){
+
+    console.error(error);
+
+    document.getElementById("lista").innerHTML =
+      `
+        <div class="error">
+          Erro ao carregar dados.<br>
+          ${escapeHtml(error.message || "Verifique a tabela tarefas_checklist.")}
+        </div>
+      `;
+
+    document.getElementById("ranking").innerHTML =
+      '<div class="error">Ranking indisponível.</div>';
+
+    return;
+  }
+
+  registros = data || [];
+
+  preencherEmpresas();
+  preencherResponsaveis();
+  aplicarFiltros();
+}
+
+function aplicarFiltros(){
+
+  const busca =
+    limparTexto(
+      document.getElementById("busca").value || ""
+    );
+
+  const status =
+    document.getElementById("filtroStatus").value || "";
+
+  const empresa =
+    document.getElementById("filtroEmpresa").value || "";
+
+  const responsavel =
+    document.getElementById("filtroResponsavel").value || "";
+
+  filtrados =
+    registros.filter(t => {
+
+      if(!passaPeriodo(t)){
+        return false;
+      }
+
+      const midias =
+        midiasDaTarefa(t);
+
+      const fontes =
+        fontesDaTarefa(t);
+
+      if(periodoAtual === "midias" && midias.length === 0){
+        return false;
+      }
+
+      if(periodoAtual === "fontes" && fontes.length === 0){
+        return false;
+      }
+
+      if(status && statusNormalizado(t.status) !== status){
+        return false;
+      }
+
+      if(empresa && String(t.empresa || "") !== empresa){
+        return false;
+      }
+
+      if(responsavel){
+
+        const nomes =
+          nomesResponsaveis(t)
+            .map(n => String(n || "").trim().toUpperCase());
+
+        if(!nomes.includes(responsavel.trim().toUpperCase())){
+          return false;
+        }
+      }
+
+      if(busca){
+
+        const texto =
+          limparTexto([
+            t.titulo,
+            t.descricao,
+            t.empresa,
+            t.setor,
+            t.status,
+            t.prioridade,
+            nomeResponsavel(t),
+            nomesResponsaveis(t).join(" "),
+            t.observacoes,
+            JSON.stringify(parseJSON(t.checklist) || ""),
+            fontes.map(f => `${f.nome} ${f.valor} ${f.tipo}`).join(" ")
+          ].join(" "));
+
+        if(!texto.includes(busca)){
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+  atualizarResumo();
+  montarRanking();
+  montarLista();
+}
+
+function preencherEmpresas(){
+
+  const select =
+    document.getElementById("filtroEmpresa");
+
+  const atual =
+    select.value;
+
+  const empresas =
+    [...new Set(
+      registros
+        .map(t => t.empresa)
+        .filter(Boolean)
+    )].sort();
+
+  select.innerHTML =
+    '<option value="">Empresas</option>' +
+    empresas.map(e =>
+      `<option value="${escapeAttr(e)}">${escapeHtml(e)}</option>`
+    ).join("");
+
+  if(empresas.includes(atual)){
+    select.value = atual;
+  }
+}
+
+function preencherResponsaveis(){
+
+  const select =
+    document.getElementById("filtroResponsavel");
+
+  const atual =
+    select.value;
+
+  const nomes =
+    [...new Set(
+      registros
+        .flatMap(t => nomesResponsaveis(t))
+        .filter(Boolean)
+        .filter(n => n !== "-")
+    )].sort();
+
+  select.innerHTML =
+    '<option value="">Responsável</option>' +
+    nomes.map(n =>
+      `<option value="${escapeAttr(n)}">${escapeHtml(n)}</option>`
+    ).join("");
+
+  if(nomes.includes(atual)){
+    select.value = atual;
+  }
+}
+
+function atualizarResumo(){
+
+  const total =
+    filtrados.length;
+
+  const concluidas =
+    filtrados.filter(t => statusNormalizado(t.status) === "CONCLUIDO").length;
+
+  const midias =
+    filtrados.reduce((acc,t) => acc + midiasDaTarefa(t).length, 0);
+
+  const fontes =
+    filtrados.reduce((acc,t) => acc + fontesDaTarefa(t).length, 0);
+
+  const percentual =
+    total > 0
+      ? Math.round((concluidas / total) * 100)
+      : 0;
+
+  document.getElementById("kpiTotal").innerText =
+    total;
+
+  document.getElementById("kpiConcluidas").innerText =
+    concluidas;
+
+  document.getElementById("kpiMidias").innerText =
+    midias;
+
+  document.getElementById("kpiFontes").innerText =
+    fontes;
+
+  document.getElementById("percentualConclusao").innerText =
+    percentual + "%";
+
+  document.getElementById("barraConclusao").style.width =
+    percentual + "%";
+
+  document.getElementById("listaInfo").innerText =
+    total + " registros";
+
+  document.getElementById("periodoTexto").innerText =
+    textoPeriodo();
+}
+
+function montarRanking(){
+
+  const mapa = {};
+
+  filtrados.forEach(t => {
+
+    const nomes =
+      nomesResponsaveis(t);
+
+    nomes.forEach(nome => {
+
+      if(!nome || nome === "-"){
+        return;
+      }
+
+      if(!mapa[nome]){
+
+        mapa[nome] = {
+          total:0,
+          concluidas:0,
+          pendentes:0,
+          atrasadas:0,
+          midias:0,
+          fontes:0
+        };
+      }
+
+      mapa[nome].total++;
+
+      const status =
+        statusNormalizado(t.status);
+
+      if(status === "CONCLUIDO"){
+        mapa[nome].concluidas++;
+      }
+
+      if(status === "PENDENTE"){
+        mapa[nome].pendentes++;
+      }
+
+      if(status === "ATRASADO"){
+        mapa[nome].atrasadas++;
+      }
+
+      mapa[nome].midias += midiasDaTarefa(t).length;
+      mapa[nome].fontes += fontesDaTarefa(t).length;
+
+    });
+
+  });
+
+  const ranking =
+    Object.entries(mapa)
+      .map(([nome, info]) => {
+
+        const percentual =
+          info.total > 0
+            ? Math.round((info.concluidas / info.total) * 100)
+            : 0;
+
+        return {
+          nome,
+          ...info,
+          percentual
+        };
+      })
+      .sort((a,b) => {
+
+        if(b.concluidas !== a.concluidas){
+          return b.concluidas - a.concluidas;
+        }
+
+        if(b.percentual !== a.percentual){
+          return b.percentual - a.percentual;
+        }
+
+        if(b.fontes !== a.fontes){
+          return b.fontes - a.fontes;
+        }
+
+        return b.midias - a.midias;
+      });
+
+  document.getElementById("rankingInfo").innerText =
+    ranking.length + " pessoas";
+
+  const box =
+    document.getElementById("ranking");
+
+  if(ranking.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">Nenhum colaborador encontrado no filtro.</div>';
+
+    return;
+  }
+
+  box.innerHTML =
+    ranking.slice(0,10).map((r,index) => `
+      <article class="rank">
+
+        <div class="rank-left">
+
+          <div class="rank-pos">
+            ${index + 1}
+          </div>
+
+          <div class="rank-name">
+            <b>${escapeHtml(r.nome)}</b>
+            <small>
+              ${r.total} tarefa(s) • ${r.midias} mídia(s) • ${r.fontes} fonte(s)
+            </small>
+          </div>
+
+        </div>
+
+        <div class="rank-score">
+          <b>${r.concluidas}/${r.total}</b>
+          <small>${r.percentual}% feito</small>
+        </div>
+
+      </article>
+    `).join("");
+}
+
+function montarLista(){
+
+  const box =
+    document.getElementById("lista");
+
+  if(filtrados.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">Nenhuma tarefa encontrada com os filtros atuais.</div>';
+
+    return;
+  }
+
+  box.innerHTML =
+    filtrados.map(t => cardTarefa(t)).join("");
+}
+
+function cardTarefa(t){
+
+  const midias =
+    midiasDaTarefa(t);
+
+  const fontes =
+    fontesDaTarefa(t);
+
+  const primeiraMidia =
+    midias[0];
+
+  const status =
+    statusNormalizado(t.status);
+
+  let statusClass = "other";
+
+  if(status === "CONCLUIDO"){
+    statusClass = "ok";
+  }
+
+  if(status === "PENDENTE"){
+    statusClass = "pending";
+  }
+
+  if(status === "ATRASADO"){
+    statusClass = "late";
+  }
+
+  const limite =
+    t.data_limite
+      ? dataHora(t.data_limite)
+      : "-";
+
+  return `
+    <article class="task-line">
+
+      <button
+        class="thumb"
+        onclick="${
+          primeiraMidia
+            ? `abrirModal('${escapeAttr(primeiraMidia.url)}','${primeiraMidia.tipo}','${escapeAttr(t.titulo || "Mídia")}')`
+            : ""
+        }"
+      >
+
+        ${
+          primeiraMidia
+            ? renderThumb(primeiraMidia)
+            : '<div class="thumb-empty">📋</div>'
+        }
+
+        <div class="media-badge">
+          📎 ${midias.length}
+        </div>
+
+      </button>
+
+      <div class="task-info">
+
+        <div class="task-head">
+
+          <div class="task-title">
+            ${escapeHtml(t.titulo || "-")}
+          </div>
+
+          <div class="status ${statusClass}">
+            ${escapeHtml(status || "-")}
+          </div>
+
+        </div>
+
+        <div class="meta-line">
+
+          <div class="meta green">
+            👤 ${escapeHtml(nomeResponsavel(t))}
+          </div>
+
+          <div class="meta blue">
+            ⏰ ${escapeHtml(limite)}
+          </div>
+
+          ${
+            t.empresa
+              ? `<div class="meta">🏢 ${escapeHtml(t.empresa)}</div>`
+              : ""
+          }
+
+          ${
+            t.setor
+              ? `<div class="meta">📍 ${escapeHtml(t.setor)}</div>`
+              : ""
+          }
+
+          ${
+            t.prioridade
+              ? `<div class="meta">⚡ ${escapeHtml(t.prioridade)}</div>`
+              : ""
+          }
+
+          ${
+            fontes.length
+              ? `<div class="meta source">📌 ${fontes.length} fonte(s)</div>`
+              : ""
+          }
+
+          ${
+            midias.length
+              ? `<div class="meta media">📸 ${midias.length} mídia(s)</div>`
+              : ""
+          }
+
+        </div>
+
+        ${
+          fontes.length
+            ? `
+              <div class="fontes-box">
+                ${
+                  fontes.slice(0,2).map(f => `
+                    <div class="fonte-card">
+                      <small>Fonte da tarefa</small>
+                      <b>
+                        ${escapeHtml(f.valor || "-")}
+                        ${f.tipo ? " " + escapeHtml(f.tipo) : ""}
+                      </b>
+                      <span>
+                        ${escapeHtml(f.nome || "Fonte informada")}
+                      </span>
+                    </div>
+                  `).join("")
+                }
+              </div>
+            `
+            : ""
+        }
+
+        <div class="task-actions">
+
+          <button
+            class="action primary ${midias.length ? "" : "disabled"}"
+            ${midias.length ? `onclick="abrirGaleria('${escapeAttr(t.id)}')"` : "disabled"}
+          >
+            Ver mídias
+          </button>
+
+          <button
+            class="action ${fontes.length ? "" : "disabled"}"
+            ${fontes.length ? `onclick="mostrarFontes('${escapeAttr(t.id)}')"` : "disabled"}
+          >
+            Ver fontes
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+  `;
+}
+
+function midiasDaTarefa(t){
+
+  const lista = [];
+
+  function add(valor){
+
+    if(!valor){
+      return;
+    }
+
+    if(Array.isArray(valor)){
+
+      valor.forEach(add);
+
+      return;
+    }
+
+    if(typeof valor === "object"){
+
+      [
+        "url",
+        "foto_url",
+        "foto",
+        "imagem_url",
+        "midia_url",
+        "media_url",
+        "video_url",
+        "arquivo_url",
+        "anexo_url",
+        "evidencia_url",
+        "publicUrl",
+        "signedUrl",
+        "foto_path"
+      ].forEach(k => {
+        if(valor[k]){
+          add(valor[k]);
+        }
+      });
+
+      return;
+    }
+
+    const url =
+      String(valor).trim();
+
+    if(!url){
+      return;
+    }
+
+    if(!/^https?:\/\//i.test(url) && !url.startsWith("data:")){
+      return;
+    }
+
+    if(lista.some(x => x.url === url)){
+      return;
+    }
+
+    lista.push({
+      url,
+      tipo:tipoMidia(url)
+    });
+  }
+
+  [
+    "foto_url",
+    "foto",
+    "imagem_url",
+    "midia_url",
+    "media_url",
+    "video_url",
+    "arquivo_url",
+    "anexo_url",
+    "evidencia_url"
+  ].forEach(campo => {
+    add(t[campo]);
+  });
+
+  const checklist =
+    parseJSON(t.checklist);
+
+  if(Array.isArray(checklist)){
+
+    checklist.forEach(item => {
+
+      [
+        "foto_url",
+        "foto",
+        "foto_path",
+        "imagem_url",
+        "midia_url",
+        "media_url",
+        "video_url",
+        "arquivo_url",
+        "anexo_url",
+        "evidencia_url",
+        "publicUrl",
+        "signedUrl"
+      ].forEach(campo => {
+        add(item?.[campo]);
+      });
+
+      add(item?.fotos);
+      add(item?.midias);
+      add(item?.anexos);
+      add(item?.evidencias);
+    });
+  }
+
+  add(parseJSON(t.evidencias));
+  add(parseJSON(t.anexos));
+
+  return lista;
+}
+
+function fontesDaTarefa(t){
+
+  const lista = [];
+
+  const checklist =
+    parseJSON(t.checklist);
+
+  if(Array.isArray(checklist)){
+
+    checklist.forEach((item,index) => {
+
+      const fonteObrigatoria =
+        Boolean(item?.fonte_obrigatoria);
+
+      const fonteTipo =
+        String(item?.fonte_tipo || "").trim();
+
+      const fonteValor =
+        String(item?.fonte_valor ?? "").trim();
+
+      const temFonte =
+        fonteObrigatoria ||
+        fonteTipo ||
+        fonteValor;
+
+      if(!temFonte){
+        return;
+      }
+
+      lista.push({
+        nome:
+          item?.item ||
+          item?.descricao ||
+          item?.titulo ||
+          `Item ${index + 1}`,
+        valor:fonteValor,
+        tipo:fonteTipo,
+        obrigatoria:fonteObrigatoria,
+        foto:item?.foto_url || item?.foto_path || "",
+        respondida_em:
+          item?.fonte_respondida_em ||
+          item?.fonte_atualizada_em ||
+          item?.respondido_em ||
+          ""
+      });
+    });
+  }
+
+  return lista;
+}
+
+function abrirGaleria(id){
+
+  const tarefa =
+    filtrados.find(t => String(t.id) === String(id));
+
+  if(!tarefa){
+    return;
+  }
+
+  const midias =
+    midiasDaTarefa(tarefa);
+
+  if(!midias.length){
+    return;
+  }
+
+  const primeira =
+    midias[0];
+
+  abrirModal(
+    primeira.url,
+    primeira.tipo,
+    tarefa.titulo || "Mídia"
+  );
+}
+
+function mostrarFontes(id){
+
+  const tarefa =
+    filtrados.find(t => String(t.id) === String(id));
+
+  if(!tarefa){
+    return;
+  }
+
+  const fontes =
+    fontesDaTarefa(tarefa);
+
+  if(!fontes.length){
+    return;
+  }
+
+  document.getElementById("modalTitulo").innerText =
+    tarefa.titulo || "Fontes";
+
+  document.getElementById("modalBody").innerHTML =
+    `
+      <div class="modal-file" style="width:100%;text-align:left">
+        <div style="font-size:30px;margin-bottom:12px;text-align:center">
+          📌
+        </div>
+
+        ${
+          fontes.map(f => `
+            <div style="
+              background:#fff7ed;
+              color:#7c2d12;
+              border:1px solid #fed7aa;
+              border-radius:16px;
+              padding:12px;
+              margin-bottom:9px;
+            ">
+              <div style="
+                font-size:9px;
+                font-weight:900;
+                text-transform:uppercase;
+                color:#9a3412;
+                margin-bottom:5px;
+              ">
+                ${escapeHtml(f.nome || "Fonte")}
+              </div>
+
+              <div style="
+                font-size:19px;
+                font-weight:900;
+                line-height:1.2;
+              ">
+                ${escapeHtml(f.valor || "-")}
+                ${f.tipo ? " " + escapeHtml(f.tipo) : ""}
+              </div>
+
+              ${
+                f.respondida_em
+                  ? `
+                    <div style="
+                      margin-top:6px;
+                      font-size:10px;
+                      font-weight:700;
+                      color:#9a3412;
+                    ">
+                      Respondido em ${escapeHtml(dataHora(f.respondida_em))}
+                    </div>
+                  `
+                  : ""
+              }
+            </div>
+          `).join("")
+        }
+      </div>
+    `;
+
+  document.getElementById("modal").classList.add("open");
+}
+
+function tipoMidia(url){
+
+  const u =
+    String(url).toLowerCase().split("?")[0];
+
+  if(
+    u.endsWith(".mp4") ||
+    u.endsWith(".webm") ||
+    u.endsWith(".mov") ||
+    u.includes("video")
+  ){
+    return "video";
+  }
+
+  if(
+    u.endsWith(".jpg") ||
+    u.endsWith(".jpeg") ||
+    u.endsWith(".png") ||
+    u.endsWith(".webp") ||
+    u.endsWith(".gif") ||
+    u.includes("image")
+  ){
+    return "imagem";
+  }
+
+  return "arquivo";
+}
+
+function renderThumb(m){
+
+  if(m.tipo === "video"){
+
+    return `
+      <video
+        src="${escapeAttr(m.url)}"
+        muted
+        playsinline
+        preload="metadata"
+      ></video>
+    `;
+  }
+
+  if(m.tipo === "imagem"){
+
+    return `
+      <img
+        src="${escapeAttr(m.url)}"
+        loading="lazy"
+        alt="Mídia"
+      >
+    `;
+  }
+
+  return '<div class="thumb-empty">📎</div>';
+}
+
+function abrirModal(url,tipo,titulo){
+
+  const modal =
+    document.getElementById("modal");
+
+  const body =
+    document.getElementById("modalBody");
+
+  document.getElementById("modalTitulo").innerText =
+    titulo || "Mídia";
+
+  if(tipo === "imagem"){
+
+    body.innerHTML =
+      `<img src="${escapeAttr(url)}" alt="Mídia aberta">`;
+
+  }else if(tipo === "video"){
+
+    body.innerHTML =
+      `
+        <video
+          src="${escapeAttr(url)}"
+          controls
+          autoplay
+          playsinline
+        ></video>
+      `;
+
+  }else{
+
+    body.innerHTML =
+      `
+        <div class="modal-file">
+          <div style="font-size:40px">📎</div>
+          <p>Arquivo disponível.</p>
+          <a href="${escapeAttr(url)}" target="_blank" rel="noopener">
+            Abrir arquivo
+          </a>
+        </div>
+      `;
+  }
+
+  modal.classList.add("open");
+}
+
+function fecharModal(){
+
+  document.getElementById("modal").classList.remove("open");
+  document.getElementById("modalBody").innerHTML = "";
+}
+
+function fecharModalFora(event){
+
+  if(event.target.id === "modal"){
+    fecharModal();
+  }
+}
+
+function nomeResponsavel(t){
+
+  const nomes =
+    nomesResponsaveis(t);
+
+  return nomes[0] || "-";
+}
+
+function nomesResponsaveis(t){
+
+  try{
+
+    let r =
+      t.responsaveis ||
+      t.responsavel ||
+      t.colaborador ||
+      t.colaboradores ||
+      t.finalizado_por_nome ||
+      t.concluido_por_nome ||
+      t.criado_por_nome ||
+      null;
+
+    if(typeof r === "string"){
+
+      const texto =
+        r.trim();
+
+      if(!texto){
+        return [];
+      }
+
+      if(
+        texto.startsWith("[") ||
+        texto.startsWith("{")
+      ){
+        r = JSON.parse(texto);
+      }else{
+        return [texto];
+      }
+    }
+
+    if(Array.isArray(r)){
+
+      return r
+        .map(x =>
+          x?.nome ||
+          x?.name ||
+          x?.colaborador ||
+          x?.responsavel ||
+          ""
+        )
+        .filter(Boolean);
+    }
+
+    if(typeof r === "object" && r){
+
+      const nome =
+        r.nome ||
+        r.name ||
+        r.colaborador ||
+        r.responsavel ||
+        "";
+
+      return nome ? [nome] : [];
+    }
+
+    return [];
+
+  }catch(e){
+    return [];
+  }
+}
+
+/*
+  FILTRO CERTO:
+  Usa data_limite.
+  Hoje e ontem usam janela operacional.
+  Com mídias e Com fontes usam o mesmo ontem operacional.
+*/
+function passaPeriodo(t){
+
+  if(!t.data_limite){
+    return false;
+  }
+
+  const data =
+    new Date(t.data_limite);
+
+  if(Number.isNaN(data.getTime())){
+    return false;
+  }
+
+  let r = null;
+
+  if(periodoAtual === "hoje"){
+    r = periodoOperacional(0);
+  }
+
+  if(
+    periodoAtual === "ontem" ||
+    periodoAtual === "midias" ||
+    periodoAtual === "fontes"
+  ){
+    r = periodoOperacional(-1);
+  }
+
+  if(r){
+    return data >= r.inicio && data <= r.fim;
+  }
+
+  const dias =
+    Number(periodoAtual || 7);
+
+  const agora =
+    new Date();
+
+  const inicio =
+    new Date();
+
+  inicio.setDate(agora.getDate() - dias);
+  inicio.setHours(5,0,0,0);
+
+  return data >= inicio && data <= agora;
+}
+
+/*
+  Janela operacional:
+  05:00 até 04:30 do dia seguinte.
+*/
+function periodoOperacional(offset){
+
+  const agora =
+    new Date();
+
+  const bahia =
+    partesBahia(agora);
+
+  let inicio =
+    new Date(
+      bahia.ano,
+      bahia.mes - 1,
+      bahia.dia,
+      5,
+      0,
+      0,
+      0
+    );
+
+  if(
+    bahia.hora < 5 ||
+    (
+      bahia.hora === 4 &&
+      bahia.minuto <= 30
+    )
+  ){
+    inicio.setDate(inicio.getDate() - 1);
+  }
+
+  inicio.setDate(inicio.getDate() + offset);
+
+  const fim =
+    new Date(inicio);
+
+  fim.setDate(fim.getDate() + 1);
+  fim.setHours(4,30,0,0);
+
+  return { inicio, fim };
+}
+
+function partesBahia(date){
+
+  const parts =
+    new Intl.DateTimeFormat("pt-BR", {
+      timeZone:"America/Bahia",
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit",
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit",
+      hour12:false
+    })
+    .formatToParts(date)
+    .reduce((acc,p) => {
+      acc[p.type] = p.value;
+      return acc;
+    }, {});
+
+  return {
+    ano:Number(parts.year),
+    mes:Number(parts.month),
+    dia:Number(parts.day),
+    hora:Number(parts.hour),
+    minuto:Number(parts.minute),
+    segundo:Number(parts.second)
+  };
+}
+
+function dataHora(data){
+
+  if(!data){
+    return "-";
+  }
+
+  try{
+
+    return new Intl.DateTimeFormat("pt-BR", {
+      timeZone:"America/Bahia",
+      day:"2-digit",
+      month:"2-digit",
+      year:"2-digit",
+      hour:"2-digit",
+      minute:"2-digit"
+    }).format(new Date(data));
+
+  }catch(e){
+    return "-";
+  }
+}
+
+function textoPeriodo(){
+
+  if(periodoAtual === "hoje"){
+    return "Hoje operacional das 05:00 até 04:30.";
+  }
+
+  if(periodoAtual === "ontem"){
+    return "Ontem operacional das 05:00 até 04:30.";
+  }
+
+  if(periodoAtual === "7"){
+    return "Mostrando tarefas dos últimos 7 dias.";
+  }
+
+  if(periodoAtual === "30"){
+    return "Mostrando tarefas dos últimos 30 dias.";
+  }
+
+  if(periodoAtual === "midias"){
+    return "Ontem operacional com mídias: 05:00 até 04:30.";
+  }
+
+  if(periodoAtual === "fontes"){
+    return "Ontem operacional com fontes: 05:00 até 04:30.";
+  }
+
+  return "Dashboard mobile de evidências.";
+}
+
+function setPeriodo(periodo,btn){
+
+  periodoAtual = periodo;
+
+  document
+    .querySelectorAll(".chip")
+    .forEach(c => c.classList.remove("active"));
+
+  btn.classList.add("active");
+
+  aplicarFiltros();
+}
+
+function statusNormalizado(status){
+
+  return String(status || "")
+    .trim()
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"");
+}
+
+function limparTexto(texto){
+
+  return String(texto || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .trim();
+}
+
+function parseJSON(valor){
+
+  if(!valor){
+    return null;
+  }
+
+  if(typeof valor === "object"){
+    return valor;
+  }
+
+  try{
+    return JSON.parse(valor);
+  }catch(e){
+    return valor;
+  }
+}
+
+function escapeHtml(texto){
+
+  return String(texto ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function escapeAttr(texto){
+  return escapeHtml(texto).replaceAll("`","&#096;");
+}
+</script>
+
+</body>
+</html>
