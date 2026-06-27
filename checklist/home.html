@@ -1,0 +1,2987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="
+width=device-width,
+initial-scale=1.0,
+maximum-scale=1,
+user-scalable=no
+" />
+
+  <title>
+    Checklist
+  </title>
+
+
+  <meta name="theme-color" content="#f4f7fb" />
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <meta name="apple-mobile-web-app-title" content="Checklist" />
+
+  <link rel="apple-touch-icon" href="logos/apps/checklistmercato.png" />
+
+  <link rel="manifest" href="./manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --line: #e7edf5;
+
+      --text: #111827;
+      --muted: #64748b;
+
+      --green: #16a34a;
+      --greenbg: #dcfce7;
+
+      --yellow: #f59e0b;
+      --yellowbg: #fef3c7;
+
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, sans-serif;
+    }
+
+    html,
+    body {
+
+      width: 100%;
+      height: 100%;
+
+      overflow: hidden;
+
+      background: var(--bg);
+      overscroll-behavior: none;
+
+      -webkit-user-select: none;
+
+      -webkit-touch-callout: none;
+
+      -webkit-tap-highlight-color:
+        transparent;
+
+
+
+
+
+
+
+
+
+    }
+
+    .app {
+
+      width: 100%;
+      height: 100vh;
+
+      overflow: auto;
+
+      padding-bottom: 120px;
+
+    }
+
+    /* ======================================================
+TOPBAR
+====================================================== */
+
+    .topbar {
+
+      position: sticky;
+      top: 0;
+      z-index: 999;
+
+      background: rgba(244, 247, 251, .96);
+
+      backdrop-filter: blur(16px);
+
+      padding: 12px 14px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      overflow: hidden;
+    }
+
+    .topbar-left {
+
+      flex: 1;
+
+      min-width: 0;
+
+      overflow: hidden;
+    }
+
+    .tt {
+
+      font-size: clamp(18px, 4vw, 24px);
+
+      font-weight: 800;
+
+      color: #111827;
+
+      line-height: 1;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sub {
+
+      margin-top: 3px;
+
+      font-size: clamp(10px, 2.8vw, 13px);
+
+      color: #64748b;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user {
+
+      display: flex;
+      align-items: center;
+
+      gap: 8px;
+
+      min-width: 0;
+
+      max-width: 55%;
+
+      flex-shrink: 1;
+
+      overflow: hidden;
+    }
+
+    .avatar {
+
+      width: 42px;
+      height: 42px;
+
+      border-radius: 50%;
+
+      background: #2563eb;
+
+      background-size: cover;
+      background-position: center;
+
+      flex-shrink: 0;
+    }
+
+    .user-info {
+
+      min-width: 0;
+
+      overflow: hidden;
+    }
+
+    .user-name {
+
+      font-size: clamp(11px, 3vw, 14px);
+
+      font-weight: 800;
+
+      color: #111827;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-role {
+
+      margin-top: 2px;
+
+      font-size: clamp(9px, 2.5vw, 11px);
+
+      color: #64748b;
+    }
+
+    #rankingUsuario {
+
+      margin-top: 5px;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+      max-width: 100%;
+
+      padding: 5px 10px;
+
+      border-radius: 999px;
+
+      background: #eff6ff;
+
+      border: 1px solid #bfdbfe;
+
+      color: #1d4ed8;
+
+      font-size: 10px;
+
+      font-weight: 900;
+
+      white-space: nowrap;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+    }
+
+    #rankingUsuario {
+
+      max-width: 100%;
+
+      overflow: hidden;
+
+      white-space: nowrap;
+
+      text-overflow: ellipsis;
+    }
+
+    /* ======================================================
+LISTA
+====================================================== */
+
+    .lista {
+
+      padding: 0 16px 30px;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 12px;
+
+    }
+
+    /* ======================================================
+CARD
+====================================================== */
+
+    .card {
+
+      background: #fff;
+
+      border: 1px solid var(--line);
+
+      border-radius: 24px;
+
+      padding: 16px;
+
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, .04);
+
+    }
+
+    .head {
+
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+
+      gap: 12px;
+
+    }
+
+
+
+    .nome {
+
+      font-size: 15px;
+      font-weight: 800;
+
+      line-height: 1.5;
+
+      color: #111827;
+
+    }
+
+    .desc {
+
+      margin-top: 6px;
+
+      font-size: 12px;
+
+      line-height: 1.6;
+
+      color: #64748b;
+
+    }
+
+    /* ======================================================
+STATUS
+====================================================== */
+
+    .status {
+
+      min-width: 84px;
+
+      height: 32px;
+
+      border-radius: 999px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 10px;
+      font-weight: 800;
+
+    }
+
+    .pendente {
+
+      background: var(--yellowbg);
+
+      color: #f59e0b;
+
+    }
+
+    .concluido {
+
+      background: var(--greenbg);
+
+      color: #16a34a;
+
+    }
+
+    .cancelada {
+
+      background: #fee2e2;
+
+      color: #dc2626;
+
+      border: 1px solid #fecaca;
+
+    }
+
+    /* ======================================================
+BOTTOM
+====================================================== */
+
+    .bottom {
+
+      margin-top: 16px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 12px;
+
+    }
+
+    .left-bottom {
+
+      flex: 1;
+
+    }
+
+    .meta {
+
+      display: flex;
+      align-items: center;
+
+      gap: 8px;
+
+      flex-wrap: wrap;
+
+    }
+
+    .tag {
+
+      padding: 7px 10px;
+
+      border-radius: 999px;
+
+      background: #f8fafc;
+
+      border: 1px solid #edf2f7;
+
+      font-size: 10px;
+      font-weight: 700;
+
+      color: #475569;
+
+    }
+
+    /* ======================================================
+HORARIOS
+====================================================== */
+
+    .horarios {
+
+      margin-top: 12px;
+
+      display: flex;
+      align-items: center;
+
+      gap: 8px;
+
+      flex-wrap: wrap;
+
+    }
+
+    .hora-tag {
+
+      padding: 7px 10px;
+
+      border-radius: 999px;
+
+      background: #eff6ff;
+
+      border: 1px solid #dbeafe;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      color: #2563eb;
+
+    }
+
+    .hora-fim {
+
+      background: #ecfdf3;
+
+      border: 1px solid #bbf7d0;
+
+      color: #16a34a;
+
+    }
+
+    .atrasada {
+
+      background: #fee2e2;
+
+      border: 1px solid #fecaca;
+
+      color: #ef4444;
+
+    }
+
+    /* ======================================================
+PROGRESS
+====================================================== */
+
+    .progress-area {
+
+      width: 110px;
+
+    }
+
+    .progress-top {
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 6px;
+
+      font-size: 10px;
+      font-weight: 700;
+
+      color: #64748b;
+
+    }
+
+    .progress {
+
+      width: 100%;
+      height: 9px;
+
+      border-radius: 999px;
+
+      background: #edf2f7;
+
+      overflow: hidden;
+
+    }
+
+    .bar {
+
+      height: 100%;
+
+      border-radius: 999px;
+
+      background:
+        linear-gradient(90deg,
+          #16a34a,
+          #22c55e);
+
+    }
+
+    /* ======================================================
+BTN
+====================================================== */
+
+    .btn-actions {
+
+      margin-top: 14px;
+
+      display: flex;
+
+      gap: 10px;
+
+    }
+
+    .btn {
+
+      flex: 1;
+
+      height: 46px;
+
+      border: none;
+
+      border-radius: 16px;
+
+      background:
+        linear-gradient(135deg,
+          #2563eb,
+          #1d4ed8);
+
+      color: #fff;
+
+      font-size: 13px;
+      font-weight: 800;
+
+    }
+
+    .btn-transferir {
+
+      flex: 0 0 140px;
+
+      border-radius: 999px;
+
+      background:
+        linear-gradient(135deg,
+          #0f172a,
+          #334155);
+
+    }
+
+    /* ======================================================
+EMPTY
+====================================================== */
+
+    .empty {
+
+      padding: 70px 20px;
+
+      text-align: center;
+
+      color: #64748b;
+
+      font-size: 14px;
+
+    }
+
+
+
+
+
+    /* ======================================================
+POPUP CONCLUÍDO
+====================================================== */
+
+    .popup-overlay {
+
+      position: fixed;
+      inset: 0;
+
+      background:
+        rgba(15, 23, 42, .55);
+
+      backdrop-filter: blur(8px);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      z-index: 999999;
+
+      padding: 24px;
+
+      animation: fadeIn .25s ease;
+
+    }
+
+    .popup-concluido {
+
+      width: 100%;
+      max-width: 380px;
+
+      background: #fff;
+
+      border-radius: 34px;
+
+      padding: 34px 26px;
+
+      text-align: center;
+
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, .18);
+
+      animation: popupUp .28s ease;
+
+    }
+
+    .popup-icon {
+
+      width: 88px;
+      height: 88px;
+
+      margin: 0 auto 22px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 42px;
+      font-weight: 900;
+
+      color: #16a34a;
+
+      background:
+        linear-gradient(135deg,
+          #dcfce7,
+          #bbf7d0);
+
+      box-shadow:
+        0 10px 30px rgba(34, 197, 94, .25);
+
+    }
+
+    .popup-title {
+
+      font-size: 24px;
+      font-weight: 800;
+
+      line-height: 1.3;
+
+      color: #111827;
+
+    }
+
+    .popup-text {
+
+      margin-top: 16px;
+
+      font-size: 14px;
+
+      line-height: 1.8;
+
+      color: #64748b;
+
+    }
+
+    .popup-btn {
+
+      margin-top: 26px;
+
+      width: 100%;
+      height: 54px;
+
+      border: none;
+
+      border-radius: 18px;
+
+      background:
+        linear-gradient(135deg,
+          #16a34a,
+          #22c55e);
+
+      color: #fff;
+
+      font-size: 15px;
+      font-weight: 800;
+
+      cursor: pointer;
+
+    }
+
+    @keyframes popupUp {
+
+      from {
+
+        opacity: 0;
+
+        transform:
+          translateY(18px) scale(.96);
+
+      }
+
+      to {
+
+        opacity: 1;
+
+        transform:
+          translateY(0) scale(1);
+
+      }
+
+    }
+
+    @keyframes fadeIn {
+
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+
+    }
+
+
+    /* ======================================================
+COMPARTILHADA
+====================================================== */
+
+    .shared-tag {
+
+      margin-top: 10px;
+
+      display: inline-flex;
+      align-items: center;
+
+      gap: 6px;
+
+      padding: 7px 12px;
+
+      border-radius: 999px;
+
+      background:
+        linear-gradient(135deg,
+          #eff6ff,
+          #dbeafe);
+
+      border: 1px solid #bfdbfe;
+
+      color: #2563eb;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      letter-spacing: .3px;
+
+      cursor: pointer;
+
+    }
+
+    /* ======================================================
+POPUP RESPONSÁVEIS
+====================================================== */
+
+    .popup-users {
+
+      position: fixed;
+      inset: 0;
+
+      background:
+        rgba(15, 23, 42, .65);
+
+      backdrop-filter: blur(10px);
+
+      z-index: 999999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+
+      animation: fadeIn .2s ease;
+
+    }
+
+    .popup-users-box {
+
+      width: 100%;
+      max-width: 420px;
+
+      background: #fff;
+
+      border-radius: 32px;
+
+      overflow: hidden;
+
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, .22);
+
+      animation: popupUp .25s ease;
+
+    }
+
+    .popup-users-top {
+
+      padding: 28px 24px 20px;
+
+      background:
+        linear-gradient(135deg,
+          #2563eb,
+          #1d4ed8);
+
+      color: #fff;
+
+      text-align: center;
+
+    }
+
+    .popup-users-logo {
+
+      width: 72px;
+      height: 72px;
+
+      margin: 0 auto 16px;
+
+      border-radius: 22px;
+
+      object-fit: cover;
+
+      background: #fff;
+
+      padding: 10px;
+
+    }
+
+    .popup-users-title {
+
+      font-size: 20px;
+      font-weight: 800;
+
+    }
+
+    .popup-users-sub {
+
+      margin-top: 6px;
+
+      font-size: 12px;
+
+      opacity: .9;
+
+    }
+
+    .popup-users-list {
+
+      padding: 18px;
+
+      max-height: 420px;
+
+      overflow: auto;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 12px;
+
+    }
+
+    .popup-user {
+
+      display: flex;
+      align-items: center;
+
+      gap: 14px;
+
+      padding: 14px;
+
+      border-radius: 18px;
+
+      background: #f8fafc;
+
+      border: 1px solid #e2e8f0;
+
+    }
+
+    .popup-user img {
+
+      width: 58px;
+      height: 58px;
+
+      border-radius: 18px;
+
+      object-fit: cover;
+
+      background: #e2e8f0;
+
+    }
+
+    .popup-user-name {
+
+      font-size: 14px;
+      font-weight: 800;
+
+      color: #0f172a;
+
+    }
+
+    .popup-user-role {
+
+      margin-top: 5px;
+
+      font-size: 12px;
+
+      color: #64748b;
+
+    }
+
+    .popup-users-close {
+
+      margin: 0 18px 18px;
+
+      width: calc(100% - 36px);
+      height: 52px;
+
+      border: none;
+
+      border-radius: 18px;
+
+      background:
+        linear-gradient(135deg,
+          #2563eb,
+          #1d4ed8);
+
+      color: #fff;
+
+      font-size: 14px;
+      font-weight: 800;
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="topbar">
+
+      <div class="topbar-left">
+
+        <div class="tt">
+          Checklist
+        </div>
+
+        <div class="sub">
+          Minhas tarefas
+        </div>
+
+      </div>
+
+      <div class="user" id="user"></div>
+
+    </div>
+    <div class="lista" id="lista">
+
+      <div class="empty">
+        Carregando tarefas...
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    /* ======================================================
+SUPABASE
+====================================================== */
+
+const supabaseClient =
+supabase.createClient(
+  "https://dxkszikemntfusfyrzos.supabase.co",
+  "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+)
+
+/* ======================================================
+USER
+====================================================== */
+
+const usuario =
+JSON.parse(
+  localStorage.getItem(
+    "usuarioLogado"
+  )
+)
+
+console.log(
+  "USUARIO:",
+  usuario
+)
+console.log(
+  "ID:",
+  usuario?.id
+)
+
+console.log(
+  "NOME:",
+  usuario?.nome
+)
+
+console.log(
+  "TELEFONE:",
+  usuario?.telefone
+)
+/* ======================================================
+SEM LOGIN
+====================================================== */
+
+if(!usuario){
+
+  window.location.href =
+  "../../../../login.html"
+
+}
+
+/* ======================================================
+USER UI
+====================================================== */
+
+document
+.getElementById("user")
+.innerHTML = `
+
+  <div
+    class="avatar"
+    style="
+      background-image:url(
+        '${
+          usuario.foto_url ||
+          ""
+        }'
+      )
+    "
+  ></div>
+
+  <div class="user-info">
+
+    <div class="user-name">
+      ${usuario.nome}
+    </div>
+
+<div class="user-role">
+  ${usuario.cargo || "-"}
+</div>
+
+<div
+  id="rankingUsuario"
+  style="
+    display:none;
+  "
+></div>
+`
+
+/* ======================================================
+LOAD
+====================================================== */
+
+let carregando = false
+let rankingSetor = []
+
+let meusPontos = 0
+
+let minhaPosicao = 0
+/* ======================================================
+RENDER RANKING USER
+====================================================== */
+
+function renderRankingUsuario(){
+
+  const el = document.getElementById(
+    "rankingUsuario"
+  )
+
+  if(!el) return
+
+  el.style.display = "inline-flex"
+
+  el.style.alignItems = "center"
+
+  el.style.gap = "8px"
+
+  el.style.marginTop = "6px"
+
+  el.style.background = "#eff6ff"
+
+  el.style.border =
+    "1px solid #bfdbfe"
+
+  el.style.color = "#1d4ed8"
+
+  el.style.padding = "7px 12px"
+
+  el.style.borderRadius = "999px"
+
+  el.style.fontSize = "11px"
+
+  el.style.fontWeight = "900"
+
+  el.style.cursor = "pointer"
+
+  el.onclick = abrirRankingSetor
+
+  el.innerHTML = `
+
+    ⭐ ${meusPontos} pts
+
+    •
+
+    #${minhaPosicao || "-"}
+
+    ${usuario.setor || "-"}
+
+  `
+
+}
+
+/* ======================================================
+RANKING SETOR
+====================================================== */
+
+async function calcularRankingSetor(){
+
+  const { data:tarefas, error } = await supabaseClient
+    .from("tarefas_checklist")
+    .select("*")
+    .eq("ativo", true)
+
+  if(error){
+    console.log("ERRO RANKING:", error)
+    rankingSetor = []
+    meusPontos = 0
+    minhaPosicao = 0
+    return
+  }
+
+  const ranking = {}
+
+  ;(tarefas || []).forEach(t=>{
+
+    const responsaveis = Array.isArray(t.responsaveis)
+      ? t.responsaveis
+      : []
+
+    responsaveis.forEach(r=>{
+
+      const nome = r.nome || "SEM NOME"
+
+      if(!ranking[nome]){
+
+        ranking[nome] = {
+          nome,
+          foto: r.foto_url || "",
+          setor: r.setor || "",
+          cargo: r.cargo || "",
+          pontos: 0,
+          tarefas: 0,
+          concluidas: 0,
+          atrasadas: 0
+        }
+
+      }
+
+      ranking[nome].tarefas++
+
+      /* ==================================================
+      REGRA DE PONTUAÇÃO
+      --------------------------------------------------
+      SOMENTE tarefa concluída soma ponto.
+      Qualquer tarefa com status CONCLUIDO vale 1 ponto.
+      Não existe bônus por urgência.
+      Não existe ponto por item respondido no checklist.
+      Não existe bônus por tarefa compartilhada.
+      Não existe desconto por atraso ou cancelamento.
+      ================================================== */
+
+     if(statusNormalizado(t.status) === "CONCLUIDO"){
+        ranking[nome].concluidas++
+        ranking[nome].pontos += 1
+      }
+
+    if(statusNormalizado(t.status) === "ATRASADO"){
+        ranking[nome].atrasadas++
+      }
+
+    })
+
+  })
+
+  rankingSetor = Object.values(ranking)
+    .filter(r => r.setor === usuario.setor)
+    .sort((a,b) => b.pontos - a.pontos)
+
+  minhaPosicao = rankingSetor.findIndex(r =>
+    r.nome === usuario.nome
+  ) + 1
+
+  meusPontos = rankingSetor.find(r =>
+    r.nome === usuario.nome
+  )?.pontos || 0
+
+}
+
+    function statusNormalizado(status){
+
+  return String(status || "")
+    .trim()
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+
+}
+
+
+
+
+
+
+    
+async function carregar(){
+
+  if(carregando) return
+
+  carregando = true
+
+  /* ======================================================
+  RANKING
+  ====================================================== */
+
+  await calcularRankingSetor()
+
+  renderRankingUsuario()
+
+  const lista =
+  document.getElementById(
+    "lista"
+  )
+
+  /* ======================================================
+  BUSCAR TAREFAS
+  ====================================================== */
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+
+.from("tarefas_checklist")
+.select("*")
+.order(
+  "created_at",
+  {
+    ascending:false
+  }
+)
+
+  console.log(
+    data,
+    error
+  )
+
+  /* ======================================================
+  ERRO
+  ====================================================== */
+
+  if(error){
+
+    lista.innerHTML = `
+      <div class="empty">
+        Erro ao carregar
+      </div>
+    `
+
+    carregando = false
+
+    return
+
+  }
+
+  /* ======================================================
+  FILTRAR USUÁRIO
+  ====================================================== */
+
+const tarefas =
+(data || [])
+.filter(t => {
+  const status = statusNormalizado(t.status)
+
+  return (
+    t.ativo === true ||
+    status === "CONCLUIDO"
+  )
+})
+.filter(t=>{
+
+    let responsaveis = []
+
+    try{
+
+      responsaveis =
+
+        Array.isArray(
+          t.responsaveis
+        )
+
+        ? t.responsaveis
+
+        : JSON.parse(
+            t.responsaveis || "[]"
+          )
+
+    }catch{
+
+      responsaveis = []
+
+    }
+
+    return responsaveis.some(r=>{
+
+      /* =========================================
+      ID
+      ========================================= */
+
+      const idMatch =
+
+        String(
+          r.id || ""
+        ).trim()
+
+        ===
+
+        String(
+          usuario.id || ""
+        ).trim()
+
+      /* =========================================
+      NOME
+      ========================================= */
+
+      const nomeMatch =
+
+        String(
+          r.nome || ""
+        )
+        .trim()
+        .toUpperCase()
+
+        ===
+
+        String(
+          usuario.nome || ""
+        )
+        .trim()
+        .toUpperCase()
+
+      /* =========================================
+      TELEFONE
+      ========================================= */
+
+      const telefoneMatch =
+
+        usuario.telefone
+
+        ? (
+
+            String(
+              r.telefone || ""
+            ).trim()
+
+            ===
+
+            String(
+              usuario.telefone || ""
+            ).trim()
+
+          )
+
+        : false
+
+      /* =========================================
+      RETORNO
+      ========================================= */
+
+      return (
+
+        idMatch
+
+        ||
+
+        nomeMatch
+
+        ||
+
+        telefoneMatch
+
+      )
+
+    })
+
+  })
+
+  console.log(
+    "MINHAS:",
+    tarefas
+  )
+
+  /* ======================================================
+  DATA OPERACIONAL BAHIA
+  ====================================================== */
+
+  const agoraBahia = new Date(
+    new Date().toLocaleString(
+      "en-US",
+      {
+        timeZone:"America/Bahia"
+      }
+    )
+  )
+
+  const horaAtual =
+  agoraBahia.getHours()
+
+  const diaOperacional =
+  new Date(agoraBahia)
+
+  /* ======================================================
+  MADRUGADA
+  ====================================================== */
+
+  if(horaAtual < 5){
+
+    diaOperacional.setDate(
+      diaOperacional.getDate() - 1
+    )
+
+  }
+
+  const diaAtualStr =
+
+    diaOperacional
+    .toLocaleDateString(
+      "sv-SE"
+    )
+
+  /* ======================================================
+  FILTRAR DIA
+  ====================================================== */
+
+  const tarefasDoDia =
+
+    tarefas.filter(t=>{
+
+      const dataBase =
+
+        t.data_limite
+
+        ||
+
+        t.created_at
+
+      if(!dataBase){
+
+        return false
+
+      }
+
+      const dataTarefa = new Date(
+
+        new Date(dataBase)
+        .toLocaleString(
+          "en-US",
+          {
+            timeZone:"America/Bahia"
+          }
+        )
+
+      )
+
+      /* =========================================
+      MADRUGADA
+      ========================================= */
+
+      if(
+        dataTarefa.getHours() < 5
+      ){
+
+        dataTarefa.setDate(
+          dataTarefa.getDate() - 1
+        )
+
+      }
+
+      const diaTarefa =
+
+        dataTarefa
+        .toLocaleDateString(
+          "sv-SE"
+        )
+
+      return (
+        diaTarefa ===
+        diaAtualStr
+      )
+
+    })
+
+  tarefas.length = 0
+
+  tarefas.push(
+    ...tarefasDoDia
+  )
+/* ======================================================
+TODAS CONCLUÍDAS
+====================================================== */
+
+const totalTarefas = tarefas.length
+
+const totalConcluidas = tarefas.filter(t =>
+  statusNormalizado(t.status) === "CONCLUIDO"
+).length
+
+
+
+const chavePopup =
+  "popup_concluido_" + diaAtualStr
+
+const jaMostrou =
+  localStorage.getItem(chavePopup)
+
+if(
+  totalTarefas > 0 &&
+  totalConcluidas === totalTarefas &&
+  !jaMostrou
+){
+
+  localStorage.setItem(
+    chavePopup,
+    "true"
+  )
+
+  mostrarPopupConclusao()
+
+}
+  /* ======================================================
+  CONVERTER BAHIA
+  ====================================================== */
+
+  function converterBahia(data){
+
+    if(!data) return null
+
+    if(typeof data === "string"){
+
+      return new Date(
+        data + "-03:00"
+      )
+
+    }
+
+    return new Date(data)
+
+  }
+
+  /* ======================================================
+  FORMATAR HORA
+  ====================================================== */
+
+  function formatarHora(data){
+
+    if(!data) return "--:--"
+
+    return converterBahia(data)
+    .toLocaleTimeString(
+      "pt-BR",
+      {
+        timeZone:"America/Bahia",
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    )
+
+  }
+
+  /* ======================================================
+  ORDENAR
+  ====================================================== */
+
+  tarefas.sort((a,b)=>{
+
+    const aConcluido =
+      a.status === "CONCLUIDO"
+
+    const bConcluido =
+      b.status === "CONCLUIDO"
+
+    const aAtrasada =
+      (
+        a.checklist || []
+      ).some(
+        i => i.atrasado === true
+      )
+
+    const bAtrasada =
+      (
+        b.checklist || []
+      ).some(
+        i => i.atrasado === true
+      )
+
+    /* =========================================
+    ATRASADAS PRIMEIRO
+    ========================================= */
+
+    if(
+      aAtrasada &&
+      !bAtrasada
+    ){
+      return -1
+    }
+
+    if(
+      !aAtrasada &&
+      bAtrasada
+    ){
+      return 1
+    }
+
+    /* =========================================
+    PENDENTES NO MEIO
+    ========================================= */
+
+    if(
+      !aConcluido &&
+      bConcluido
+    ){
+      return -1
+    }
+
+    if(
+      aConcluido &&
+      !bConcluido
+    ){
+      return 1
+    }
+
+    /* =========================================
+    CONCLUÍDAS POR ÚLTIMO
+    ========================================= */
+
+    if(
+      aConcluido &&
+      bConcluido
+    ){
+
+      return (
+
+        converterBahia(
+          a.updated_at ||
+          a.created_at
+        )
+
+        -
+
+        converterBahia(
+          b.updated_at ||
+          b.created_at
+        )
+
+      )
+
+    }
+
+    return (
+
+      converterBahia(
+        b.created_at
+      )
+
+      -
+
+      converterBahia(
+        a.created_at
+      )
+
+    )
+
+  })
+
+  /* ======================================================
+  SEM TAREFAS
+  ====================================================== */
+
+  if(!tarefas.length){
+
+    lista.innerHTML = `
+      <div class="empty">
+        Nenhuma tarefa encontrada
+      </div>
+    `
+
+    carregando = false
+
+    return
+
+  }
+
+  /* ======================================================
+  LIMPAR
+  ====================================================== */
+
+  lista.innerHTML = ""
+
+  /* ======================================================
+  RENDER
+  ====================================================== */
+
+  tarefas.forEach(item=>{
+
+    const checklist =
+    Array.isArray(item.checklist)
+    ? item.checklist
+    : []
+
+    /* =========================================
+    FEITOS
+    ========================================= */
+
+   const feitos =
+
+  checklist.filter(i=>{
+
+    const resposta =
+
+      String(
+        i.resposta || ""
+      )
+      .trim()
+      .toLowerCase()
+
+    return (
+
+      resposta === "sim"
+
+      ||
+
+      resposta === "não"
+
+      ||
+
+      resposta === "nao"
+
+      ||
+
+      i.concluido === true
+
+      ||
+
+      i.concluido === false
+
+    )
+
+  }).length
+
+const total =
+checklist.length || (
+  statusNormalizado(item.status) === "CONCLUIDO"
+  ? 1
+  : 0
+)
+
+    const porcentagem =
+
+      total > 0
+
+      ? Math.round(
+          (feitos / total) * 100
+        )
+
+      : 0
+
+const statusItem = statusNormalizado(item.status)
+
+const concluido =
+  statusItem === "CONCLUIDO"
+
+const cancelada =
+  statusItem === "CANCELADO"
+
+const atrasadoStatus =
+  statusItem === "ATRASADO"
+
+const reprovada =
+  statusItem === "REPROVADO"
+    
+
+    const primeiraHora =
+
+      (
+        checklist[0]?.hora_inicio
+
+        ||
+
+        checklist[0]?.hora
+
+        ||
+
+        item.horario_execucao
+
+        ||
+
+        formatarHora(
+          item.created_at
+        )
+
+        ||
+
+        "--:--"
+
+      )
+      .toString()
+      .slice(0,5)
+
+    const ultimaHora =
+
+      checklist[
+        checklist.length - 1
+      ]?.hora_fim
+
+      ||
+
+      checklist[
+        checklist.length - 1
+      ]?.hora
+
+      ||
+
+      (
+        item.data_limite
+
+        ? formatarHora(
+            item.data_limite
+          )
+
+        : "--:--"
+      )
+
+    const atrasada =
+    checklist.some(
+      i => i.atrasado === true
+    )
+window.__TAREFAS__ =
+window.__TAREFAS__ || {}
+
+window.__TAREFAS__[item.id] =
+item
+    const html = `
+
+      <div class="card">
+
+        <div class="head">
+
+          <div>
+
+            <div class="nome">
+              ${item.titulo || "-"}
+            </div>
+
+            <div class="desc">
+              ${item.descricao || "-"}
+            </div>
+
+          </div>
+
+<div class="
+  status
+  ${
+    cancelada
+      ? "cancelada"
+      : concluido
+      ? "concluido"
+      : "pendente"
+  }
+">
+
+${
+  cancelada
+  ? "CANCELADA"
+
+  : concluido
+  ? "CONCLUÍDA"
+
+  : "PENDENTE"
+}
+
+          </div>
+
+        </div>
+
+        <div class="horarios">
+
+          <div class="hora-tag">
+            INÍCIO • ${primeiraHora}
+          </div>
+
+          <div class="
+            hora-tag
+            hora-fim
+          ">
+            FIM • ${ultimaHora}
+          </div>
+
+          ${
+            atrasada
+
+            ? `
+
+              <div class="
+                hora-tag
+                atrasada
+              ">
+                ATRASADA
+              </div>
+
+            `
+
+            : ""
+          }
+
+        </div>
+
+       <div class="bottom">
+
+  <div class="left-bottom">
+
+    <div class="meta">
+
+      <div class="tag">
+        ${item.empresa || "-"}
+      </div>
+
+      <div class="tag">
+        ${item.setor || "-"}
+      </div>
+
+      <div class="tag">
+        ${item.prioridade || "-"}
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="progress-area">
+
+    <div class="progress-top">
+
+      <span>
+        ${feitos}/${total}
+      </span>
+
+      <span>
+        ${porcentagem}%
+      </span>
+
+    </div>
+
+    <div class="progress">
+
+      <div
+        class="bar"
+        style="
+          width:${porcentagem}%;
+        "
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+${
+  Array.isArray(item.responsaveis) &&
+  item.responsaveis.length > 1
+
+  ? `
+
+    <div
+      class="shared-tag"
+      onclick='mostrarCompartilhados(
+        ${JSON.stringify(item.responsaveis)}
+      )'
+    >
+
+      👥 COMPARTILHADA •
+      ${item.responsaveis.length} responsáveis
+
+    </div>
+
+  `
+
+  : ""
+}
+
+${
+cancelada
+
+? `
+
+<div style="
+  margin-top:14px;
+  padding:16px;
+  border-radius:18px;
+  background:#fef2f2;
+  border:1px solid #fecaca;
+">
+
+  <div style="
+    color:#b91c1c;
+    font-size:14px;
+    font-weight:900;
+    margin-bottom:8px;
+  ">
+    ❌ TAREFA CANCELADA
+  </div>
+
+  <div style="
+    color:#7f1d1d;
+    font-size:12px;
+    line-height:1.7;
+    font-weight:700;
+  ">
+    Esta tarefa foi cancelada pelo sistema.
+
+    <br><br>
+
+    Pontuação:
+    <b>não soma ponto.</b>
+
+    <br><br>
+
+    O checklist foi bloqueado e não pode mais ser executado.
+  </div>
+
+</div>
+
+`
+
+: `
+
+<div class="btn-actions">
+
+  <button
+    class="btn"
+    onclick="
+      abrirChecklist(
+        '${item.id}'
+      )
+    "
+  >
+
+    Abrir checklist
+
+  </button>
+
+  <button
+    class="
+      btn
+      btn-transferir
+    "
+    onclick="
+      abrirTransferencia(
+        window.__TAREFAS__['${item.id}']
+      )
+    "
+  >
+
+    Enviar
+
+  </button>
+
+</div>
+
+`
+
+}
+      </div>
+
+    `
+
+    lista.innerHTML += html
+
+  })
+
+  carregando = false
+
+}
+/* ======================================================
+RANKING SETOR
+====================================================== */
+
+function abrirRankingSetor(){
+
+  const medalhas = [
+
+    "🥇",
+    "🥈",
+    "🥉"
+
+  ]
+
+  const popup =
+    document.createElement("div")
+
+  popup.className =
+    "popup-users"
+
+  popup.innerHTML = `
+
+    <div class="popup-users-box">
+
+      <div class="popup-users-top">
+
+        <div class="popup-users-title">
+
+          Ranking do Setor
+
+        </div>
+
+        <div class="popup-users-sub">
+
+          ${usuario.setor}
+
+        </div>
+
+      </div>
+
+      <div class="popup-users-list">
+
+        ${rankingSetor.map((u,index)=>`
+
+          <div class="popup-user">
+
+            <img
+              src="${
+                u.foto ||
+                'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              }"
+            >
+
+            <div style="flex:1">
+
+              <div class="popup-user-name">
+
+                ${
+                  medalhas[index]
+                  ||
+                  `#${index+1}`
+                }
+
+                ${u.nome}
+
+              </div>
+
+              <div class="popup-user-role">
+
+                ${u.cargo || "-"}
+
+              </div>
+
+            </div>
+
+            <div style="
+              font-size:18px;
+              font-weight:900;
+              color:#2563eb;
+            ">
+
+              ${u.pontos}
+
+            </div>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+      <button
+        class="popup-users-close"
+        onclick="
+          this.closest(
+            '.popup-users'
+          ).remove()
+        "
+      >
+
+        Fechar
+
+      </button>
+
+    </div>
+
+  `
+
+  document.body.appendChild(
+    popup
+  )
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    
+/* ======================================================
+OPEN
+====================================================== */
+
+function abrirChecklist(id){
+
+  location.href =
+
+  `chat.html?id=${id}`
+
+}
+
+
+/* ======================================================
+POPUP COMPARTILHADOS
+====================================================== */
+
+function mostrarCompartilhados(lista){
+
+  const popup =
+    document.createElement("div")
+
+  popup.className =
+    "popup-users"
+
+  popup.innerHTML = `
+
+    <div class="popup-users-box">
+
+      <div class="popup-users-top">
+
+        <img
+          src="logos/apps/checklistmercato.png"
+          class="popup-users-logo"
+        >
+
+        <div class="popup-users-title">
+          Tarefa Compartilhada
+        </div>
+
+        <div class="popup-users-sub">
+
+          Esta tarefa está vinculada aos seguintes responsáveis
+
+        </div>
+
+      </div>
+
+      <div class="popup-users-list">
+
+        ${lista.map(user=>`
+
+          <div class="popup-user">
+
+            <img
+              src="${
+                user.foto_url ||
+                'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              }"
+            >
+
+            <div>
+
+              <div class="popup-user-name">
+                ${user.nome || "-"}
+              </div>
+
+              <div class="popup-user-role">
+
+                ${user.cargo || "-"}
+
+                •
+
+                ${user.setor || "-"}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+      <button
+        class="popup-users-close"
+        onclick="
+          this.closest(
+            '.popup-users'
+          ).remove()
+        "
+      >
+
+        Fechar
+
+      </button>
+
+    </div>
+
+  `
+
+  document.body.appendChild(
+    popup
+  )
+
+}
+
+
+
+/* ======================================================
+TRANSFERIR
+====================================================== */
+
+async function abrirTransferencia(item){
+
+  /* =========================================
+  BUSCAR MESMO CARGO
+  ========================================= */
+
+const {
+  data: usuarios,
+  error
+} = await supabaseClient
+
+.from("usuarios_do_sistema")
+
+.select("*")
+
+.eq(
+  "empresa",
+  usuario.empresa
+)
+
+.eq(
+  "cargo",
+  usuario.cargo
+)
+
+.eq(
+  "ativo",
+  true
+)
+
+  if(error){
+
+    console.log(error)
+
+    alert(
+      "Erro ao buscar usuários"
+    )
+
+    return
+
+  }
+
+  /* =========================================
+  REMOVE O PRÓPRIO
+  ========================================= */
+
+  const mesmos =
+
+    usuarios.filter(u=>
+
+      String(u.id)
+      !==
+      String(usuario.id)
+
+    )
+
+  /* =========================================
+  SEM USUÁRIOS
+  ========================================= */
+
+  if(!mesmos.length){
+
+    alert(
+      "Nenhum usuário encontrado"
+    )
+
+    return
+
+  }
+
+  /* =========================================
+  POPUP
+  ========================================= */
+
+  const popup =
+    document.createElement("div")
+
+  popup.className =
+    "popup-users"
+
+  popup.innerHTML = `
+
+    <div class="popup-users-box">
+
+      <div class="popup-users-top">
+
+        <img
+          src="logos/apps/checklistmercato.png"
+          class="popup-users-logo"
+        >
+
+        <div class="popup-users-title">
+
+          Transferir tarefa
+
+        </div>
+
+        <div class="popup-users-sub">
+
+          Usuários do cargo:
+
+          ${usuario.cargo || "-"}
+
+        </div>
+
+      </div>
+
+      <div class="popup-users-list">
+
+        ${mesmos.map(user=>`
+
+          <div
+            class="popup-user"
+            style="
+              cursor:pointer;
+            "
+            onclick="
+              transferirTarefa(
+                '${item.id}',
+                '${user.id}'
+              )
+            "
+          >
+
+            <img
+              src="${
+                user.foto_url ||
+                'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              }"
+            >
+
+            <div>
+
+              <div class="popup-user-name">
+
+                ${user.nome || "-"}
+
+              </div>
+
+              <div class="popup-user-role">
+
+                ${user.cargo || "-"}
+
+                •
+
+                ${user.setor || "-"}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+      <button
+        class="popup-users-close"
+        onclick="
+          this.closest(
+            '.popup-users'
+          ).remove()
+        "
+      >
+
+        Fechar
+
+      </button>
+
+    </div>
+
+  `
+
+  document.body.appendChild(
+    popup
+  )
+
+}
+
+/* ======================================================
+TRANSFERIR TAREFA
+====================================================== */
+
+async function transferirTarefa(
+
+  tarefaId,
+  novoUsuarioId
+
+){
+
+  /* =========================================
+  BUSCAR USUÁRIO
+  ========================================= */
+
+  const {
+    data:userData,
+    error:userError
+  } = await supabaseClient
+
+  .from("usuarios_do_sistema")
+
+  .select("*")
+
+  .eq(
+    "id",
+    novoUsuarioId
+  )
+
+  .single()
+
+  if(userError || !userData){
+
+    alert(
+      "Usuário não encontrado"
+    )
+
+    return
+
+  }
+
+  /* =========================================
+  BUSCAR TAREFA
+  ========================================= */
+
+  const {
+    data:tarefaData
+  } = await supabaseClient
+
+  .from("tarefas_checklist")
+
+  .select("*")
+
+  .eq(
+    "id",
+    tarefaId
+  )
+
+  .single()
+
+  /* =========================================
+  UPDATE
+  ========================================= */
+
+  const {
+    error:updateError
+  } = await supabaseClient
+
+  .from("tarefas_checklist")
+
+  .update({
+
+    responsaveis:[{
+
+      id:userData.id,
+      nome:userData.nome,
+      telefone:userData.telefone,
+      cargo:userData.cargo,
+      setor:userData.setor,
+      foto_url:userData.foto_url
+
+    }]
+
+  })
+
+  .eq(
+    "id",
+    tarefaId
+  )
+
+  if(updateError){
+
+    console.log(updateError)
+
+    alert(
+      "Erro ao transferir"
+    )
+
+    return
+
+  }
+
+  /* =========================================
+  ACIONAR API RECADOS
+  NÃO QUEBRA O FLUXO
+  ========================================= */
+
+  try{
+
+    fetch(
+      "/api/assistente_gerentes/recados.js",
+      {
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          nome:userData.nome || "",
+
+          telefone:userData.telefone || "",
+
+          titulo:
+            tarefaData?.titulo
+            ||
+            "Nova tarefa"
+
+        })
+
+      }
+    )
+    .then(r=>r.json())
+    .then(res=>{
+
+      console.log(
+        "RECADO ENVIADO:",
+        res
+      )
+
+    })
+    .catch(err=>{
+
+      console.log(
+        "ERRO API RECADOS:",
+        err
+      )
+
+    })
+
+  }catch(e){
+
+    console.log(
+      "ERRO GERAL API:",
+      e
+    )
+
+  }
+
+  document
+  .querySelectorAll(
+    ".popup-users"
+  )
+  .forEach(p=>p.remove())
+
+  alert(
+    "Tarefa transferida"
+  )
+
+  carregar()
+
+}
+
+
+
+
+
+/* ======================================================
+POPUP TODAS CONCLUÍDAS
+====================================================== */
+
+function mostrarPopupConclusao(){
+
+  if(
+    document.querySelector(
+      ".popup-overlay"
+    )
+  ){
+    return
+  }
+
+  const popup =
+  document.createElement("div")
+
+  popup.className =
+  "popup-overlay"
+
+  popup.innerHTML = `
+
+    <div class="popup-concluido">
+
+      <div class="popup-icon">
+        ✓
+      </div>
+
+      <div class="popup-title">
+        Todas as tarefas concluídas
+      </div>
+
+<div class="popup-text">
+
+  🎉 Parabéns <b>${usuario.nome || ""}</b>!
+
+  Você concluiu todas as tarefas do dia com sucesso.
+
+  <br><br>
+
+  <div style="
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:22px;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  ">
+
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    ">
+
+      <span style="
+        color:#64748b;
+        font-size:13px;
+        font-weight:700;
+      ">
+        Meta diária atingida
+      </span>
+
+      <span style="
+        color:#16a34a;
+        font-size:24px;
+        font-weight:900;
+      ">
+        ⭐ ${meusPontos}
+      </span>
+
+    </div>
+
+    <div style="
+      width:100%;
+      height:10px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+    ">
+
+      <div style="
+       width:100%;
+        height:100%;
+        border-radius:999px;
+        background:linear-gradient(
+          90deg,
+          #16a34a,
+          #22c55e
+        );
+      "></div>
+
+    </div>
+
+    <div style="
+      text-align:center;
+      font-size:12px;
+      color:#64748b;
+      font-weight:700;
+    ">
+
+      Continue assim 🚀
+
+    </div>
+
+  </div>
+
+</div>
+
+      <button
+        class="popup-btn"
+        onclick="
+          this.closest('.popup-overlay').remove()
+        "
+      >
+
+        Fechar
+
+      </button>
+
+    </div>
+
+  `
+
+  document.body.appendChild(
+    popup
+  )
+
+}
+
+
+  
+/* ======================================================
+INIT
+====================================================== */
+
+carregar()
+
+/* ======================================================
+ATUALIZAR AO VOLTAR PRA TELA
+====================================================== */
+
+document.addEventListener(
+  "visibilitychange",
+  ()=>{
+
+    if(
+      document.visibilityState === "visible"
+    ){
+
+      carregar()
+
+    }
+
+  }
+)
+
+/* ======================================================
+FOCUS
+====================================================== */
+
+window.addEventListener(
+  "focus",
+  ()=>{
+
+    carregar()
+
+  }
+)
+
+/* ======================================================
+AUTO REFRESH BACKGROUND
+====================================================== */
+
+setInterval(()=>{
+
+  carregar()
+
+},15000)
+
+/* ======================================================
+REALTIME
+====================================================== */
+
+supabaseClient
+.channel(
+  "tarefas-home"
+)
+.on(
+  "postgres_changes",
+  {
+    event:"*",
+    schema:"public",
+    table:"tarefas_checklist"
+  },
+  payload => {
+
+    console.log(
+      "ALTERAÇÃO:",
+      payload
+    )
+
+    carregar()
+
+  }
+)
+.subscribe()
+
+/* ======================================================
+PWA
+====================================================== */
+
+if(
+  "serviceWorker"
+  in navigator
+){
+
+  window.addEventListener(
+    "load",
+    ()=>{
+
+      navigator
+      .serviceWorker
+      .register("./sw.js")
+
+    }
+  )
+
+}
+
+
+
+
+
+
+
+
+
+  
+  </script>
+
+</body>
+
+</html>

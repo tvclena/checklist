@@ -1,0 +1,21 @@
+{
+  "name": "Checklist Mercatto",
+  "short_name": "Checklist",
+  "start_url": "./home.html",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#f4f7fb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logos/apps/checklistmercato.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logos/apps/checklistmercato.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

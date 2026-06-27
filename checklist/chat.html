@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+  <title>Checklist DV • Execução</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --line: #e5eaf1;
+      --line-strong: #d8e0ea;
+      --text: #0f172a;
+      --muted: #64748b;
+      --muted-2: #94a3b8;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-soft: #eff6ff;
+      --green: #16a34a;
+      --green-soft: #dcfce7;
+      --yellow: #d97706;
+      --yellow-soft: #fef3c7;
+      --red: #dc2626;
+      --red-soft: #fee2e2;
+      --shadow: 0 6px 18px rgba(15, 23, 42, .055);
+      --radius: 16px;
+      --bottom-h: 78px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+
+    button,
+    textarea,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      width: 100%;
+      height: 100vh;
+      overflow: auto;
+      padding-bottom: calc(var(--bottom-h) + env(safe-area-inset-bottom));
+      background: var(--bg);
+    }
+
+    .app::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .loading {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* =========================
+       TOPO
+    ========================= */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(244, 247, 251, .94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px 12px;
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .back {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .status {
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 11px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .45px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .status.pendente {
+      background: var(--yellow-soft);
+      color: var(--yellow);
+      border: 1px solid #fde68a;
+    }
+
+    .status.concluido {
+      background: var(--green-soft);
+      color: var(--green);
+      border: 1px solid #bbf7d0;
+    }
+
+    .status.cancelado,
+    .status.reprovado,
+    .status.atrasado {
+      background: var(--red-soft);
+      color: var(--red);
+      border: 1px solid #fecaca;
+    }
+
+    .header-info {
+      margin-top: 10px;
+    }
+
+    .codigo {
+      display: inline-flex;
+      max-width: 100%;
+      align-items: center;
+      gap: 6px;
+      min-height: 22px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      color: var(--blue);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .35px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .titulo {
+      margin-top: 7px;
+      font-size: clamp(16px, 4.4vw, 22px);
+      font-weight: 900;
+      line-height: 1.18;
+      color: var(--text);
+      letter-spacing: -.02em;
+    }
+
+    .descricao {
+      margin-top: 5px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* =========================
+       RESUMO
+    ========================= */
+
+    .content {
+      padding: 10px 10px 18px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .metric-card {
+      min-width: 0;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 9px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric-label {
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .metric-value {
+      margin-top: 4px;
+      font-size: 19px;
+      line-height: 1;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .metric-sub {
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .progress-card {
+      margin-top: 8px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .progress-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .progress-percent {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--blue);
+    }
+
+    .progress {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: #e8eef6;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), #60a5fa);
+      transition: width .25s ease;
+    }
+
+    /* =========================
+       LISTA
+    ========================= */
+
+    .section-title {
+      margin: 14px 2px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .item {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .item.respondido {
+      border-color: #bfdbfe;
+    }
+
+    .item-inner {
+      padding: 12px;
+    }
+
+    .item-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .ordem {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 28px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .item-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .hora,
+    .foto-flag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 21px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .2px;
+    }
+
+    .hora {
+      background: var(--blue-soft);
+      color: var(--blue);
+      border: 1px solid #dbeafe;
+    }
+
+    .foto-flag {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+    }
+
+    .item-title {
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.3;
+      color: var(--text);
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+
+    .item-desc {
+      margin-top: 4px;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .check-area {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .check-btn {
+      height: 40px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 900;
+      transition: transform .12s ease, opacity .12s ease;
+    }
+
+    .check-btn:active {
+      transform: scale(.98);
+    }
+
+    .ok {
+      background: var(--green-soft);
+      color: #15803d;
+      border-color: #bbf7d0;
+    }
+
+    .no {
+      background: var(--red-soft);
+      color: var(--red);
+      border-color: #fecaca;
+    }
+
+    .selected-ok {
+      background: var(--green) !important;
+      color: #fff !important;
+      border-color: var(--green) !important;
+    }
+
+    .selected-no {
+      background: var(--red) !important;
+      color: #fff !important;
+      border-color: var(--red) !important;
+    }
+
+    .upload-area {
+      margin-top: 10px;
+    }
+
+    .upload-btn {
+      width: 100%;
+      height: 40px;
+      border: 1px dashed #93c5fd;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .preview-wrap {
+      position: relative;
+      margin-top: 10px;
+      display: none;
+      width: 100%;
+    }
+
+    .preview-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .preview {
+      width: 68px;
+      height: 68px;
+      flex: 0 0 68px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid #fff;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, .10);
+      background: #e2e8f0;
+      cursor: pointer;
+    }
+
+    .preview-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .preview-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .preview-sub {
+      margin-top: 3px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .delete-photo {
+      margin-top: 7px;
+      height: 32px;
+      padding: 0 10px;
+      border: none;
+      border-radius: 10px;
+      background: var(--red-soft);
+      color: var(--red);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .preview-loading {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, .58);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      border-radius: 14px;
+      z-index: 4;
+    }
+
+    .spinner {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 3px solid rgba(255, 255, 255, .28);
+      border-top-color: #fff;
+      animation: spin .8s linear infinite;
+    }
+
+    .loading-text {
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .item-finalizado {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .item-finalizado.ok-final {
+      background: var(--green-soft);
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .item-finalizado.no-final {
+      background: var(--red-soft);
+      color: var(--red);
+      border: 1px solid #fecaca;
+    }
+
+
+
+    /* =========================
+       FONTE DE DADOS
+    ========================= */
+
+    .fonte-flag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 21px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .2px;
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+    }
+
+    .fonte-card {
+      margin-top: 10px;
+      padding: 11px;
+      border-radius: 15px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, .045);
+    }
+
+    .fonte-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .fonte-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .fonte-pill {
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      border: 1px solid #dbeafe;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .fonte-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .fonte-input {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      padding: 0 11px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 900;
+      outline: none;
+    }
+
+    .fonte-input:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+    }
+
+    .fonte-unit {
+      height: 42px;
+      min-width: 58px;
+      padding: 0 12px;
+      border-radius: 13px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #3730a3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .fonte-save {
+      width: 100%;
+      height: 38px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, .16);
+    }
+
+    .fonte-help {
+      margin-top: 6px;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .fonte-final {
+      margin-top: 8px;
+      padding: 9px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+
+    /* =========================
+       OBSERVAÇÕES
+    ========================= */
+
+    .obs-card {
+      margin-top: 12px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    .obs-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .obs {
+      width: 100%;
+      min-height: 92px;
+      margin-top: 9px;
+      resize: none;
+      outline: none;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      padding: 11px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .obs:focus {
+      border-color: #93c5fd;
+      background: #fff;
+    }
+
+    .flag {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .flag input {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--blue);
+    }
+
+    /* =========================
+       BOTÃO FINAL
+    ========================= */
+
+    .bottom {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 620px;
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--line);
+      padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+      z-index: 80;
+    }
+
+    .finalizar {
+      width: 100%;
+      height: 52px;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, .23);
+    }
+
+    .finalizar:disabled {
+      opacity: .48;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* =========================
+       OVERLAYS
+    ========================= */
+
+    .overlay-finalizando {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .74);
+      backdrop-filter: blur(9px);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      padding: 24px;
+    }
+
+    .overlay-spinner {
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      border: 4px solid rgba(255, 255, 255, .20);
+      border-top-color: #fff;
+      animation: spin .8s linear infinite;
+    }
+
+    .overlay-text {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .popup-preview {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .88);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .popup-preview img {
+      width: 100%;
+      max-width: 900px;
+      max-height: 88vh;
+      object-fit: contain;
+      border-radius: 16px;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 999px;
+      background: #fff;
+      color: #0f172a;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* =========================
+       CELULAR PEQUENO
+    ========================= */
+
+    @media (max-width: 380px) {
+      .content {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .dashboard {
+        gap: 6px;
+      }
+
+      .metric-card {
+        padding: 9px 7px;
+      }
+
+      .metric-label {
+        font-size: 8px;
+      }
+
+      .metric-value {
+        font-size: 17px;
+      }
+
+      .item-inner {
+        padding: 10px;
+      }
+
+      .item-title {
+        font-size: 12px;
+      }
+
+      .check-btn,
+      .upload-btn {
+        height: 38px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      body {
+        background: #eaf0f8;
+      }
+
+      .page,
+      .bottom {
+        max-width: 640px;
+      }
+
+      .app {
+        background: #f8fafc;
+      }
+    }
+
+
+
+.fonte-full {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.fonte-full .fonte-card {
+  margin-top: 0;
+  width: 100%;
+}
+
+
+    
+  </style>
+</head>
+
+<body>
+  <audio id="audioClick" preload="auto">
+    <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg" />
+  </audio>
+
+  <div class="app" id="app">
+    <div class="loading">Carregando checklist...</div>
+  </div>
+
+  <script>
+    /* =====================================================
+       CONFIGURAÇÃO
+    ===================================================== */
+
+    const supabaseClient = supabase.createClient(
+      "https://dxkszikemntfusfyrzos.supabase.co",
+      "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+    );
+
+    const params = new URLSearchParams(window.location.search);
+    const ID = params.get("id");
+
+    if (!ID) {
+      document.body.innerHTML = '<div class="loading">Checklist inválido</div>';
+      throw new Error("ID inválido");
+    }
+
+    let CHECKLIST_DATA = null;
+
+    /* =====================================================
+       HELPERS
+    ===================================================== */
+
+    function h(valor) {
+      return String(valor ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function tocarSom() {
+      const audio = document.getElementById("audioClick");
+      if (!audio) return;
+
+      try {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function respostaNormalizada(item) {
+      return String(item?.resposta || "").trim().toLowerCase();
+    }
+
+    function itemRespondido(item) {
+      const resposta = respostaNormalizada(item);
+
+      return (
+        resposta === "sim" ||
+        resposta === "não" ||
+        resposta === "nao" ||
+        item?.concluido === true ||
+        item?.concluido === false
+      );
+    }
+
+    function normalizarChecklist(lista) {
+      return (Array.isArray(lista) ? lista : []).map(item => {
+        const resposta = respostaNormalizada(item);
+        let concluido = null;
+
+        if (typeof item.concluido === "boolean") {
+          concluido = item.concluido;
+        } else if (resposta === "sim") {
+          concluido = true;
+        } else if (resposta === "não" || resposta === "nao") {
+          concluido = false;
+        }
+
+        return {
+          ...item,
+          concluido,
+          fonte_obrigatoria: Boolean(item.fonte_obrigatoria),
+          fonte_tipo: String(item.fonte_tipo || "").trim().toUpperCase(),
+          fonte_valor: String(item.fonte_valor ?? ""),
+          fonte_config: item.fonte_config || null,
+          fonte_respondida_em: item.fonte_respondida_em || null,
+          fonte_atualizada_em: item.fonte_atualizada_em || null
+        };
+      });
+    }
+
+    function statusClasse(status) {
+      const s = String(status || "PENDENTE").toUpperCase();
+
+      if (s === "CONCLUIDO") return "concluido";
+      if (s === "CANCELADO") return "cancelado";
+      if (s === "REPROVADO") return "reprovado";
+      if (s === "ATRASADO") return "atrasado";
+
+      return "pendente";
+    }
+
+    function fotoPendente(item) {
+      return Boolean(item?.foto_obrigatoria && !item?.foto_url);
+    }
+
+function fontePendente(item) {
+  if (!item?.fonte_obrigatoria) return false;
+
+  const tipo = String(item?.fonte_tipo || "").trim().toUpperCase();
+
+  if (tipo === "CONTAGEM_ESTOQUE") {
+    const itens = item?.fonte_config?.itens || [];
+    const resultados = item?.fonte_config?.resultados || [];
+
+    if (!itens.length) return true;
+
+    const contados = resultados.filter(r =>
+      r.quantidade_contada !== "" &&
+      r.quantidade_contada !== null &&
+      r.quantidade_contada !== undefined
+    ).length;
+
+    return contados < itens.length;
+  }
+
+  if (tipo === "REGISTRO_CAIXA") {
+    const campos = item?.fonte_config?.campos || {};
+
+    const dinheiro = Number(campos.dinheiro || 0);
+    const credito = Number(campos.credito || 0);
+    const debito = Number(campos.debito || 0);
+    const pix = Number(campos.pix || 0);
+    const consumoSocio = Number(campos.consumo_socio || 0);
+    const funcionarios = Number(campos.funcionarios || 0);
+
+    const total =
+      dinheiro +
+      credito +
+      debito +
+      pix +
+      consumoSocio +
+      funcionarios;
+
+    return total <= 0;
+  }
+
+  const valor = String(item?.fonte_valor ?? "").trim();
+
+  return valor === "";
+}
+
+    function mostrarOverlay(texto = "Finalizando checklist...") {
+      if (document.getElementById("overlayFinalizando")) return;
+
+      document.body.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div class="overlay-finalizando" id="overlayFinalizando">
+            <div class="overlay-spinner"></div>
+            <div class="overlay-text">${h(texto)}</div>
+          </div>
+        `
+      );
+    }
+
+    function esconderOverlay() {
+      document.getElementById("overlayFinalizando")?.remove();
+    }
+
+    /* =====================================================
+       CARREGAMENTO
+    ===================================================== */
+
+    async function carregar() {
+      const app = document.getElementById("app");
+
+      const { data, error } = await supabaseClient
+        .from("tarefas_checklist")
+        .select("*")
+        .eq("id", ID)
+        .single();
+
+      if (error || !data) {
+        console.log(error);
+        app.innerHTML = '<div class="loading">Checklist não encontrado</div>';
+        return;
+      }
+
+      data.checklist = normalizarChecklist(data.checklist);
+      CHECKLIST_DATA = data;
+      renderizar();
+    }
+
+    /* =====================================================
+       RENDERIZAÇÃO
+    ===================================================== */
+
+    function renderizar() {
+      const app = document.getElementById("app");
+      const checklist = CHECKLIST_DATA.checklist || [];
+
+      const feitos = checklist.filter(itemRespondido).length;
+      const total = checklist.length;
+      const pendentes = Math.max(total - feitos, 0);
+      const percentual = total ? Math.round((feitos / total) * 100) : 0;
+      const fotosObrigatoriasPendentes = checklist.filter(fotoPendente).length;
+      const fontesObrigatoriasPendentes = checklist.filter(fontePendente).length;
+      const statusAtual = String(CHECKLIST_DATA.status || "PENDENTE").toUpperCase();
+      const bloqueado = statusAtual === "CONCLUIDO" || statusAtual === "CANCELADO";
+
+      const podeFinalizar = (
+        feitos === total &&
+        total > 0 &&
+        fotosObrigatoriasPendentes === 0 &&
+        fontesObrigatoriasPendentes === 0 &&
+        !bloqueado
+      );
+
+      app.innerHTML = `
+        <div class="page">
+          <div class="topbar">
+            <div class="top-row">
+              <button class="back" type="button" onclick="history.back()">←</button>
+              <div class="status ${statusClasse(statusAtual)}">${h(statusAtual)}</div>
+            </div>
+
+            <div class="header-info">
+              <div class="codigo">${h(CHECKLIST_DATA.codigo || "CHECKLIST")}</div>
+              <div class="titulo">${h(CHECKLIST_DATA.titulo || "Checklist")}</div>
+              <div class="descricao">${h(CHECKLIST_DATA.descricao || "")}</div>
+            </div>
+          </div>
+
+          <div class="content">
+            <div class="dashboard">
+              <div class="metric-card">
+                <div class="metric-label">Respondidos</div>
+                <div class="metric-value">${feitos}</div>
+                <div class="metric-sub">de ${total}</div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-label">Pendentes</div>
+                <div class="metric-value">${pendentes}</div>
+                <div class="metric-sub">${fontesObrigatoriasPendentes ? `${fontesObrigatoriasPendentes} fonte(s)` : "restantes"}</div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-label">Progresso</div>
+                <div class="metric-value">${percentual}%</div>
+                <div class="metric-sub">concluído</div>
+              </div>
+            </div>
+
+            <div class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Andamento geral</div>
+                <div class="progress-percent">${percentual}%</div>
+              </div>
+              <div class="progress">
+                <div class="bar" style="width:${percentual}%;"></div>
+              </div>
+            </div>
+
+            <div class="section-title">
+              Itens do checklist
+              <span>${feitos}/${total}</span>
+            </div>
+
+            <div class="lista">
+              ${checklist.map((item, index) => renderItem(item, index, bloqueado)).join("")}
+            </div>
+
+            <div class="obs-card">
+              <div class="obs-title">Observações finais</div>
+              <textarea
+                id="obs"
+                class="obs"
+                placeholder="Digite observações finais..."
+                ${bloqueado ? "disabled" : ""}
+              >${h(CHECKLIST_DATA.observacoes_finais || "")}</textarea>
+
+              <label class="flag">
+                <input type="checkbox" id="flagLeonardo" ${bloqueado ? "disabled" : ""} />
+                Comunicar Leonardo
+              </label>
+            </div>
+          </div>
+        </div>
+
+        ${!bloqueado ? renderBotaoFinalizar(podeFinalizar, fotosObrigatoriasPendentes, fontesObrigatoriasPendentes, feitos, total) : ""}
+      `;
+    }
+
+   function renderItem(item, index, bloqueado) {
+  const respondido = itemRespondido(item);
+  const precisaFoto = Boolean(item.foto_obrigatoria);
+  const precisaFonte = Boolean(item.fonte_obrigatoria);
+  const fotoUrl = item.foto_url || "";
+
+  return `
+    <div class="item ${respondido ? "respondido" : ""}">
+      <div class="item-inner">
+        <div class="item-main">
+          <div class="ordem">${index + 1}</div>
+
+          <div class="item-body">
+            <div class="item-meta">
+              <div class="hora">${h(item.hora || "--:--")}</div>
+              ${precisaFoto ? '<div class="foto-flag">foto obrigatória</div>' : ""}
+              ${precisaFonte ? `<div class="fonte-flag">fonte ${h(item.fonte_tipo || "dados")}</div>` : ""}
+            </div>
+
+            <div class="item-title">${h(item.item || "-")}</div>
+            <div class="item-desc">${h(item.descricao || "Sem descrição")}</div>
+
+            ${!bloqueado ? renderAcoesItem(item, index) : renderResultadoFinal(item)}
+          </div>
+        </div>
+
+        ${
+          !bloqueado && item.fonte_obrigatoria
+            ? `<div class="fonte-full">${renderFonteDados(item, index)}</div>`
+            : ""
+        }
+      </div>
+    </div>
+  `;
+}
+  function renderAcoesItem(item, index) {
+  return `
+    <div class="check-area">
+      <button
+        type="button"
+        class="check-btn ok ${item.concluido === true ? "selected-ok" : ""}"
+        onclick="marcar(${index}, true)"
+      >
+        ✔ OK
+      </button>
+
+      <button
+        type="button"
+        class="check-btn no ${item.concluido === false ? "selected-no" : ""}"
+        onclick="marcar(${index}, false)"
+      >
+        ✖ NÃO
+      </button>
+    </div>
+
+    ${item.foto_obrigatoria ? renderUploadFoto(item, index) : ""}
+  `;
+}
+
+    function renderUploadFoto(item, index) {
+      const fotoUrl = item.foto_url || "";
+      const temFoto = Boolean(fotoUrl);
+
+      return `
+        <div class="upload-area">
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            id="foto_${index}"
+            style="display:none"
+            onchange="uploadFoto(event, ${index})"
+          />
+
+          ${!temFoto ? `
+            <button
+              type="button"
+              class="upload-btn"
+              onclick="document.getElementById('foto_${index}').click()"
+            >
+              📷 Tirar foto
+            </button>
+          ` : ""}
+
+          <div class="preview-wrap" id="previewWrap_${index}" ${temFoto ? 'style="display:block"' : ""}>
+            <div class="preview-box">
+              <img
+                class="preview"
+                id="preview_${index}"
+                src="${h(fotoUrl)}"
+                onclick="abrirPreview('${h(fotoUrl)}')"
+                alt="Foto do checklist"
+              />
+
+              <div class="preview-info">
+                <div class="preview-title">Foto anexada</div>
+                <div class="preview-sub">Toque na imagem para ampliar.</div>
+
+                ${temFoto ? `
+                  <button type="button" class="delete-photo" onclick="excluirFoto(${index})">
+                    🗑 Excluir foto
+                  </button>
+                ` : ""}
+              </div>
+            </div>
+
+            <div class="preview-loading" id="loading_${index}">
+              <div class="spinner"></div>
+              <div class="loading-text">Enviando foto...</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+  function renderFonteDados(item, index) {
+  const tipo = String(item.fonte_tipo || "VALOR").trim().toUpperCase();
+
+if (tipo === "CONTAGEM_ESTOQUE") {
+  return renderContagemEstoque(item, index);
+}
+
+if (tipo === "REGISTRO_CAIXA") {
+  return renderRegistroCaixa(item, index);
+}
+
+  const valor = String(item.fonte_valor ?? "");
+  const pendente = fontePendente(item);
+
+  return `
+    <div class="fonte-card">
+      <div class="fonte-head">
+        <div class="fonte-title">📊 Fonte de dados obrigatória</div>
+        <div class="fonte-pill">${h(tipo)}</div>
+      </div>
+
+      <div class="fonte-grid">
+        <input
+          id="fonte_${index}"
+          class="fonte-input"
+          type="text"
+          inputmode="decimal"
+          value="${h(valor)}"
+          placeholder="Digite a quantidade"
+          oninput="salvarFonteLocal(${index}, this.value)"
+          onkeydown="if(event.key === 'Enter'){ event.preventDefault(); salvarFonte(${index}); }"
+        />
+
+        <div class="fonte-unit">${h(tipo)}</div>
+      </div>
+
+      <button
+        type="button"
+        class="fonte-save"
+        onclick="salvarFonte(${index})"
+      >
+        ${pendente ? "Salvar quantidade" : "Atualizar quantidade"}
+      </button>
+
+      <div class="fonte-help">
+        Informe o valor antes de finalizar.
+      </div>
+    </div>
+  `;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function renderContagemEstoque(item, index) {
+  const itens = item?.fonte_config?.itens || [];
+  const resultados = item?.fonte_config?.resultados || [];
+
+  const mapaResultados = {};
+
+  resultados.forEach(r => {
+    mapaResultados[String(r.produto_id)] = r;
+  });
+
+  const total = itens.length;
+
+  const contados = itens.filter(produto => {
+    const r = mapaResultados[String(produto.id)];
+    return (
+      r &&
+      r.quantidade_contada !== "" &&
+      r.quantidade_contada !== null &&
+      r.quantidade_contada !== undefined
+    );
+  }).length;
+
+  if (!itens.length) {
+    return `
+      <div class="fonte-card">
+        <div class="fonte-head">
+          <div class="fonte-title">📦 Contagem de estoque</div>
+          <div class="fonte-pill">0/0</div>
+        </div>
+
+        <div class="fonte-help">
+          Nenhum item foi selecionado no cadastro desta tarefa.
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="fonte-card">
+      <div class="fonte-head">
+        <div class="fonte-title">📦 Contagem de estoque</div>
+       <div class="fonte-pill" id="contador_contagem_${index}">${contados}/${total}</div>
+      </div>
+
+      <div style="
+        display:flex;
+        flex-direction:column;
+        gap:9px;
+      ">
+        ${
+          itens.map((produto, pos) => {
+            const id = String(produto.id);
+            const r = mapaResultados[id] || {};
+            const contado = r.quantidade_contada ?? "";
+            const unidade = produto.unidade || "UN";
+
+            return `
+              <div style="
+                border:1px solid #e5eaf1;
+                border-radius:14px;
+                padding:10px;
+                background:#fff;
+              ">
+                <div style="
+                  font-size:12px;
+                  font-weight:900;
+                  color:#0f172a;
+                  text-transform:uppercase;
+                  line-height:1.25;
+                ">
+                  ${h(produto.produto || "-")}
+                </div>
+
+                <div style="
+                  margin-top:5px;
+                  font-size:10px;
+                  font-weight:800;
+                  color:#64748b;
+                ">
+                  ${h(produto.empresa || "-")}
+                  •
+                  ${h(produto.local_saida || "-")}
+                </div>
+
+                <div style="
+                  margin-top:8px;
+                  display:grid;
+                  grid-template-columns:1fr auto;
+                  gap:8px;
+                  align-items:end;
+                ">
+                  <div>
+                    <div style="
+                      font-size:9px;
+                      font-weight:900;
+                      color:#64748b;
+                      text-transform:uppercase;
+                    ">
+                      Quantidade contada
+                    </div>
+
+<input
+  id="contagem_${index}_${pos}"
+  type="text"
+  inputmode="decimal"
+  value="${h(contado)}"
+  placeholder="Digite a quantidade"
+  oninput="salvarContagemEstoqueLocal(${index}, ${pos}, this.value)"
+                      style="
+                        width:100%;
+                        height:42px;
+                        border:1px solid #e5eaf1;
+                        border-radius:12px;
+                        padding:0 10px;
+                        font-size:15px;
+                        font-weight:900;
+                        outline:none;
+                      "
+                    >
+                  </div>
+
+                  <div style="
+                    height:42px;
+                    min-width:60px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    padding:0 12px;
+                    border-radius:12px;
+                    background:#eef2ff;
+                    border:1px solid #c7d2fe;
+                    color:#3730a3;
+                    font-size:12px;
+                    font-weight:900;
+                  ">
+                    ${h(unidade)}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("")
+        }
+      </div>
+
+      <div class="fonte-help">
+        O estoque será atualizado automaticamente quando finalizar o checklist.
+      </div>
+    </div>
+  `;
+}
+
+
+
+
+
+
+
+
+function dinheiroBR(valor) {
+  const numero = Number(valor || 0);
+
+  return numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function parseMoeda(valor) {
+  let v = String(valor ?? "").trim();
+
+  if (!v) return 0;
+
+  v = v.replace(/\s/g, "");
+  v = v.replace(/[R$]/g, "");
+
+  // Se veio no formato brasileiro: 1.234,56
+  if (v.includes(",")) {
+    v = v.replace(/\./g, "");
+    v = v.replace(",", ".");
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  // Se veio só número: 123456 vira 1234.56
+  const apenasNumeros = v.replace(/\D/g, "");
+
+  if (!apenasNumeros) return 0;
+
+  const n = Number(apenasNumeros) / 100;
+
+  return Number.isFinite(n) ? n : 0;
+}
+
+
+
+
+function formatarMoedaInput(valor) {
+  const apenasNumeros = String(valor ?? "").replace(/\D/g, "");
+
+  if (!apenasNumeros) return "";
+
+  const numero = Number(apenasNumeros) / 100;
+
+  return numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+function renderRegistroCaixa(item, index) {
+  const cfg = item.fonte_config || {};
+  const campos = cfg.campos || {};
+
+  const dinheiro = campos.dinheiro ?? 0;
+  const credito = campos.credito ?? 0;
+  const debito = campos.debito ?? 0;
+  const pix = campos.pix ?? 0;
+  const consumoSocio = campos.consumo_socio ?? 0;
+  const funcionarios = campos.funcionarios ?? 0;
+
+  const total =
+    Number(dinheiro || 0) +
+    Number(credito || 0) +
+    Number(debito || 0) +
+    Number(pix || 0) +
+    Number(consumoSocio || 0) +
+    Number(funcionarios || 0);
+
+  return `
+    <div class="fonte-card">
+      <div class="fonte-head">
+        <div class="fonte-title">💰 Registro de Caixa</div>
+        <div class="fonte-pill" id="pill_caixa_${index}">R$ ${h(dinheiroBR(total))}</div>
+      </div>
+
+      <div style="
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:9px;
+      ">
+        ${renderCampoCaixa(index, "dinheiro", "Dinheiro", dinheiro)}
+        ${renderCampoCaixa(index, "credito", "Crédito", credito)}
+        ${renderCampoCaixa(index, "debito", "Débito", debito)}
+        ${renderCampoCaixa(index, "pix", "Pix", pix)}
+        ${renderCampoCaixa(index, "consumo_socio", "Consumo Sócio", consumoSocio)}
+        ${renderCampoCaixa(index, "funcionarios", "Funcionários", funcionarios)}
+      </div>
+
+      <div
+  id="total_caixa_${index}"
+  style="
+    margin-top:10px;
+    padding:10px;
+    border-radius:12px;
+    background:#f8fafc;
+    border:1px solid #e5eaf1;
+    font-size:12px;
+    font-weight:900;
+    color:#0f172a;
+  "
+>
+  Total informado: R$ ${h(dinheiroBR(total))}
+</div>
+
+      <div class="fonte-help">
+        Informe os valores do caixa. O registro será salvo na tabela registro_caixa ao finalizar o checklist.
+      </div>
+    </div>
+  `;
+}
+
+function renderCampoCaixa(index, campo, label, valor) {
+  return `
+    <div>
+      <div style="
+        font-size:9px;
+        font-weight:900;
+        color:#64748b;
+        text-transform:uppercase;
+        margin-bottom:5px;
+      ">
+        ${h(label)}
+      </div>
+
+      <div style="position:relative;">
+        <span style="
+          position:absolute;
+          left:10px;
+          top:50%;
+          transform:translateY(-50%);
+          color:#64748b;
+          font-size:13px;
+          font-weight:900;
+          pointer-events:none;
+        ">
+          R$
+        </span>
+
+        <input
+          type="text"
+          inputmode="numeric"
+          value="${h(dinheiroBR(valor))}"
+          placeholder="0,00"
+          oninput="salvarRegistroCaixaLocal(${index}, '${campo}', this)"
+          style="
+            width:100%;
+            height:42px;
+            border:1px solid #e5eaf1;
+            border-radius:12px;
+            padding:0 10px 0 34px;
+            font-size:14px;
+            font-weight:900;
+            outline:none;
+            background:#fff;
+          "
+        >
+      </div>
+    </div>
+  `;
+}
+
+
+
+    
+
+    function renderResultadoFinal(item) {
+      const ok = item.concluido === true || respostaNormalizada(item) === "sim";
+      const fonteHtml = item.fonte_obrigatoria
+        ? `
+          <div class="fonte-final">
+            📊 Fonte: ${h(item.fonte_valor || "-")} ${h(item.fonte_tipo || "")}
+          </div>
+        `
+        : "";
+
+      return `
+        <div class="item-finalizado ${ok ? "ok-final" : "no-final"}">
+          ${ok ? "✔ ITEM CONCLUÍDO" : "✖ ITEM MARCADO COMO NÃO"}
+          ${fonteHtml}
+        </div>
+      `;
+    }
+
+    function renderBotaoFinalizar(podeFinalizar, fotosPendentes, fontesPendentes, feitos, total) {
+      let texto = "Finalizar checklist";
+
+      if (!podeFinalizar) {
+        if (fotosPendentes > 0) {
+          texto = `Adicione ${fotosPendentes} foto(s) obrigatória(s)`;
+        } else if (fontesPendentes > 0) {
+          texto = `Preencha ${fontesPendentes} fonte(s) obrigatória(s)`;
+        } else {
+          texto = `Responda todos os itens (${feitos}/${total})`;
+        }
+      }
+
+      return `
+        <div class="bottom">
+          <button
+            type="button"
+            class="finalizar"
+            id="btnFinalizar"
+            onclick="finalizar()"
+            ${podeFinalizar ? "" : "disabled"}
+          >
+            ${h(texto)}
+          </button>
+        </div>
+      `;
+    }
+
+    /* =====================================================
+       AÇÕES DOS ITENS
+    ===================================================== */
+
+    async function marcar(index, status) {
+      tocarSom();
+
+      const checklist = JSON.parse(JSON.stringify(CHECKLIST_DATA.checklist || []));
+      if (!checklist[index]) return;
+
+      checklist[index].concluido = status;
+      checklist[index].resposta = status ? "sim" : "não";
+      checklist[index].respondido_em = new Date().toISOString();
+
+      const respondidos = checklist.filter(itemRespondido).length;
+      const percentual = checklist.length ? Math.round((respondidos / checklist.length) * 100) : 0;
+      const agora = new Date().toISOString();
+
+      const { error } = await supabaseClient
+        .from("tarefas_checklist")
+        .update({
+          checklist,
+          percentual_conclusao: percentual,
+          total_itens_respondidos: respondidos,
+          ultima_interacao: agora,
+          updated_at: agora
+        })
+        .eq("id", ID);
+
+      if (error) {
+        console.log(error);
+        alert("Erro ao salvar:\n\n" + error.message);
+        return;
+      }
+
+      CHECKLIST_DATA = {
+        ...CHECKLIST_DATA,
+        checklist,
+        percentual_conclusao: percentual,
+        total_itens_respondidos: respondidos
+      };
+
+      renderizar();
+    }
+
+
+function atualizarContadorContagem(index) {
+  const itemChecklist = CHECKLIST_DATA?.checklist?.[index];
+  if (!itemChecklist) return;
+
+  const total = itemChecklist.fonte_config?.itens?.length || 0;
+  const resultados = itemChecklist.fonte_config?.resultados || [];
+
+  const contados = resultados.filter(r =>
+    r.quantidade_contada !== "" &&
+    r.quantidade_contada !== null &&
+    r.quantidade_contada !== undefined
+  ).length;
+
+  const el = document.getElementById(`contador_contagem_${index}`);
+  if (el) {
+    el.textContent = `${contados}/${total}`;
+  }
+}
+
+function atualizarBotaoFinalizacao() {
+  const checklist = CHECKLIST_DATA?.checklist || [];
+
+  const feitos = checklist.filter(itemRespondido).length;
+  const total = checklist.length;
+  const fotosPendentes = checklist.filter(fotoPendente).length;
+  const fontesPendentes = checklist.filter(fontePendente).length;
+  const statusAtual = String(CHECKLIST_DATA?.status || "PENDENTE").toUpperCase();
+  const bloqueado = statusAtual === "CONCLUIDO" || statusAtual === "CANCELADO";
+
+  const podeFinalizar =
+    feitos === total &&
+    total > 0 &&
+    fotosPendentes === 0 &&
+    fontesPendentes === 0 &&
+    !bloqueado;
+
+  const btn = document.getElementById("btnFinalizar");
+  if (!btn) return;
+
+  btn.disabled = !podeFinalizar;
+
+  if (podeFinalizar) {
+    btn.textContent = "Finalizar checklist";
+  } else if (fotosPendentes > 0) {
+    btn.textContent = `Adicione ${fotosPendentes} foto(s) obrigatória(s)`;
+  } else if (fontesPendentes > 0) {
+    btn.textContent = `Preencha ${fontesPendentes} fonte(s) obrigatória(s)`;
+  } else {
+    btn.textContent = `Responda todos os itens (${feitos}/${total})`;
+  }
+}
+
+
+
+
+    function salvarContagemEstoqueLocal(index, pos, valor) {
+  if (!CHECKLIST_DATA?.checklist?.[index]) return;
+
+  const itemChecklist = CHECKLIST_DATA.checklist[index];
+
+  if (!itemChecklist.fonte_config) {
+    itemChecklist.fonte_config = {};
+  }
+
+  if (!Array.isArray(itemChecklist.fonte_config.resultados)) {
+    itemChecklist.fonte_config.resultados = [];
+  }
+
+  const produto = itemChecklist.fonte_config.itens?.[pos];
+
+  if (!produto) return;
+
+  const produtoId = String(produto.id);
+
+  let resultado = itemChecklist.fonte_config.resultados.find(
+    r => String(r.produto_id) === produtoId
+  );
+
+  if (!resultado) {
+    resultado = {
+      produto_id: produtoId,
+      produto: produto.produto || "",
+      empresa: produto.empresa || "",
+      local_saida: produto.local_saida || "",
+      unidade: produto.unidade || "UN",
+      quantidade_contada: "",
+      contado_em: null,
+      contado_por: "Checklist Home"
+    };
+
+    itemChecklist.fonte_config.resultados.push(resultado);
+  }
+
+  const valorLimpo = String(valor ?? "").trim();
+
+const numero = valorLimpo === ""
+  ? ""
+  : Number(valorLimpo.replace(",", "."));
+
+resultado.quantidade_contada =
+  valorLimpo === "" ? "" : numero;
+
+  resultado.contado_em = new Date().toISOString();
+  resultado.contado_por = "Checklist Home";
+
+  const total = itemChecklist.fonte_config.itens?.length || 0;
+
+  const contados = itemChecklist.fonte_config.resultados.filter(r =>
+    r.quantidade_contada !== "" &&
+    r.quantidade_contada !== null &&
+    r.quantidade_contada !== undefined
+  ).length;
+
+  itemChecklist.fonte_valor = `${contados}/${total} itens contados`;
+  itemChecklist.fonte_atualizada_em = new Date().toISOString();
+
+if (contados === total && total > 0) {
+  itemChecklist.fonte_respondida_em =
+    itemChecklist.fonte_respondida_em || new Date().toISOString();
+} else {
+  itemChecklist.fonte_respondida_em = null;
+}
+
+atualizarBotaoFinalizacao();
+atualizarContadorContagem(index);
+}
+
+
+function salvarRegistroCaixaLocal(index, campo, input) {
+  if (!CHECKLIST_DATA?.checklist?.[index]) return;
+
+  const itemChecklist = CHECKLIST_DATA.checklist[index];
+
+  if (!itemChecklist.fonte_config) {
+    itemChecklist.fonte_config = {};
+  }
+
+  if (!itemChecklist.fonte_config.campos) {
+    itemChecklist.fonte_config.campos = {
+      dinheiro: 0,
+      credito: 0,
+      debito: 0,
+      pix: 0,
+      consumo_socio: 0,
+      funcionarios: 0
+    };
+  }
+
+  const valorDigitado = input?.value ?? "";
+  const valorFormatado = formatarMoedaInput(valorDigitado);
+
+  input.value = valorFormatado;
+
+  const valorNumerico = parseMoeda(valorFormatado);
+
+  itemChecklist.fonte_config.campos[campo] = valorNumerico;
+
+  const c = itemChecklist.fonte_config.campos;
+
+  const total =
+    Number(c.dinheiro || 0) +
+    Number(c.credito || 0) +
+    Number(c.debito || 0) +
+    Number(c.pix || 0) +
+    Number(c.consumo_socio || 0) +
+    Number(c.funcionarios || 0);
+
+  itemChecklist.fonte_valor = `R$ ${dinheiroBR(total)}`;
+  itemChecklist.fonte_atualizada_em = new Date().toISOString();
+
+  if (total > 0) {
+    itemChecklist.fonte_respondida_em =
+      itemChecklist.fonte_respondida_em || new Date().toISOString();
+  } else {
+    itemChecklist.fonte_respondida_em = null;
+  }
+
+  atualizarTotalRegistroCaixa(index, total);
+  atualizarBotaoFinalizacao();
+}
+
+
+    function atualizarTotalRegistroCaixa(index, total) {
+  const el = document.getElementById(`total_caixa_${index}`);
+
+  if (el) {
+    el.textContent = `Total informado: R$ ${dinheiroBR(total)}`;
+  }
+
+  const pill = document.getElementById(`pill_caixa_${index}`);
+
+  if (pill) {
+    pill.textContent = `R$ ${dinheiroBR(total)}`;
+  }
+}
+
+
+
+
+
+
+
+    
+    function salvarFonteLocal(index, valor) {
+      if (!CHECKLIST_DATA?.checklist?.[index]) return;
+
+      CHECKLIST_DATA.checklist[index].fonte_valor = valor;
+    }
+
+    async function salvarFonte(index) {
+      const statusAtual = String(CHECKLIST_DATA?.status || "").toUpperCase();
+      if (statusAtual === "CONCLUIDO" || statusAtual === "CANCELADO") return;
+
+      tocarSom();
+
+      const input = document.getElementById(`fonte_${index}`);
+      const valor = String(input?.value ?? "").trim();
+      const checklist = JSON.parse(JSON.stringify(CHECKLIST_DATA.checklist || []));
+
+      if (!checklist[index]) return;
+
+      checklist[index].fonte_valor = valor;
+      checklist[index].fonte_tipo = String(checklist[index].fonte_tipo || "").trim().toUpperCase();
+      checklist[index].fonte_atualizada_em = new Date().toISOString();
+      checklist[index].fonte_respondida_em = valor
+        ? (checklist[index].fonte_respondida_em || new Date().toISOString())
+        : null;
+
+      const agora = new Date().toISOString();
+
+      const { error } = await supabaseClient
+        .from("tarefas_checklist")
+        .update({
+          checklist,
+          ultima_interacao: agora,
+          updated_at: agora
+        })
+        .eq("id", ID);
+
+      if (error) {
+        console.log(error);
+        alert("Erro ao salvar quantidade:\n\n" + error.message);
+        return;
+      }
+
+      CHECKLIST_DATA = {
+        ...CHECKLIST_DATA,
+        checklist
+      };
+
+      renderizar();
+    }
+
+    async function uploadFoto(event, index) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const previewWrap = document.getElementById(`previewWrap_${index}`);
+      const preview = document.getElementById(`preview_${index}`);
+      const loading = document.getElementById(`loading_${index}`);
+
+      if (preview) preview.src = URL.createObjectURL(file);
+      if (previewWrap) previewWrap.style.display = "block";
+      if (loading) loading.style.display = "flex";
+
+      try {
+        const nomeSeguro = String(file.name || "foto.jpg").replace(/[^a-zA-Z0-9_.-]/g, "_");
+        const nome = `checklists/${Date.now()}_${nomeSeguro}`;
+
+        const { error: uploadError } = await supabaseClient
+          .storage
+          .from("checklists")
+          .upload(nome, file, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabaseClient
+          .storage
+          .from("checklists")
+          .getPublicUrl(nome);
+
+        CHECKLIST_DATA.checklist[index].foto_url = data.publicUrl;
+
+        const { error } = await supabaseClient
+          .from("tarefas_checklist")
+          .update({
+            checklist: CHECKLIST_DATA.checklist,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", ID);
+
+        if (error) throw error;
+
+        renderizar();
+      } catch (err) {
+        console.log(err);
+        alert("Erro ao enviar foto:\n\n" + (err.message || err));
+      } finally {
+        if (loading) loading.style.display = "none";
+      }
+    }
+
+    function abrirPreview(url) {
+      if (!url) return;
+
+      document.body.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div class="popup-preview" id="popupPreview" onclick="fecharPreview()">
+            <button type="button" class="popup-close" onclick="fecharPreview()">✕</button>
+            <img src="${h(url)}" onclick="event.stopPropagation()" alt="Foto ampliada" />
+          </div>
+        `
+      );
+    }
+
+    function fecharPreview() {
+      document.getElementById("popupPreview")?.remove();
+    }
+
+    async function excluirFoto(index) {
+      if (CHECKLIST_DATA.status === "CONCLUIDO") return;
+      if (!confirm("Deseja excluir esta foto?")) return;
+
+      try {
+        CHECKLIST_DATA.checklist[index].foto_url = null;
+
+        const { error } = await supabaseClient
+          .from("tarefas_checklist")
+          .update({
+            checklist: CHECKLIST_DATA.checklist,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", ID);
+
+        if (error) throw error;
+
+        renderizar();
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao excluir foto:\n\n" + (err.message || err));
+      }
+    }
+
+
+
+async function salvarRegistrosCaixa(checklist) {
+  const agora = new Date().toISOString();
+
+  const subtarefasCaixa = checklist.filter(item =>
+    String(item.fonte_tipo || "").trim().toUpperCase() === "REGISTRO_CAIXA"
+  );
+
+  for (const subtarefa of subtarefasCaixa) {
+    const cfg = subtarefa.fonte_config || {};
+    const campos = cfg.campos || {};
+
+    const dia =
+      cfg.dia ||
+      new Date().toISOString().slice(0, 10);
+
+    const payload = {
+      dia,
+      dinheiro: Number(campos.dinheiro || 0),
+      credito: Number(campos.credito || 0),
+      debito: Number(campos.debito || 0),
+      pix: Number(campos.pix || 0),
+      consumo_socio: Number(campos.consumo_socio || 0),
+      funcionarios: Number(campos.funcionarios || 0),
+      tarefa_id: ID,
+      empresa: CHECKLIST_DATA?.empresa || null,
+      responsavel: "Checklist Home",
+      observacao: subtarefa.observacao || null,
+      atualizado_em: agora
+    };
+
+    let registroExistente = null;
+
+    if (cfg.registro_id) {
+      const { data } = await supabaseClient
+        .from("registro_caixa")
+        .select("id")
+        .eq("id", cfg.registro_id)
+        .maybeSingle();
+
+      registroExistente = data;
+    }
+
+    if (!registroExistente) {
+      const { data } = await supabaseClient
+        .from("registro_caixa")
+        .select("id")
+        .eq("tarefa_id", ID)
+        .eq("dia", dia)
+        .maybeSingle();
+
+      registroExistente = data;
+    }
+
+    if (registroExistente?.id) {
+      const { data, error } = await supabaseClient
+        .from("registro_caixa")
+        .update(payload)
+        .eq("id", registroExistente.id)
+        .select("id")
+        .single();
+
+      if (error) {
+        console.log("Erro ao atualizar registro de caixa:", error);
+        throw new Error("Erro ao atualizar registro de caixa: " + error.message);
+      }
+
+      subtarefa.fonte_config.registro_id = data.id;
+    } else {
+      const { data, error } = await supabaseClient
+        .from("registro_caixa")
+        .insert(payload)
+        .select("id")
+        .single();
+
+      if (error) {
+        console.log("Erro ao inserir registro de caixa:", error);
+        throw new Error("Erro ao inserir registro de caixa: " + error.message);
+      }
+
+      subtarefa.fonte_config.registro_id = data.id;
+    }
+
+    subtarefa.fonte_config.salvo_em = agora;
+    subtarefa.fonte_atualizada_em = agora;
+  }
+}
+
+
+
+
+
+    async function salvarContagensNoEstoque(checklist) {
+  const agora = new Date().toISOString();
+
+  const subtarefasContagem = checklist.filter(item =>
+    String(item.fonte_tipo || "").trim().toUpperCase() === "CONTAGEM_ESTOQUE"
+  );
+
+  for (const subtarefa of subtarefasContagem) {
+    const resultados = subtarefa?.fonte_config?.resultados || [];
+
+    for (const resultado of resultados) {
+      const produtoId = resultado.produto_id;
+      const quantidade = resultado.quantidade_contada;
+
+      if (
+        !produtoId ||
+        quantidade === "" ||
+        quantidade === null ||
+        quantidade === undefined
+      ) {
+        continue;
+      }
+
+const { error } = await supabaseClient
+  .from("mercatto_estoque")
+  .update({
+    quantidade: Number(quantidade),
+    ultima_contagem_em: agora,
+    atualizado_em: agora
+  })
+  .eq("id", produtoId);
+
+      if (error) {
+        console.log("Erro ao atualizar estoque:", error);
+        throw new Error(
+          `Erro ao atualizar estoque do produto ${resultado.produto || produtoId}: ${error.message}`
+        );
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+    
+    /* =====================================================
+       FINALIZAÇÃO
+    ===================================================== */
+
+    async function finalizar() {
+      tocarSom();
+
+      const btn = document.getElementById("btnFinalizar");
+      if (btn) {
+        btn.disabled = true;
+      }
+
+      mostrarOverlay("Finalizando checklist...");
+
+      try {
+        const obs = document.getElementById("obs")?.value || "";
+        const comunicarLeonardo = Boolean(document.getElementById("flagLeonardo")?.checked);
+        const agora = new Date().toISOString();
+        const checklist = JSON.parse(JSON.stringify(CHECKLIST_DATA.checklist || []));
+
+        const respondidos = checklist.filter(itemRespondido).length;
+        const total = checklist.length;
+        const fotosPendentes = checklist.filter(fotoPendente).length;
+        const fontesPendentes = checklist.filter(fontePendente).length;
+
+        if (respondidos < total) {
+          alert("Responda todos os itens");
+          return;
+        }
+
+        if (fotosPendentes > 0) {
+          alert(`Ainda existe(m) ${fotosPendentes} foto(s) obrigatória(s) pendente(s).`);
+          return;
+        }
+
+        if (fontesPendentes > 0) {
+          alert(`Ainda existe(m) ${fontesPendentes} fonte(s) obrigatória(s) pendente(s).`);
+          return;
+        }
+        await salvarContagensNoEstoque(checklist);
+        await salvarRegistrosCaixa(checklist);
+        const { error } = await supabaseClient
+          .from("tarefas_checklist")
+          .update({
+            checklist,
+            status: "CONCLUIDO",
+            total_itens_respondidos: respondidos,
+            percentual_conclusao: 100,
+            observacoes_finais: obs || null,
+            metadata: {
+              comunicar_leonardo: comunicarLeonardo
+            },
+            data_conclusao: agora,
+            finalizado_em: agora,
+            ultima_interacao: agora,
+            updated_at: agora
+          })
+          .eq("id", ID);
+
+        if (error) throw error;
+
+        await supabaseClient.rpc("processar_tarefas_checklist_unica");
+
+        CHECKLIST_DATA = {
+          ...CHECKLIST_DATA,
+          status: "CONCLUIDO",
+          percentual_conclusao: 100,
+          total_itens_respondidos: respondidos,
+          checklist
+        };
+
+        renderizar();
+      } catch (err) {
+        console.log(err);
+        alert("Erro ao finalizar:\n\n" + (err.message || err));
+      } finally {
+        setTimeout(() => {
+          esconderOverlay();
+
+          const btnAtual = document.getElementById("btnFinalizar");
+          if (btnAtual) {
+            btnAtual.disabled = false;
+          }
+        }, 500);
+      }
+    }
+
+    carregar();
+  </script>
+</body>
+</html>
