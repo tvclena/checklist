@@ -1,1736 +1,2467 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
 <meta charset="UTF-8">
 
 <meta
   name="viewport"
-  content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
 >
 
-<title>Mercatto • Checklist OTTO</title>
+<meta name="theme-color" content="#eefbf3">
 
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-  rel="stylesheet"
->
+<title>CheckFlow Operacional</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-:root{
-
-  --bg:#f3f7fc;
-
-  --card:#ffffff;
-
-  --line:#e5e7eb;
-
-  --text:#0f172a;
-
-  --muted:#64748b;
-
-  --blue:#2563eb;
-  --green:#16a34a;
-  --red:#dc2626;
-  --gold:#d4af37;
-  --orange:#f59e0b;
-  --purple:#7c3aed;
-
-  --shadow:
-    0 10px 40px rgba(15,23,42,.08);
-
-}
-
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Inter;
+  font-family:'Inter',sans-serif;
+  -webkit-tap-highlight-color:transparent;
 }
 
 html,
 body{
-
   width:100%;
-  min-height:100%;
+  height:100%;
+  overflow:hidden;
+  background:#eefbf3;
+  color:#0f172a;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  border:none;
+  cursor:pointer;
+}
+
+input,
+select{
+  outline:none;
+}
+
+:root{
+  --bg:#eefbf3;
+  --card:#ffffff;
+  --soft:#f8fffa;
+  --line:#d8f3df;
+
+  --text:#0f172a;
+  --muted:#64748b;
+
+  --green:#16a34a;
+  --green2:#22c55e;
+  --green-soft:#dcfce7;
+
+  --blue:#2563eb;
+  --blue-soft:#dbeafe;
+
+  --red:#dc2626;
+  --red-soft:#fee2e2;
+
+  --orange:#ea580c;
+  --orange-soft:#ffedd5;
+
+  --purple:#7c3aed;
+  --purple-soft:#f3e8ff;
+
+  --yellow:#ca8a04;
+  --yellow-soft:#fef9c3;
+
+  --shadow:0 8px 22px rgba(15,23,42,.065);
+}
+
+.app{
+  width:100%;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+
+  padding:9px;
+
+  display:grid;
+  grid-template-rows:56px 72px minmax(0,1fr);
+  gap:8px;
 
   background:
-
-    radial-gradient(
-      circle at top left,
-      rgba(37,99,235,.05),
-      transparent 20%
-    ),
-
-    radial-gradient(
-      circle at top right,
-      rgba(124,58,237,.05),
-      transparent 20%
-    ),
-
-    var(--bg);
-
-  color:var(--text);
-
-  overflow-x:hidden;
+    radial-gradient(circle at top left, rgba(34,197,94,.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(134,239,172,.36), transparent 32%),
+    linear-gradient(135deg,#fbfffc 0%,#eefbf3 54%,#e9f8ee 100%);
 }
 
-body{
-  padding:22px;
-}
-
-/* ======================================================
-TOP
-====================================================== */
+/* TOPO */
 
 .top{
+  height:56px;
 
-  display:flex;
-  justify-content:space-between;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
   align-items:center;
+  gap:8px;
 
-  gap:20px;
+  padding:8px 10px;
 
-  flex-wrap:wrap;
+  background:rgba(255,255,255,.88);
+  border:1px solid rgba(187,247,208,.95);
+  border-radius:19px;
 
-  margin-bottom:24px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(14px);
 }
 
-.top-left h1{
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
 
-  font-size:44px;
+.logo{
+  width:39px;
+  height:39px;
+  border-radius:15px;
 
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:linear-gradient(135deg,#16a34a,#4ade80);
+  color:#fff;
+
+  font-size:20px;
   font-weight:900;
 
-  letter-spacing:-2px;
+  box-shadow:0 9px 18px rgba(22,163,74,.24);
+  flex:0 0 auto;
 }
 
-.top-left p{
+.brand h1{
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:-.7px;
+  line-height:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-  margin-top:8px;
-
+.brand p{
+  margin-top:5px;
   color:var(--muted);
-
-  font-size:14px;
+  font-size:10.5px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
-.top-right{
-
+.actions{
   display:flex;
-  gap:12px;
+  align-items:center;
+  gap:6px;
+}
+
+.live{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(22,163,74,.75);
 }
 
 .btn{
+  height:37px;
+  padding:0 13px;
 
-  height:52px;
-
-  padding:0 22px;
-
-  border:none;
-
-  border-radius:18px;
-
-  cursor:pointer;
-
-  font-size:13px;
-
-  font-weight:800;
-
-  transition:.2s;
-}
-
-.btn-white{
+  border-radius:14px;
 
   background:#fff;
+  border:1px solid var(--line);
 
-  border:1px solid #e5e7eb;
-
-  color:#111827;
-
-  box-shadow:var(--shadow);
-}
-
-.btn-gold{
-
-  background:
-    linear-gradient(
-      135deg,
-      #d4af37,
-      #f7d774
-    );
-
-  color:#000;
-
-  box-shadow:
-    0 10px 30px rgba(212,175,55,.28);
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-}
-
-/* ======================================================
-HEADER ANALYTICS
-====================================================== */
-
-.hero{
-
-  width:100%;
-
-  border-radius:36px;
-
-  padding:30px;
-
-  margin-bottom:24px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #2563eb,
-      #7c3aed
-    );
-
-  position:relative;
-
-  overflow:hidden;
-
-  color:#fff;
-
-  box-shadow:
-    0 20px 60px rgba(37,99,235,.25);
-}
-
-.hero::before{
-
-  content:"";
-
-  position:absolute;
-
-  right:-80px;
-  top:-80px;
-
-  width:260px;
-  height:260px;
-
-  border-radius:50%;
-
-  background:
-    rgba(255,255,255,.08);
-}
-
-.hero h2{
-
-  font-size:34px;
-
-  font-weight:900;
-
-  letter-spacing:-1px;
-}
-
-.hero p{
-
-  margin-top:10px;
-
-  max-width:700px;
-
-  line-height:1.7;
-
-  font-size:14px;
-
-  opacity:.92;
-}
-
-.hero-stats{
-
-  margin-top:26px;
-
-  display:flex;
-  gap:14px;
-
-  flex-wrap:wrap;
-}
-
-.hero-box{
-
-  min-width:180px;
-
-  padding:18px;
-
-  border-radius:24px;
-
-  background:
-    rgba(255,255,255,.12);
-
-  backdrop-filter:blur(10px);
-}
-
-.hero-box small{
-
+  color:#14532d;
   font-size:11px;
-
-  opacity:.8;
-}
-
-.hero-box h3{
-
-  margin-top:10px;
-
-  font-size:28px;
-
   font-weight:900;
+
+  box-shadow:0 5px 14px rgba(15,23,42,.055);
 }
 
-/* ======================================================
-KPIS
-====================================================== */
+.btn.green{
+  background:var(--green);
+  color:#fff;
+  border-color:var(--green);
+}
 
-.kpis{
+/* RESUMO */
+
+.summary{
+  height:72px;
 
   display:grid;
+  grid-template-columns:350px minmax(0,1fr);
+  gap:8px;
+  min-width:0;
+}
 
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(240px,1fr)
-    );
+.filters{
+  background:rgba(255,255,255,.9);
+  border:1px solid rgba(187,247,208,.95);
+  border-radius:19px;
+  box-shadow:var(--shadow);
 
-  gap:18px;
+  padding:8px;
 
-  margin-bottom:24px;
+  display:grid;
+  grid-template-rows:27px 25px;
+  gap:6px;
+  min-width:0;
+}
+
+.filter-line{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 104px;
+  gap:6px;
+}
+
+.search,
+.select{
+  height:27px;
+  width:100%;
+
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#f8fffa;
+
+  padding:0 9px;
+
+  color:#14532d;
+  font-size:10.5px;
+  font-weight:800;
+
+  min-width:0;
+}
+
+.chips{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+
+.chips::-webkit-scrollbar{
+  display:none;
+}
+
+.chip{
+  flex:0 0 auto;
+
+  height:25px;
+  padding:0 10px;
+
+  border-radius:999px;
+  background:#f8fffa;
+  border:1px solid var(--line);
+
+  color:#166534;
+  font-size:9.4px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.chip.active{
+  background:var(--green);
+  color:#fff;
+  border-color:var(--green);
+}
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:7px;
+  min-width:0;
 }
 
 .kpi{
+  background:rgba(255,255,255,.9);
+  border:1px solid rgba(187,247,208,.95);
+  border-radius:19px;
+  box-shadow:var(--shadow);
 
-  position:relative;
+  padding:8px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 
   overflow:hidden;
-
-  border-radius:32px;
-
-  padding:24px;
-
-  background:#fff;
-
-  border:1px solid #edf2f7;
-
-  box-shadow:var(--shadow);
 }
 
-.kpi::before{
+.kpi b{
+  font-size:23px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:-.8px;
+}
 
-  content:"";
+.kpi span{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:8.8px;
+  font-weight:900;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-  position:absolute;
+.kpi.total b{color:var(--blue);}
+.kpi.ok b{color:var(--green);}
+.kpi.pending b{color:var(--yellow);}
+.kpi.late b{color:var(--red);}
+.kpi.media b{color:var(--purple);}
+.kpi.source b{color:var(--orange);}
 
+/* DASHBOARD */
+
+.dashboard{
+  min-height:0;
+
+  display:grid;
+  grid-template-columns:1.25fr .92fr .9fr;
+  grid-template-rows:138px minmax(0,1fr);
+  gap:8px;
+
+  overflow:hidden;
+}
+
+.card{
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(187,247,208,.95);
+  border-radius:21px;
+  box-shadow:var(--shadow);
+
+  padding:10px;
+
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+}
+
+.card-title{
+  height:24px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+
+  margin-bottom:7px;
+}
+
+.card-title h2{
+  font-size:12.8px;
+  font-weight:900;
+  letter-spacing:-.35px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.card-title span{
+  height:21px;
+  padding:0 8px;
+
+  border-radius:999px;
+  background:var(--green-soft);
+  color:#166534;
+
+  display:flex;
+  align-items:center;
+
+  font-size:8.7px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+/* CONCLUSÃO */
+
+.overview{
+  grid-column:1 / 2;
+  grid-row:1 / 2;
+
+  display:grid;
+  grid-template-columns:132px minmax(0,1fr);
+  gap:9px;
+}
+
+.circle{
   width:120px;
   height:120px;
 
   border-radius:50%;
-
-  background:
-    rgba(37,99,235,.04);
-
-  right:-40px;
-  top:-40px;
-}
-
-.kpi small{
-
-  color:#64748b;
-
-  font-size:12px;
-
-  font-weight:700;
-}
-
-.kpi h2{
-
-  margin-top:16px;
-
-  font-size:42px;
-
-  font-weight:900;
-}
-
-.kpi span{
-
-  margin-top:14px;
-
-  display:inline-flex;
-
-  padding:9px 14px;
-
-  border-radius:999px;
-
-  font-size:10px;
-
-  font-weight:900;
-}
-
-.success{
-  background:#dcfce7;
-  color:#166534;
-}
-
-.info{
-  background:#dbeafe;
-  color:#1d4ed8;
-}
-
-.warning{
-  background:#fef3c7;
-  color:#92400e;
-}
-
-.danger{
-  background:#fee2e2;
-  color:#991b1b;
-}
-
-/* ======================================================
-GRID
-====================================================== */
-
-.grid{
-
-  display:grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(380px,1fr)
-    );
-
-  gap:22px;
-
-  margin-bottom:22px;
-}
-
-.card{
-
-  background:#fff;
-
-  border-radius:34px;
-
-  padding:24px;
-
-  border:1px solid #edf2f7;
-
-  box-shadow:var(--shadow);
-}
-
-.card.large{
-  grid-column:span 2;
-}
-
-.card-header{
-
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  margin-bottom:24px;
-}
-
-.card-header h3{
-
-  font-size:20px;
-
-  font-weight:900;
-}
-
-.badge{
-
-  padding:10px 14px;
-
-  border-radius:999px;
-
-  background:#eff6ff;
-
-  color:#2563eb;
-
-  font-size:10px;
-
-  font-weight:900;
-}
-
-.chart-box{
-
-  position:relative;
-
-  width:100%;
-  height:360px;
-}
-
-/* ======================================================
-INDICADORES
-====================================================== */
-
-.progress-group{
-
-  display:flex;
-  flex-direction:column;
-  gap:22px;
-}
-
-.progress-item{
-
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.progress-top{
-
-  display:flex;
-  justify-content:space-between;
-
-  font-size:12px;
-
-  font-weight:800;
-}
-
-.progress{
-
-  width:100%;
-  height:14px;
-
-  border-radius:999px;
-
-  overflow:hidden;
-
-  background:#edf2f7;
-}
-
-.progress div{
-
-  height:100%;
-
-  border-radius:999px;
-}
-
-/* ======================================================
-RANKING
-====================================================== */
-
-.list{
-
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-
-.item{
-
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  padding:18px;
-
-  border-radius:24px;
-
-  background:#f8fafc;
-
-  border:1px solid #edf2f7;
-}
-
-.item-left{
-
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.avatar{
-
-  width:58px;
-  height:58px;
-
-  border-radius:50%;
-
-  background:
-    linear-gradient(
-      135deg,
-      #2563eb,
-      #7c3aed
-    );
+  background:conic-gradient(var(--green) 0deg,#e2e8f0 0deg);
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  font-size:18px;
+  position:relative;
+  margin:auto;
+}
 
+.circle::before{
+  content:"";
+  position:absolute;
+  inset:9px;
+  background:#fff;
+  border-radius:50%;
+}
+
+.circle b{
+  position:relative;
+  z-index:2;
+
+  color:#14532d;
+  font-size:29px;
   font-weight:900;
-
-  color:#fff;
+  letter-spacing:-1px;
 }
 
-.item-info b{
-
-  font-size:15px;
+.mini-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  min-width:0;
 }
 
-.item-info p{
+.mini{
+  background:#f8fffa;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:8px;
+  overflow:hidden;
+}
 
-  margin-top:5px;
+.mini small{
+  display:block;
+  color:var(--muted);
+  font-size:8.6px;
+  font-weight:900;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-  font-size:12px;
+.mini b{
+  display:block;
+  margin-top:6px;
+  color:#0f172a;
+  font-size:15.5px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-  color:#64748b;
+/* LISTAS */
+
+.people{
+  grid-column:2 / 3;
+  grid-row:1 / 3;
+}
+
+.sources{
+  grid-column:3 / 4;
+  grid-row:1 / 2;
+}
+
+.tasks{
+  grid-column:1 / 2;
+  grid-row:2 / 3;
+}
+
+.medias{
+  grid-column:3 / 4;
+  grid-row:2 / 3;
+}
+
+.scroll{
+  height:calc(100% - 31px);
+  overflow:auto;
+  padding-right:2px;
+  scrollbar-width:thin;
+}
+
+.rank{
+  min-height:54px;
+
+  display:grid;
+  grid-template-columns:32px minmax(0,1fr) auto;
+  align-items:center;
+  gap:7px;
+
+  padding:7px;
+  margin-bottom:6px;
+
+  border-radius:15px;
+  background:#f8fffa;
+  border:1px solid var(--line);
+}
+
+.pos{
+  width:32px;
+  height:32px;
+  border-radius:12px;
+
+  background:var(--green-soft);
+  color:#166534;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:11.5px;
+  font-weight:900;
+}
+
+.rank-info{
+  min-width:0;
+}
+
+.rank-info b{
+  display:block;
+  font-size:11.8px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.rank-info small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .score{
+  text-align:right;
+  min-width:52px;
+}
 
-  min-width:74px;
-  height:48px;
+.score b{
+  display:block;
+  color:var(--green);
+  font-size:12.5px;
+  font-weight:900;
+}
 
-  border-radius:18px;
+.score small{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:900;
+}
+
+/* FONTES */
+
+.source-item{
+  min-height:46px;
+
+  border-radius:14px;
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+
+  padding:8px;
+  margin-bottom:6px;
+
+  overflow:hidden;
+}
+
+.source-item small{
+  display:block;
+  color:#9a3412;
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.source-item b{
+  display:block;
+  margin-top:4px;
+  color:#7c2d12;
+  font-size:11.5px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.source-item span{
+  display:block;
+  margin-top:3px;
+  color:#9a3412;
+  font-size:8.8px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* TAREFAS */
+
+.task{
+  min-height:66px;
+
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+
+  padding:8px;
+  margin-bottom:6px;
+
+  border-radius:16px;
+  background:#f8fffa;
+  border:1px solid var(--line);
+}
+
+.task-main{
+  min-width:0;
+}
+
+.task-main b{
+  display:block;
+  color:#0f172a;
+  font-size:12px;
+  font-weight:900;
+  line-height:1.2;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.meta-line{
+  margin-top:7px;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:4px;
+}
+
+.meta{
+  height:20px;
+  max-width:135px;
+
+  padding:0 7px;
+
+  border-radius:999px;
+  background:#fff;
+  border:1px solid var(--line);
+
+  color:#334155;
+  font-size:8.2px;
+  font-weight:850;
+
+  display:flex;
+  align-items:center;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.meta.green{
+  background:var(--green-soft);
+  color:#166534;
+  border-color:#bbf7d0;
+}
+
+.meta.media{
+  background:var(--purple-soft);
+  color:#6d28d9;
+  border-color:#ddd6fe;
+}
+
+.meta.source{
+  background:var(--orange-soft);
+  color:#c2410c;
+  border-color:#fed7aa;
+}
+
+.status{
+  align-self:start;
+  height:23px;
+  padding:0 8px;
+
+  border-radius:999px;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  background:
-    linear-gradient(
-      135deg,
-      #f59e0b,
-      #fbbf24
-    );
-
-  color:#000;
-
-  font-size:15px;
-
+  font-size:7.8px;
   font-weight:900;
+  white-space:nowrap;
 }
 
-/* ======================================================
-TABLE
-====================================================== */
-
-.table-wrap{
-
-  overflow:auto;
-
-  border-radius:34px;
-
-  background:#fff;
-
-  border:1px solid #edf2f7;
-
-  box-shadow:var(--shadow);
-}
-
-.table-head{
-
-  padding:24px;
-
-  border-bottom:
-    1px solid #edf2f7;
-}
-
-.table-head h3{
-
-  font-size:22px;
-
-  font-weight:900;
-}
-
-.table-head p{
-
-  margin-top:8px;
-
-  font-size:13px;
-
-  color:#64748b;
-}
-
-table{
-
-  width:100%;
-
-  border-collapse:collapse;
-}
-
-thead{
-
-  background:#0f172a;
-
-  color:#fff;
-}
-
-th{
-
-  padding:18px;
-
-  text-align:left;
-
-  font-size:11px;
-
-  font-weight:900;
-}
-
-td{
-
-  padding:18px;
-
-  border-top:
-    1px solid #edf2f7;
-
-  font-size:13px;
-}
-
-tr:hover{
-  background:#f8fafc;
-}
-
-/* ======================================================
-STATUS
-====================================================== */
-
-.status{
-
-  display:inline-flex;
-
-  padding:8px 14px;
-
-  border-radius:999px;
-
-  font-size:10px;
-
-  font-weight:900;
-}
-
-.ok{
-  background:#dcfce7;
+.status.ok{
+  background:var(--green-soft);
   color:#166534;
 }
 
-.alerta{
-  background:#fee2e2;
+.status.pending{
+  background:var(--yellow-soft);
+  color:#854d0e;
+}
+
+.status.late{
+  background:var(--red-soft);
   color:#991b1b;
 }
 
-.med{
-  background:#dbeafe;
-  color:#1d4ed8;
+.status.other{
+  background:#f1f5f9;
+  color:#475569;
 }
 
-/* ======================================================
-RESPONSIVO
-====================================================== */
+/* MÍDIAS */
 
-@media(max-width:980px){
+.media-grid{
+  height:calc(100% - 31px);
 
-  .card.large{
-    grid-column:span 1;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-auto-rows:76px;
+  gap:6px;
+
+  overflow:auto;
+  padding-right:2px;
+}
+
+.media{
+  width:100%;
+  height:76px;
+
+  border-radius:15px;
+  border:1px solid var(--line);
+
+  background:#f1f5f9;
+  overflow:hidden;
+
+  position:relative;
+}
+
+.media img,
+.media video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.file-icon{
+  width:100%;
+  height:100%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#94a3b8;
+  font-size:22px;
+  font-weight:900;
+}
+
+.media-label{
+  position:absolute;
+  left:5px;
+  bottom:5px;
+
+  height:19px;
+  padding:0 6px;
+
+  border-radius:999px;
+  background:rgba(15,23,42,.72);
+  color:#fff;
+
+  display:flex;
+  align-items:center;
+
+  font-size:7.8px;
+  font-weight:900;
+}
+
+/* ESTADOS */
+
+.loading,
+.empty,
+.error{
+  height:100%;
+
+  border-radius:16px;
+  border:1px dashed var(--line);
+  background:#f8fffa;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:12px;
+
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  line-height:1.4;
+}
+
+.error{
+  background:var(--red-soft);
+  border-color:#fecaca;
+  color:#991b1b;
+}
+
+/* MODAL */
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:999;
+
+  display:none;
+  align-items:center;
+  justify-content:center;
+
+  padding:12px;
+  background:rgba(15,23,42,.82);
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modal-card{
+  width:100%;
+  max-width:620px;
+  max-height:92vh;
+
+  border-radius:23px;
+  overflow:hidden;
+
+  background:#020617;
+  box-shadow:0 28px 90px rgba(0,0,0,.45);
+
+  display:flex;
+  flex-direction:column;
+}
+
+.modal-head{
+  min-height:51px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+
+  padding:0 12px;
+
+  border-bottom:1px solid rgba(255,255,255,.12);
+  color:#fff;
+}
+
+.modal-head b{
+  font-size:13px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.close{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:22px;
+  font-weight:900;
+}
+
+.modal-body{
+  min-height:260px;
+  max-height:80vh;
+
+  overflow:auto;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:#020617;
+}
+
+.modal-body img,
+.modal-body video{
+  width:100%;
+  height:auto;
+  max-height:80vh;
+  object-fit:contain;
+}
+
+.modal-info{
+  width:100%;
+  padding:18px;
+  color:#fff;
+}
+
+.modal-source{
+  background:#fff7ed;
+  color:#7c2d12;
+  border:1px solid #fed7aa;
+  border-radius:17px;
+  padding:12px;
+}
+
+.modal-source small{
+  display:block;
+  color:#9a3412;
+  font-size:9px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+
+.modal-source b{
+  display:block;
+  font-size:19px;
+  font-weight:900;
+  line-height:1.2;
+}
+
+.modal-source span{
+  display:block;
+  margin-top:6px;
+  color:#9a3412;
+  font-size:10px;
+  font-weight:800;
+}
+
+/* MOBILE */
+
+@media(max-width:1050px){
+
+  html,
+  body{
+    overflow:auto;
   }
 
-  .grid{
+  .app{
+    height:auto;
+    min-height:100dvh;
+    grid-template-rows:auto auto auto;
+    overflow:visible;
+  }
+
+  .summary{
+    height:auto;
     grid-template-columns:1fr;
   }
 
+  .kpis{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .dashboard{
+    grid-template-columns:1fr;
+    grid-template-rows:auto;
+    overflow:visible;
+  }
+
+  .overview,
+  .people,
+  .sources,
+  .tasks,
+  .medias{
+    grid-column:auto;
+    grid-row:auto;
+  }
+
+  .card{
+    min-height:250px;
+  }
+
+  .overview{
+    grid-template-columns:120px minmax(0,1fr);
+  }
+
+  .circle{
+    width:108px;
+    height:108px;
+  }
+
+  .media-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
 }
 
-@media(max-width:700px){
+@media(max-width:620px){
 
-  body{
-    padding:14px;
+  .app{
+    padding:7px;
+    gap:7px;
   }
 
-  .top-left h1{
-    font-size:30px;
+  .top{
+    height:auto;
+    grid-template-columns:1fr;
   }
 
-  .hero h2{
-    font-size:28px;
+  .actions{
+    justify-content:space-between;
   }
 
-  .chart-box{
-    height:300px;
+  .filter-line{
+    grid-template-columns:1fr;
   }
 
+  .kpis{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .overview{
+    grid-template-columns:1fr;
+  }
+
+  .circle{
+    width:116px;
+    height:116px;
+  }
+
+  .media-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
 }
-
 </style>
 </head>
+
 <body>
 
-<!-- ======================================================
-TOP
-====================================================== -->
+<div class="app">
 
-<div class="top">
+  <header class="top">
 
-  <div class="top-left">
+    <div class="brand">
 
-    <h1>
-      Checklist OTTO
-    </h1>
+      <div class="logo">✓</div>
 
-    <p>
-      Dashboard • Mercatto Delícia
-    </p>
-
-  </div>
-
-  <div class="top-right">
-
-    <button
-      class="btn btn-white"
-      onclick="carregarDados()"
-    >
-      Atualizar
-    </button>
-
-    <button class="btn btn-gold">
-      Exportar Relatório
-    </button>
-
-  </div>
-
-</div>
-
-<!-- ======================================================
-HERO
-====================================================== -->
-
-<div class="hero">
-
-  <h2>
-    Central Inteligente de Indicadores
-  </h2>
-
-  <p>
-
-    Acompanhe produtividade operacional,
-    eficiência da equipe, indicadores
-    avançados, desempenho por setor,
-    evolução em tempo real e tarefas do dia.
-
-  </p>
-
-  <div class="hero-stats">
-
-    <div class="hero-box">
-
-      <small>
-        Eficiência Operacional
-      </small>
-
-      <h3 id="heroEf">
-        0%
-      </h3>
-
-    </div>
-
-    <div class="hero-box">
-
-      <small>
-        Tarefas Hoje
-      </small>
-
-      <h3 id="heroHoje">
-        0
-      </h3>
-
-    </div>
-
-    <div class="hero-box">
-
-      <small>
-        Setores Ativos
-      </small>
-
-      <h3 id="heroSetores">
-        0
-      </h3>
-
-    </div>
-
-    <div class="hero-box">
-
-      <small>
-        Melhor Setor
-      </small>
-
-      <h3 id="heroTop">
-        -
-      </h3>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- ======================================================
-KPIS
-====================================================== -->
-
-<div class="kpis">
-
-  <div class="kpi">
-
-    <small>
-      Total registros
-    </small>
-
-    <h2 id="kpiTotal">
-      0
-    </h2>
-
-    <span class="info">
-      Operacional
-    </span>
-
-  </div>
-
-  <div class="kpi">
-
-    <small>
-      Concluídos
-    </small>
-
-    <h2 id="kpiConcluidos">
-      0
-    </h2>
-
-    <span class="success">
-      Alta performance
-    </span>
-
-  </div>
-
-  <div class="kpi">
-
-    <small>
-      Pendentes
-    </small>
-
-    <h2 id="kpiPendentes">
-      0
-    </h2>
-
-    <span class="warning">
-      Fluxo ativo
-    </span>
-
-  </div>
-
-  <div class="kpi">
-
-    <small>
-      Atrasados
-    </small>
-
-    <h2 id="kpiAtrasados">
-      0
-    </h2>
-
-    <span class="danger">
-      Atenção
-    </span>
-
-  </div>
-
-</div>
-
-<!-- ======================================================
-GRID
-====================================================== -->
-
-<div class="grid">
-
-  <!-- STATUS -->
-
-  <div class="card large">
-
-    <div class="card-header">
-
-      <h3>
-        Status operacional
-      </h3>
-
-      <div class="badge">
-        Tempo real
+      <div>
+        <h1>CheckFlow Operacional</h1>
+        <p id="periodoTexto">Carregando painel...</p>
       </div>
 
     </div>
 
-    <div class="chart-box">
-
-      <canvas id="graficoStatus"></canvas>
-
+    <div class="actions">
+      <div class="live"></div>
+      <button class="btn" onclick="limparFiltros()">Limpar</button>
+      <button class="btn green" onclick="carregarDados()">Atualizar</button>
     </div>
 
-  </div>
+  </header>
 
-  <!-- SETORES -->
+  <section class="summary">
 
-  <div class="card large">
+    <div class="filters">
 
-    <div class="card-header">
+      <div class="filter-line">
 
-      <h3>
-        Performance por setor
-      </h3>
+        <input
+          id="busca"
+          class="search"
+          placeholder="Buscar tarefa, pessoa, empresa..."
+          oninput="debounceFiltro()"
+        >
 
-      <div class="badge">
-        Operacional
+        <select id="filtroStatus" class="select" onchange="aplicarFiltros()">
+          <option value="">Status</option>
+          <option value="CONCLUIDO">Concluído</option>
+          <option value="PENDENTE">Pendente</option>
+          <option value="ATRASADO">Atrasado</option>
+          <option value="EM_ANDAMENTO">Andamento</option>
+          <option value="AGUARDANDO_VALIDACAO">Validação</option>
+          <option value="AGUARDANDO_FINALIZACAO">Finalização</option>
+          <option value="CANCELADO">Cancelado</option>
+          <option value="REPROVADO">Reprovado</option>
+        </select>
+
+      </div>
+
+      <div class="chips">
+
+        <button class="chip" onclick="setPeriodo('hoje',this)">Hoje</button>
+        <button class="chip active" onclick="setPeriodo('ontem',this)">Ontem</button>
+        <button class="chip" onclick="setPeriodo('7',this)">7 dias</button>
+        <button class="chip" onclick="setPeriodo('30',this)">30 dias</button>
+        <button class="chip" onclick="setPeriodo('midias',this)">Com mídias</button>
+        <button class="chip" onclick="setPeriodo('fontes',this)">Com fontes</button>
+
       </div>
 
     </div>
 
-    <div class="chart-box">
+    <div class="kpis">
 
-      <canvas id="graficoSetores"></canvas>
+      <div class="kpi total">
+        <b id="kpiTotal">0</b>
+        <span>Total</span>
+      </div>
 
-    </div>
+      <div class="kpi ok">
+        <b id="kpiConcluidas">0</b>
+        <span>Feitas</span>
+      </div>
 
-  </div>
+      <div class="kpi pending">
+        <b id="kpiPendentes">0</b>
+        <span>Pendentes</span>
+      </div>
 
-  <!-- INDICADORES -->
+      <div class="kpi late">
+        <b id="kpiAtrasadas">0</b>
+        <span>Atrasadas</span>
+      </div>
 
-  <div class="card">
+      <div class="kpi media">
+        <b id="kpiMidias">0</b>
+        <span>Mídias</span>
+      </div>
 
-    <div class="card-header">
-
-      <h3>
-        Indicadores avançados
-      </h3>
-
-    </div>
-
-    <div
-      class="progress-group"
-      id="indicadores"
-    ></div>
-
-  </div>
-
-  <!-- RANKING -->
-
-  <div class="card">
-
-    <div class="card-header">
-
-      <h3>
-        Ranking operacional
-      </h3>
+      <div class="kpi source">
+        <b id="kpiFontes">0</b>
+        <span>Fontes</span>
+      </div>
 
     </div>
 
-    <div
-      class="list"
-      id="ranking"
-    ></div>
+  </section>
 
-  </div>
+  <main class="dashboard">
+
+    <section class="card overview">
+
+      <div class="circle" id="percentCircle">
+        <b id="percentualConclusao">0%</b>
+      </div>
+
+      <div class="mini-grid">
+
+        <div class="mini">
+          <small>Empresas</small>
+          <b id="resEmpresas">0</b>
+        </div>
+
+        <div class="mini">
+          <small>Pessoas</small>
+          <b id="resPessoas">0</b>
+        </div>
+
+        <div class="mini">
+          <small>Setores</small>
+          <b id="resSetores">0</b>
+        </div>
+
+        <div class="mini">
+          <small>Destaque</small>
+          <b id="resTopPessoa">-</b>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="card people">
+
+      <div class="card-title">
+        <h2>Pessoas / responsáveis</h2>
+        <span id="rankingInfo">0</span>
+      </div>
+
+      <div id="ranking" class="scroll">
+        <div class="loading">Carregando pessoas...</div>
+      </div>
+
+    </section>
+
+    <section class="card sources">
+
+      <div class="card-title">
+        <h2>Fontes de dados</h2>
+        <span id="fontesInfo">0</span>
+      </div>
+
+      <div id="fontesLista" class="scroll">
+        <div class="loading">Carregando fontes...</div>
+      </div>
+
+    </section>
+
+    <section class="card tasks">
+
+      <div class="card-title">
+        <h2>Tarefas principais</h2>
+        <span id="tarefasInfo">0</span>
+      </div>
+
+      <div id="tarefasLista" class="scroll">
+        <div class="loading">Carregando tarefas...</div>
+      </div>
+
+    </section>
+
+    <section class="card medias">
+
+      <div class="card-title">
+        <h2>Mídias recentes</h2>
+        <span id="midiasInfo">0</span>
+      </div>
+
+      <div id="midiasLista" class="media-grid">
+        <div class="loading">Carregando mídias...</div>
+      </div>
+
+    </section>
+
+  </main>
 
 </div>
 
-<!-- ======================================================
-TABLE
-====================================================== -->
+<div id="modal" class="modal" onclick="fecharModalFora(event)">
 
-<div class="table-wrap">
+  <div class="modal-card" onclick="event.stopPropagation()">
 
-  <div class="table-head">
+    <div class="modal-head">
+      <b id="modalTitulo">Visualização</b>
+      <button class="close" onclick="fecharModal()">×</button>
+    </div>
 
-    <h3>
-      Tarefas do dia
-    </h3>
-
-    <p>
-      Apenas tarefas registradas hoje
-    </p>
+    <div id="modalBody" class="modal-body"></div>
 
   </div>
-
-  <table>
-
-    <thead>
-
-      <tr>
-
-        <th>Status</th>
-        <th>Título</th>
-        <th>Empresa</th>
-        <th>Setor</th>
-        <th>Prioridade</th>
-        <th>Data</th>
-
-      </tr>
-
-    </thead>
-
-    <tbody id="tbody"></tbody>
-
-  </table>
 
 </div>
 
 <script>
+const SUPABASE_URL =
+  "https://dxkszikemntfusfyrzos.supabase.co";
 
-/* ======================================================
-SUPABASE
-====================================================== */
+const SUPABASE_KEY =
+  "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed";
 
 const supabaseClient =
   window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-    "https://dxkszikemntfusfyrzos.supabase.co",
+let registros = [];
+let filtrados = [];
+let periodoAtual = "ontem";
+let filtroTimer = null;
 
-    "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+const LIMITE_BUSCA = 350;
+const LIMITE_TAREFAS_TELA = 12;
+const LIMITE_PESSOAS_TELA = 8;
+const LIMITE_FONTES_TELA = 7;
+const LIMITE_MIDIAS_TELA = 12;
 
-)
+carregarDados();
 
-let graficoStatus
-let graficoSetores
+function setLoading(){
 
-carregarDados()
+  document.getElementById("periodoTexto").innerText =
+    "Carregando dados...";
 
-/* ======================================================
-LOAD
-====================================================== */
+  document.getElementById("ranking").innerHTML =
+    '<div class="loading">Carregando pessoas...</div>';
+
+  document.getElementById("fontesLista").innerHTML =
+    '<div class="loading">Carregando fontes...</div>';
+
+  document.getElementById("tarefasLista").innerHTML =
+    '<div class="loading">Carregando tarefas...</div>';
+
+  document.getElementById("midiasLista").innerHTML =
+    '<div class="loading">Carregando mídias...</div>';
+}
 
 async function carregarDados(){
 
-  const { data, error } =
+  setLoading();
 
-    await supabaseClient
-
+  let query =
+    supabaseClient
       .from("tarefas_checklist")
-
       .select("*")
-      .order("created_at",{ascending:false})
+      .eq("ativo", true)
+      .eq("deletado", false)
+      .order("data_limite", { ascending:false })
+      .limit(LIMITE_BUSCA);
+
+  const faixa =
+    faixaPeriodoServidor(periodoAtual);
+
+  if(faixa && periodoAtual !== "midias" && periodoAtual !== "fontes"){
+
+    query =
+      query
+        .gte("data_limite", faixa.inicio)
+        .lte("data_limite", faixa.fim);
+  }
+
+  if(periodoAtual === "midias" || periodoAtual === "fontes"){
+
+    const ultimos30 =
+      faixaDiasServidor(30);
+
+    query =
+      query
+        .gte("data_limite", ultimos30.inicio)
+        .lte("data_limite", ultimos30.fim);
+  }
+
+  const { data, error } =
+    await query;
 
   if(error){
 
-    console.log(error)
+    console.error(error);
 
-    return
+    const html =
+      `
+        <div class="error">
+          Erro ao carregar dados.<br>
+          ${escapeHtml(error.message || "Verifique a tabela tarefas_checklist.")}
+        </div>
+      `;
+
+    document.getElementById("ranking").innerHTML = html;
+    document.getElementById("fontesLista").innerHTML = html;
+    document.getElementById("tarefasLista").innerHTML = html;
+    document.getElementById("midiasLista").innerHTML = html;
+
+    return;
   }
 
-  const lista = data || []
+  registros = data || [];
 
-  atualizarKPIS(lista)
-
-  montarTabela(lista)
-
-  montarGraficos(lista)
-
-  montarIndicadores(lista)
-
-  montarRanking(lista)
-
-  atualizarHero(lista)
-
+  aplicarFiltros();
 }
 
-/* ======================================================
-KPIS
-====================================================== */
+function debounceFiltro(){
 
-function atualizarKPIS(lista){
+  clearTimeout(filtroTimer);
 
-  const concluidos =
-    lista.filter(
-      x=>x.status === "CONCLUIDO"
-    ).length
-
-  const pendentes =
-    lista.filter(
-      x=>x.status === "PENDENTE"
-    ).length
-
-  const atrasados =
-    lista.filter(
-      x=>x.status === "ATRASADO"
-    ).length
-
-  document.getElementById(
-    "kpiTotal"
-  ).innerText =
-    lista.length
-
-  document.getElementById(
-    "kpiConcluidos"
-  ).innerText =
-    concluidos
-
-  document.getElementById(
-    "kpiPendentes"
-  ).innerText =
-    pendentes
-
-  document.getElementById(
-    "kpiAtrasados"
-  ).innerText =
-    atrasados
-
+  filtroTimer =
+    setTimeout(() => {
+      aplicarFiltros();
+    }, 180);
 }
 
-/* ======================================================
-HERO
-====================================================== */
+function setPeriodo(tipo, el){
 
-function atualizarHero(lista){
+  periodoAtual = tipo;
 
-  const hoje =
-    new Date()
-      .toLocaleDateString("pt-BR")
+  document
+    .querySelectorAll(".chip")
+    .forEach(c => c.classList.remove("active"));
 
-  const tarefasHoje =
+  if(el){
+    el.classList.add("active");
+  }
 
-    lista.filter(t=>{
-
-      if(!t.created_at)
-        return false
-
-      return new Date(
-        t.created_at
-      ).toLocaleDateString("pt-BR")
-      === hoje
-
-    })
-
-  const concluidos =
-    lista.filter(
-      x=>x.status === "CONCLUIDO"
-    ).length
-
-  const eficiencia =
-
-    lista.length > 0
-
-    ? Math.round(
-        (concluidos/lista.length)*100
-      )
-
-    : 0
-
-  const setores = {}
-
-  lista.forEach(t=>{
-
-    const s =
-      t.setor || "Outros"
-
-    if(!setores[s])
-      setores[s] = 0
-
-    if(t.status === "CONCLUIDO"){
-
-      setores[s]++
-    }
-
-  })
-
-  const top =
-
-    Object.entries(setores)
-
-      .sort(
-        (a,b)=>
-          b[1]-a[1]
-      )[0]
-
-  document.getElementById(
-    "heroEf"
-  ).innerText =
-    eficiencia + "%"
-
-  document.getElementById(
-    "heroHoje"
-  ).innerText =
-    tarefasHoje.length
-
-  document.getElementById(
-    "heroSetores"
-  ).innerText =
-    Object.keys(setores).length
-
-  document.getElementById(
-    "heroTop"
-  ).innerText =
-    top
-      ? top[0]
-      : "-"
-
+  carregarDados();
 }
 
-/* ======================================================
-TABLE DIA
-====================================================== */
+function limparFiltros(){
 
-function montarTabela(lista){
+  document.getElementById("busca").value = "";
+  document.getElementById("filtroStatus").value = "";
 
-  const tbody =
-    document.getElementById(
-      "tbody"
-    )
+  periodoAtual = "ontem";
 
-  tbody.innerHTML = ""
+  document
+    .querySelectorAll(".chip")
+    .forEach(c => c.classList.remove("active"));
 
-  const hoje =
-    new Date()
-      .toLocaleDateString("pt-BR")
+  const ontem =
+    [...document.querySelectorAll(".chip")]
+      .find(btn => btn.innerText.trim().toLowerCase() === "ontem");
 
-  const tarefasHoje =
+  if(ontem){
+    ontem.classList.add("active");
+  }
 
-    lista.filter(t=>{
-
-      if(!t.created_at)
-        return false
-
-      return new Date(
-        t.created_at
-      ).toLocaleDateString("pt-BR")
-      === hoje
-
-    })
-
-  tarefasHoje.forEach(t=>{
-
-    tbody.innerHTML += `
-
-      <tr>
-
-        <td>
-
-          <span class="
-            status
-            ${
-              t.status === "CONCLUIDO"
-
-              ? "ok"
-
-              : t.status === "ATRASADO"
-
-              ? "alerta"
-
-              : "med"
-            }
-          ">
-
-            ${t.status || "-"}
-
-          </span>
-
-        </td>
-
-        <td>
-
-          <b>
-            ${t.titulo || "-"}
-          </b>
-
-        </td>
-
-        <td>
-
-          ${t.empresa || "-"}
-
-        </td>
-
-        <td>
-
-          ${t.setor || "-"}
-
-        </td>
-
-        <td>
-
-          ${t.prioridade || "-"}
-
-        </td>
-
-        <td>
-
-          ${
-            t.created_at
-
-            ? new Date(
-                t.created_at
-              ).toLocaleString("pt-BR")
-
-            : "-"
-          }
-
-        </td>
-
-      </tr>
-
-    `
-
-  })
-
+  carregarDados();
 }
 
-/* ======================================================
-GRAFICOS
-====================================================== */
+function aplicarFiltros(){
 
-function montarGraficos(lista){
+  const busca =
+    limparTexto(
+      document.getElementById("busca").value || ""
+    );
 
-  const pendentes =
-    lista.filter(
-      x=>x.status === "PENDENTE"
-    ).length
+  const status =
+    document.getElementById("filtroStatus").value || "";
 
-  const concluidos =
-    lista.filter(
-      x=>x.status === "CONCLUIDO"
-    ).length
+  filtrados =
+    registros.filter(t => {
 
-  const atrasados =
-    lista.filter(
-      x=>x.status === "ATRASADO"
-    ).length
+      const midias =
+        midiasDaTarefa(t, true);
 
-  if(graficoStatus)
-    graficoStatus.destroy()
+      const fontes =
+        fontesDaTarefa(t);
 
-  graficoStatus =
-    new Chart(
-
-      document.getElementById(
-        "graficoStatus"
-      ),
-
-      {
-
-        type:"doughnut",
-
-        data:{
-
-          labels:[
-            "Concluídos",
-            "Pendentes",
-            "Atrasados"
-          ],
-
-          datasets:[{
-
-            data:[
-              concluidos,
-              pendentes,
-              atrasados
-            ],
-
-            backgroundColor:[
-              "#16a34a",
-              "#2563eb",
-              "#dc2626"
-            ],
-
-            borderWidth:0
-
-          }]
-
-        },
-
-        options:{
-          responsive:true,
-          maintainAspectRatio:false
-        }
-
+      if(periodoAtual === "midias" && midias.length === 0){
+        return false;
       }
 
-    )
-
-  const mapa = {}
-
-  lista.forEach(t=>{
-
-    const setor =
-      t.setor || "Outros"
-
-    if(!mapa[setor]){
-
-      mapa[setor] = 0
-    }
-
-    mapa[setor]++
-
-  })
-
-  if(graficoSetores)
-    graficoSetores.destroy()
-
-  graficoSetores =
-    new Chart(
-
-      document.getElementById(
-        "graficoSetores"
-      ),
-
-      {
-
-        type:"bar",
-
-        data:{
-
-          labels:
-            Object.keys(mapa),
-
-          datasets:[{
-
-            label:"Total",
-
-            data:
-              Object.values(mapa),
-
-            borderRadius:14,
-
-            backgroundColor:"#2563eb"
-
-          }]
-
-        },
-
-        options:{
-          responsive:true,
-          maintainAspectRatio:false
-        }
-
+      if(periodoAtual === "fontes" && fontes.length === 0){
+        return false;
       }
 
-    )
+      if(status && statusNormalizado(t.status) !== status){
+        return false;
+      }
 
+      if(busca){
+
+        const texto =
+          limparTexto([
+            t.titulo,
+            t.descricao,
+            t.empresa,
+            t.setor,
+            t.status,
+            t.prioridade,
+            nomeResponsavel(t),
+            nomesResponsaveis(t).join(" "),
+            t.observacoes
+          ].join(" "));
+
+        if(!texto.includes(busca)){
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+  atualizarResumo();
+
+  requestAnimationFrame(() => {
+    montarRanking();
+    montarFontes();
+    montarTarefas();
+    montarMidias();
+  });
 }
 
-/* ======================================================
-INDICADORES
-====================================================== */
-
-function montarIndicadores(lista){
+function atualizarResumo(){
 
   const total =
-    lista.length
+    filtrados.length;
 
-  const concluidos =
-    lista.filter(
-      x=>x.status === "CONCLUIDO"
-    ).length
+  const concluidas =
+    filtrados.filter(t => statusNormalizado(t.status) === "CONCLUIDO").length;
 
-  const atrasados =
-    lista.filter(
-      x=>x.status === "ATRASADO"
-    ).length
+  const pendentes =
+    filtrados.filter(t => statusNormalizado(t.status) === "PENDENTE").length;
 
-  const eficiencia =
+  const atrasadas =
+    filtrados.filter(t => statusNormalizado(t.status) === "ATRASADO").length;
 
+  let midias = 0;
+  let fontes = 0;
+
+  const empresas = new Set();
+  const setores = new Set();
+  const pessoas = new Set();
+
+  filtrados.forEach(t => {
+
+    midias += midiasDaTarefa(t, true).length;
+    fontes += fontesDaTarefa(t).length;
+
+    if(t.empresa){
+      empresas.add(t.empresa);
+    }
+
+    if(t.setor){
+      setores.add(t.setor);
+    }
+
+    nomesResponsaveis(t).forEach(nome => {
+      if(nome && nome !== "-"){
+        pessoas.add(nome);
+      }
+    });
+  });
+
+  const percentual =
     total > 0
+      ? Math.round((concluidas / total) * 100)
+      : 0;
 
-    ? Math.round(
-        (concluidos/total)*100
-      )
+  document.getElementById("kpiTotal").innerText = total;
+  document.getElementById("kpiConcluidas").innerText = concluidas;
+  document.getElementById("kpiPendentes").innerText = pendentes;
+  document.getElementById("kpiAtrasadas").innerText = atrasadas;
+  document.getElementById("kpiMidias").innerText = midias;
+  document.getElementById("kpiFontes").innerText = fontes;
 
-    : 0
+  document.getElementById("percentualConclusao").innerText =
+    percentual + "%";
 
-  const atraso =
+  document.getElementById("percentCircle").style.background =
+    `conic-gradient(var(--green) ${percentual * 3.6}deg,#e2e8f0 0deg)`;
 
-    total > 0
+  document.getElementById("resEmpresas").innerText = empresas.size;
+  document.getElementById("resPessoas").innerText = pessoas.size;
+  document.getElementById("resSetores").innerText = setores.size;
 
-    ? Math.round(
-        (atrasados/total)*100
-      )
+  document.getElementById("tarefasInfo").innerText = total;
+  document.getElementById("fontesInfo").innerText = fontes;
+  document.getElementById("midiasInfo").innerText = midias;
 
-    : 0
-
-  const pontualidade =
-    100 - atraso
-
-  document.getElementById(
-    "indicadores"
-  ).innerHTML = `
-
-    <div class="progress-item">
-
-      <div class="progress-top">
-
-        <span>
-          Eficiência operacional
-        </span>
-
-        <b>
-          ${eficiencia}%
-        </b>
-
-      </div>
-
-      <div class="progress">
-
-        <div style="
-          width:${eficiencia}%;
-          background:linear-gradient(
-            90deg,
-            #16a34a,
-            #4ade80
-          );
-        "></div>
-
-      </div>
-
-    </div>
-
-    <div class="progress-item">
-
-      <div class="progress-top">
-
-        <span>
-          Pontualidade
-        </span>
-
-        <b>
-          ${pontualidade}%
-        </b>
-
-      </div>
-
-      <div class="progress">
-
-        <div style="
-          width:${pontualidade}%;
-          background:linear-gradient(
-            90deg,
-            #2563eb,
-            #60a5fa
-          );
-        "></div>
-
-      </div>
-
-    </div>
-
-    <div class="progress-item">
-
-      <div class="progress-top">
-
-        <span>
-          Taxa atraso
-        </span>
-
-        <b>
-          ${atraso}%
-        </b>
-
-      </div>
-
-      <div class="progress">
-
-        <div style="
-          width:${atraso}%;
-          background:linear-gradient(
-            90deg,
-            #dc2626,
-            #f87171
-          );
-        "></div>
-
-      </div>
-
-    </div>
-
-  `
-
+  document.getElementById("periodoTexto").innerText =
+    textoPeriodo() + " • " + total + " registros";
 }
 
-/* ======================================================
-RANKING
-====================================================== */
+function montarRanking(){
 
-function montarRanking(lista){
+  const mapa = {};
 
-  const mapa = {}
+  filtrados.forEach(t => {
 
-  lista.forEach(t=>{
+    const midias =
+      midiasDaTarefa(t, true).length;
 
-    const setor =
-      t.setor || "Outros"
+    const fontes =
+      fontesDaTarefa(t).length;
 
-    if(!mapa[setor]){
+    nomesResponsaveis(t).forEach(nome => {
 
-      mapa[setor] = 0
-    }
+      if(!nome || nome === "-"){
+        return;
+      }
 
-    if(t.status === "CONCLUIDO"){
+      if(!mapa[nome]){
 
-      mapa[setor]++
-    }
+        mapa[nome] = {
+          total:0,
+          concluidas:0,
+          midias:0,
+          fontes:0
+        };
+      }
 
-  })
+      mapa[nome].total++;
+
+      if(statusNormalizado(t.status) === "CONCLUIDO"){
+        mapa[nome].concluidas++;
+      }
+
+      mapa[nome].midias += midias;
+      mapa[nome].fontes += fontes;
+    });
+  });
 
   const ranking =
-
     Object.entries(mapa)
+      .map(([nome, info]) => {
 
-      .sort(
-        (a,b)=>
-          b[1]-a[1]
-      )
+        const percentual =
+          info.total > 0
+            ? Math.round((info.concluidas / info.total) * 100)
+            : 0;
 
-      .slice(0,5)
+        return {
+          nome,
+          ...info,
+          percentual
+        };
+      })
+      .sort((a,b) => {
+
+        if(b.concluidas !== a.concluidas){
+          return b.concluidas - a.concluidas;
+        }
+
+        return b.percentual - a.percentual;
+      });
+
+  document.getElementById("rankingInfo").innerText =
+    ranking.length;
+
+  document.getElementById("resTopPessoa").innerText =
+    ranking[0]
+      ? ranking[0].nome
+      : "-";
 
   const box =
-    document.getElementById(
-      "ranking"
-    )
+    document.getElementById("ranking");
 
-  box.innerHTML = ""
+  if(ranking.length === 0){
 
-  ranking.forEach(item=>{
+    box.innerHTML =
+      '<div class="empty">Nenhuma pessoa encontrada.</div>';
 
-    box.innerHTML += `
+    return;
+  }
 
-      <div class="item">
+  box.innerHTML =
+    ranking.slice(0,LIMITE_PESSOAS_TELA).map((r,index) => `
+      <article class="rank">
 
-        <div class="item-left">
+        <div class="pos">
+          ${index + 1}
+        </div>
 
-          <div class="avatar">
-
-            ${item[0].charAt(0)}
-
-          </div>
-
-          <div class="item-info">
-
-            <b>
-              ${item[0]}
-            </b>
-
-            <p>
-              Melhor desempenho operacional
-            </p>
-
-          </div>
-
+        <div class="rank-info">
+          <b>${escapeHtml(r.nome)}</b>
+          <small>${r.total} tarefa(s) • ${r.midias} mídia(s) • ${r.fontes} fonte(s)</small>
         </div>
 
         <div class="score">
+          <b>${r.concluidas}/${r.total}</b>
+          <small>${r.percentual}%</small>
+        </div>
 
-          ${item[1]}
+      </article>
+    `).join("");
+}
+
+function montarFontes(){
+
+  const lista = [];
+
+  for(const t of filtrados){
+
+    const fontes =
+      fontesDaTarefa(t);
+
+    for(const f of fontes){
+
+      lista.push({
+        tarefa:t.titulo || "-",
+        responsavel:nomeResponsavel(t),
+        empresa:t.empresa || "",
+        ...f
+      });
+
+      if(lista.length >= LIMITE_FONTES_TELA){
+        break;
+      }
+    }
+
+    if(lista.length >= LIMITE_FONTES_TELA){
+      break;
+    }
+  }
+
+  const box =
+    document.getElementById("fontesLista");
+
+  if(lista.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">Nenhuma fonte encontrada.</div>';
+
+    return;
+  }
+
+  window.__fontesDashboard =
+    lista;
+
+  box.innerHTML =
+    lista.map((f,index) => `
+      <article class="source-item" onclick="abrirFonte(${index})">
+
+        <small>${escapeHtml(f.nome || "Fonte")}</small>
+
+        <b>
+          ${escapeHtml(f.valor || "-")}
+          ${f.tipo ? " " + escapeHtml(f.tipo) : ""}
+        </b>
+
+        <span>${escapeHtml(f.tarefa || "-")}</span>
+
+      </article>
+    `).join("");
+}
+
+function montarTarefas(){
+
+  const box =
+    document.getElementById("tarefasLista");
+
+  if(filtrados.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">Nenhuma tarefa encontrada.</div>';
+
+    return;
+  }
+
+  box.innerHTML =
+    filtrados
+      .slice(0,LIMITE_TAREFAS_TELA)
+      .map(cardTarefa)
+      .join("");
+}
+
+function cardTarefa(t){
+
+  const midias =
+    midiasDaTarefa(t, true);
+
+  const fontes =
+    fontesDaTarefa(t);
+
+  const status =
+    statusNormalizado(t.status);
+
+  let statusClass = "other";
+
+  if(status === "CONCLUIDO"){
+    statusClass = "ok";
+  }
+
+  if(status === "PENDENTE"){
+    statusClass = "pending";
+  }
+
+  if(status === "ATRASADO"){
+    statusClass = "late";
+  }
+
+  return `
+    <article class="task">
+
+      <div class="task-main">
+
+        <b>${escapeHtml(t.titulo || "-")}</b>
+
+        <div class="meta-line">
+
+          <div class="meta green">
+            👤 ${escapeHtml(nomeResponsavel(t))}
+          </div>
+
+          ${
+            t.empresa
+              ? `<div class="meta">🏢 ${escapeHtml(t.empresa)}</div>`
+              : ""
+          }
+
+          ${
+            t.setor
+              ? `<div class="meta">📍 ${escapeHtml(t.setor)}</div>`
+              : ""
+          }
+
+          ${
+            midias.length
+              ? `<div class="meta media">📸 ${midias.length}</div>`
+              : ""
+          }
+
+          ${
+            fontes.length
+              ? `<div class="meta source">📌 ${fontes.length}</div>`
+              : ""
+          }
 
         </div>
 
       </div>
 
-    `
+      <div class="status ${statusClass}">
+        ${escapeHtml(status)}
+      </div>
 
-  })
-
+    </article>
+  `;
 }
 
+function montarMidias(){
+
+  const lista = [];
+
+  for(const t of filtrados){
+
+    const midias =
+      midiasDaTarefa(t, false);
+
+    for(const m of midias){
+
+      lista.push({
+        tarefa:t.titulo || "Mídia",
+        ...m
+      });
+
+      if(lista.length >= LIMITE_MIDIAS_TELA){
+        break;
+      }
+    }
+
+    if(lista.length >= LIMITE_MIDIAS_TELA){
+      break;
+    }
+  }
+
+  const box =
+    document.getElementById("midiasLista");
+
+  if(lista.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">Nenhuma mídia encontrada.</div>';
+
+    return;
+  }
+
+  box.innerHTML =
+    lista.map(m => `
+      <button
+        class="media"
+        onclick="abrirModal('${escapeAttr(m.url)}','${escapeAttr(m.tipo)}','${escapeAttr(m.tarefa)}')"
+      >
+        ${renderThumb(m)}
+        <div class="media-label">
+          ${m.tipo === "video" ? "Vídeo" : m.tipo === "imagem" ? "Foto" : "Arquivo"}
+        </div>
+      </button>
+    `).join("");
+}
+
+function midiasDaTarefa(t, leve){
+
+  const lista = [];
+
+  function add(valor){
+
+    if(!valor){
+      return;
+    }
+
+    if(Array.isArray(valor)){
+
+      for(const item of valor){
+
+        add(item);
+
+        if(leve && lista.length > 0){
+          return;
+        }
+      }
+
+      return;
+    }
+
+    if(typeof valor === "object"){
+
+      const campos = [
+        "url",
+        "foto_url",
+        "foto",
+        "imagem_url",
+        "midia_url",
+        "media_url",
+        "video_url",
+        "arquivo_url",
+        "anexo_url",
+        "evidencia_url",
+        "publicUrl",
+        "signedUrl",
+        "foto_path"
+      ];
+
+      for(const k of campos){
+
+        if(valor[k]){
+          add(valor[k]);
+        }
+
+        if(leve && lista.length > 0){
+          return;
+        }
+      }
+
+      return;
+    }
+
+    const url =
+      String(valor).trim();
+
+    if(!url){
+      return;
+    }
+
+    if(!/^https?:\/\//i.test(url) && !url.startsWith("data:")){
+      return;
+    }
+
+    if(lista.some(x => x.url === url)){
+      return;
+    }
+
+    lista.push({
+      url,
+      tipo:tipoMidia(url)
+    });
+  }
+
+  [
+    "foto_url",
+    "foto",
+    "imagem_url",
+    "midia_url",
+    "media_url",
+    "video_url",
+    "arquivo_url",
+    "anexo_url",
+    "evidencia_url"
+  ].forEach(campo => {
+
+    add(t[campo]);
+
+  });
+
+  if(!leve || lista.length === 0){
+
+    const checklist =
+      parseJSON(t.checklist);
+
+    if(Array.isArray(checklist)){
+
+      for(const item of checklist){
+
+        add(item?.foto_url);
+        add(item?.foto);
+        add(item?.foto_path);
+        add(item?.imagem_url);
+        add(item?.midia_url);
+        add(item?.media_url);
+        add(item?.video_url);
+        add(item?.arquivo_url);
+        add(item?.anexo_url);
+        add(item?.evidencia_url);
+        add(item?.publicUrl);
+        add(item?.signedUrl);
+        add(item?.fotos);
+        add(item?.midias);
+        add(item?.anexos);
+        add(item?.evidencias);
+
+        if(leve && lista.length > 0){
+          break;
+        }
+      }
+    }
+  }
+
+  if(!leve || lista.length === 0){
+    add(parseJSON(t.evidencias));
+    add(parseJSON(t.anexos));
+  }
+
+  return lista;
+}
+
+function fontesDaTarefa(t){
+
+  const lista = [];
+
+  const checklist =
+    parseJSON(t.checklist);
+
+  if(!Array.isArray(checklist)){
+    return lista;
+  }
+
+  for(let index = 0; index < checklist.length; index++){
+
+    const item =
+      checklist[index];
+
+    const fonteObrigatoria =
+      Boolean(item?.fonte_obrigatoria);
+
+    const fonteTipo =
+      String(item?.fonte_tipo || "").trim();
+
+    const fonteValor =
+      String(item?.fonte_valor ?? "").trim();
+
+    if(!fonteObrigatoria && !fonteTipo && !fonteValor){
+      continue;
+    }
+
+    lista.push({
+      nome:
+        item?.item ||
+        item?.descricao ||
+        item?.titulo ||
+        `Item ${index + 1}`,
+      valor:fonteValor,
+      tipo:fonteTipo
+    });
+  }
+
+  return lista;
+}
+
+function nomesResponsaveis(t){
+
+  const nomes = [];
+
+  function add(valor){
+
+    if(!valor){
+      return;
+    }
+
+    if(Array.isArray(valor)){
+
+      valor.forEach(add);
+      return;
+    }
+
+    if(typeof valor === "object"){
+
+      [
+        "nome",
+        "name",
+        "responsavel",
+        "responsavel_nome",
+        "colaborador",
+        "usuario",
+        "usuario_nome",
+        "executado_por",
+        "feito_por"
+      ].forEach(k => {
+
+        if(valor[k]){
+          add(valor[k]);
+        }
+
+      });
+
+      return;
+    }
+
+    String(valor)
+      .split(",")
+      .map(v => v.trim())
+      .filter(Boolean)
+      .forEach(v => {
+
+        if(!nomes.includes(v)){
+          nomes.push(v);
+        }
+
+      });
+  }
+
+  [
+    t.responsavel,
+    t.responsavel_nome,
+    t.usuario_nome,
+    t.colaborador,
+    t.executado_por,
+    t.feito_por,
+    t.nome,
+    t.user_name,
+    t.atribuido_para,
+    parseJSON(t.responsaveis),
+    parseJSON(t.colaboradores)
+  ].forEach(add);
+
+  if(nomes.length === 0){
+    nomes.push("-");
+  }
+
+  return nomes;
+}
+
+function nomeResponsavel(t){
+
+  return nomesResponsaveis(t)[0] || "-";
+}
+
+function statusNormalizado(status){
+
+  const s =
+    String(status || "")
+      .trim()
+      .toUpperCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g,"")
+      .replace(/\s+/g,"_");
+
+  if(["CONCLUIDO","CONCLUIDA","FINALIZADO","FINALIZADA","FEITO","FEITA"].includes(s)){
+    return "CONCLUIDO";
+  }
+
+  if(["ATRASADO","ATRASADA","VENCIDO","VENCIDA"].includes(s)){
+    return "ATRASADO";
+  }
+
+  if(["PENDENTE","ABERTO","ABERTA"].includes(s)){
+    return "PENDENTE";
+  }
+
+  return s || "-";
+}
+
+function faixaPeriodoServidor(tipo){
+
+  const agora =
+    new Date();
+
+  if(tipo === "hoje"){
+
+    const inicio =
+      new Date(agora);
+
+    inicio.setHours(0,0,0,0);
+
+    const fim =
+      new Date(agora);
+
+    fim.setHours(23,59,59,999);
+
+    return {
+      inicio:inicio.toISOString(),
+      fim:fim.toISOString()
+    };
+  }
+
+  if(tipo === "ontem"){
+
+    const inicio =
+      new Date(agora);
+
+    inicio.setDate(inicio.getDate() - 1);
+    inicio.setHours(5,0,0,0);
+
+    const fim =
+      new Date(agora);
+
+    fim.setHours(4,30,0,0);
+
+    return {
+      inicio:inicio.toISOString(),
+      fim:fim.toISOString()
+    };
+  }
+
+  if(tipo === "7"){
+    return faixaDiasServidor(7);
+  }
+
+  if(tipo === "30"){
+    return faixaDiasServidor(30);
+  }
+
+  return null;
+}
+
+function faixaDiasServidor(dias){
+
+  const agora =
+    new Date();
+
+  const inicio =
+    new Date(agora);
+
+  inicio.setDate(inicio.getDate() - dias);
+  inicio.setHours(0,0,0,0);
+
+  const fim =
+    new Date(agora);
+
+  fim.setHours(23,59,59,999);
+
+  return {
+    inicio:inicio.toISOString(),
+    fim:fim.toISOString()
+  };
+}
+
+function textoPeriodo(){
+
+  if(periodoAtual === "hoje"){
+    return "Hoje";
+  }
+
+  if(periodoAtual === "ontem"){
+    return "Ontem operacional 05:00 até 04:30";
+  }
+
+  if(periodoAtual === "7"){
+    return "Últimos 7 dias";
+  }
+
+  if(periodoAtual === "30"){
+    return "Últimos 30 dias";
+  }
+
+  if(periodoAtual === "midias"){
+    return "Tarefas com mídias";
+  }
+
+  if(periodoAtual === "fontes"){
+    return "Tarefas com fontes";
+  }
+
+  return "Dashboard compacto";
+}
+
+function tipoMidia(url){
+
+  const u =
+    String(url).toLowerCase().split("?")[0];
+
+  if(
+    u.endsWith(".mp4") ||
+    u.endsWith(".webm") ||
+    u.endsWith(".mov") ||
+    u.includes("video")
+  ){
+    return "video";
+  }
+
+  if(
+    u.endsWith(".jpg") ||
+    u.endsWith(".jpeg") ||
+    u.endsWith(".png") ||
+    u.endsWith(".webp") ||
+    u.endsWith(".gif") ||
+    u.includes("image")
+  ){
+    return "imagem";
+  }
+
+  return "arquivo";
+}
+
+function renderThumb(m){
+
+  if(m.tipo === "video"){
+
+    return `
+      <video
+        src="${escapeAttr(m.url)}"
+        muted
+        playsinline
+        preload="none">
+      </video>
+    `;
+  }
+
+  if(m.tipo === "imagem"){
+
+    return `
+      <img
+        src="${escapeAttr(m.url)}"
+        loading="lazy"
+        decoding="async"
+        alt="Mídia">
+    `;
+  }
+
+  return '<div class="file-icon">📎</div>';
+}
+
+function abrirFonte(index){
+
+  const lista =
+    window.__fontesDashboard || [];
+
+  const f =
+    lista[index];
+
+  if(!f){
+    return;
+  }
+
+  document.getElementById("modalTitulo").innerText =
+    "Fonte de dados";
+
+  document.getElementById("modalBody").innerHTML =
+    `
+      <div class="modal-info">
+        <div class="modal-source">
+          <small>${escapeHtml(f.nome || "Fonte")}</small>
+
+          <b>
+            ${escapeHtml(f.valor || "-")}
+            ${f.tipo ? " " + escapeHtml(f.tipo) : ""}
+          </b>
+
+          <span>Tarefa: ${escapeHtml(f.tarefa || "-")}</span>
+          <span>Responsável: ${escapeHtml(f.responsavel || "-")}</span>
+        </div>
+      </div>
+    `;
+
+  document.getElementById("modal").classList.add("open");
+}
+
+function abrirModal(url,tipo,titulo){
+
+  document.getElementById("modalTitulo").innerText =
+    titulo || "Mídia";
+
+  const body =
+    document.getElementById("modalBody");
+
+  if(tipo === "imagem"){
+
+    body.innerHTML =
+      `<img src="${escapeAttr(url)}" alt="Mídia aberta">`;
+
+  }else if(tipo === "video"){
+
+    body.innerHTML =
+      `
+        <video
+          src="${escapeAttr(url)}"
+          controls
+          autoplay
+          playsinline>
+        </video>
+      `;
+
+  }else{
+
+    body.innerHTML =
+      `
+        <div class="modal-info" style="text-align:center">
+          <div style="font-size:34px;margin-bottom:12px">📎</div>
+          <a
+            href="${escapeAttr(url)}"
+            target="_blank"
+            style="
+              height:42px;
+              padding:0 16px;
+              border-radius:14px;
+              background:#16a34a;
+              color:#fff;
+              text-decoration:none;
+              display:inline-flex;
+              align-items:center;
+              justify-content:center;
+              font-size:12px;
+              font-weight:900;
+            ">
+            Abrir arquivo
+          </a>
+        </div>
+      `;
+
+  }
+
+  document.getElementById("modal").classList.add("open");
+}
+
+function fecharModal(){
+
+  document.getElementById("modal").classList.remove("open");
+  document.getElementById("modalBody").innerHTML = "";
+}
+
+function fecharModalFora(event){
+
+  if(event.target.id === "modal"){
+    fecharModal();
+  }
+}
+
+function parseJSON(valor){
+
+  if(!valor){
+    return null;
+  }
+
+  if(typeof valor === "object"){
+    return valor;
+  }
+
+  try{
+    return JSON.parse(valor);
+  }catch(e){
+    return null;
+  }
+}
+
+function limparTexto(valor){
+
+  return String(valor || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .trim();
+}
+
+function escapeHtml(valor){
+
+  return String(valor ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function escapeAttr(valor){
+
+  return escapeHtml(valor);
+}
+
+document.addEventListener("keydown",function(e){
+
+  if(e.key === "Escape"){
+    fecharModal();
+  }
+
+});
 </script>
+
 </body>
 </html>
