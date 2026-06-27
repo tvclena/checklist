@@ -1,1215 +1,1406 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 
-<meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
 
-<meta name="viewport"
-content="width=device-width,
+  <meta name="viewport" content="width=device-width,
 initial-scale=1.0,
 maximum-scale=1.0,
 minimum-scale=1.0,
 user-scalable=no,
-viewport-fit=cover"/>
+viewport-fit=cover" />
 
-<title>Grupo DV • Workspace</title>
+  <title>CheckFlow Operacional</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
-<style>
-
-/* =======================================================
-RESET
+  <style>
+    /* =======================================================
+RESET GERAL
 ======================================================= */
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Inter',sans-serif;
-  -webkit-tap-highlight-color:transparent;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-html,
-body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#eef6ff;
-  touch-action:manipulation;
-}
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #eefbf3;
+      touch-action: manipulation;
+    }
 
-/* =======================================================
-VARIÁVEIS VISUAIS
+    button,
+    input,
+    select,
+    textarea {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* =======================================================
+VARIÁVEIS VISUAIS — TEMA VERDE CLARO
 ======================================================= */
 
-:root{
-  --azul-900:#0f2f57;
-  --azul-800:#123f73;
-  --azul-700:#1d5fae;
-  --azul-600:#2563eb;
-  --azul-500:#3b82f6;
-  --azul-400:#60a5fa;
-  --azul-300:#93c5fd;
-  --azul-200:#bfdbfe;
-  --azul-100:#dbeafe;
-  --azul-50:#eff6ff;
+    :root {
+      --verde-950: #052e1a;
+      --verde-900: #064e2b;
+      --verde-800: #04733f;
+      --verde-700: #05994f;
+      --verde-600: #10b65f;
+      --verde-500: #22c76b;
+      --verde-400: #4ade80;
+      --verde-300: #86efac;
+      --verde-200: #bbf7d0;
+      --verde-100: #dcfce7;
+      --verde-50: #f0fdf4;
 
-  --branco:#ffffff;
-  --texto:#0f172a;
-  --muted:#64748b;
-  --linha:#dbeafe;
+      --branco: #ffffff;
+      --texto: #0f172a;
+      --muted: #64748b;
+      --linha: #d8f3df;
 
-  --sombra-suave:
-  0 18px 45px rgba(37,99,235,.14);
+      --sombra-menu:
+        12px 0 36px rgba(16, 185, 129, .13);
 
-  --sombra-card:
-  0 10px 28px rgba(15,23,42,.08);
-}
+      --sombra-card:
+        0 18px 46px rgba(15, 23, 42, .08);
 
-/* =======================================================
+      --sombra-suave:
+        0 14px 34px rgba(16, 185, 129, .14);
+
+      --blur-bg:
+        rgba(255, 255, 255, .74);
+    }
+
+    /* =======================================================
 LAYOUT PRINCIPAL
 ======================================================= */
 
-.layout{
-  width:100%;
-  height:100vh;
-  height:100dvh;
-  display:flex;
-  overflow:hidden;
-  background:
-  radial-gradient(circle at top left, rgba(59,130,246,.12), transparent 32%),
-  linear-gradient(135deg,#f8fbff 0%,#eef6ff 48%,#eaf4ff 100%);
-}
+    .layout {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 6% 3%, rgba(34, 197, 94, .18), transparent 30%),
+        radial-gradient(circle at 95% 12%, rgba(187, 247, 208, .65), transparent 28%),
+        linear-gradient(135deg, #f8fff9 0%, #eefbf3 48%, #e9f8ed 100%);
+      position: relative;
+    }
 
-/* =======================================================
-SIDEBAR AZUL CLARO PROFISSIONAL
+    /* detalhe decorativo suave */
+    .layout::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border-radius: 34px;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, 0));
+      border: 1px solid rgba(255, 255, 255, .45);
+    }
+
+    /* =======================================================
+SIDEBAR — DESKTOP
 ======================================================= */
 
-.sidebar-black{
-  width:104px;
-  min-width:104px;
-  height:100%;
+    .sidebar-black {
+      width: 112px;
+      min-width: 112px;
+      height: 100%;
 
-  background:
-  linear-gradient(
-    180deg,
-    rgba(239,246,255,.98) 0%,
-    rgba(219,234,254,.96) 50%,
-    rgba(191,219,254,.94) 100%
-  );
+      background:
+        linear-gradient(180deg,
+          rgba(240, 253, 244, .98) 0%,
+          rgba(220, 252, 231, .96) 52%,
+          rgba(187, 247, 208, .94) 100%);
 
-  border-right:
-  1px solid rgba(147,197,253,.55);
+      border-right: 1px solid rgba(134, 239, 172, .68);
 
-  box-shadow:
-  12px 0 35px rgba(37,99,235,.13);
+      box-shadow: var(--sombra-menu);
 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-  padding:18px 10px;
-  gap:9px;
+      padding: 16px 10px;
+      gap: 9px;
 
-  z-index:50;
-}
+      z-index: 50;
+      position: relative;
+    }
 
-/* =======================================================
+    /* =======================================================
+MARCA / LOGO DO SISTEMA
+======================================================= */
+
+    .brand-box {
+      width: 100%;
+      min-height: 78px;
+
+      border-radius: 26px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(180deg,
+          rgba(255, 255, 255, .92),
+          rgba(240, 253, 244, .78));
+
+      border: 1px solid rgba(134, 239, 172, .72);
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .95),
+        0 10px 28px rgba(16, 185, 129, .10);
+
+      margin-bottom: 4px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 17px;
+
+      background:
+        linear-gradient(145deg, #ffffff 0%, #dcfce7 52%, #bbf7d0 100%);
+
+      border: 1px solid rgba(74, 222, 128, .75);
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .95),
+        0 10px 22px rgba(16, 185, 129, .18);
+
+      position: relative;
+    }
+
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 14px;
+      left: 10px;
+      top: 13px;
+
+      border-left: 4px solid var(--verde-700);
+      border-bottom: 4px solid var(--verde-700);
+
+      transform: rotate(-45deg);
+      border-radius: 2px;
+    }
+
+    .brand-text {
+      margin-top: 7px;
+      font-size: 9.6px;
+      font-weight: 900;
+      color: var(--verde-950);
+      letter-spacing: -.35px;
+      line-height: 1;
+      text-align: center;
+    }
+
+    /* =======================================================
 ITEM DO MENU
 ======================================================= */
 
-.side-item{
-  width:100%;
-  min-height:78px;
+    .side-item {
+      width: 100%;
+      min-height: 74px;
 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
 
-  gap:8px;
+      gap: 7px;
 
-  cursor:pointer;
-  position:relative;
+      cursor: pointer;
+      position: relative;
 
-  border-radius:24px;
+      border-radius: 24px;
 
-  color:var(--azul-900);
+      color: var(--verde-950);
 
-  background:
-  linear-gradient(
-    180deg,
-    rgba(255,255,255,.72),
-    rgba(239,246,255,.62)
-  );
+      background:
+        linear-gradient(180deg,
+          rgba(255, 255, 255, .76),
+          rgba(240, 253, 244, .62));
 
-  border:
-  1px solid rgba(147,197,253,.42);
+      border: 1px solid rgba(134, 239, 172, .50);
 
-  box-shadow:
-  inset 0 1px 0 rgba(255,255,255,.86),
-  0 8px 20px rgba(37,99,235,.045);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .88),
+        0 8px 22px rgba(16, 185, 129, .045);
 
-  transition:
-  background .18s ease,
-  transform .18s ease,
-  box-shadow .18s ease,
-  border-color .18s ease;
-}
+      transition:
+        background .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease,
+        border-color .18s ease;
+    }
 
-.side-item:hover{
-  transform:
-  translateY(-2px);
+    .side-item:hover {
+      transform: translateY(-2px);
 
-  border-color:
-  rgba(96,165,250,.78);
+      border-color: rgba(34, 197, 94, .82);
 
-  background:
-  linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #eff6ff 100%
-  );
+      background:
+        linear-gradient(180deg,
+          #ffffff 0%,
+          #ecfdf5 100%);
 
-  box-shadow:
-  0 14px 32px rgba(37,99,235,.14),
-  inset 0 1px 0 rgba(255,255,255,.95);
-}
+      box-shadow:
+        0 15px 34px rgba(16, 185, 129, .16),
+        inset 0 1px 0 rgba(255, 255, 255, .95);
+    }
 
-.side-item.active{
-  background:
-  linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #dbeafe 100%
-  );
+    .side-item.active {
+      background:
+        linear-gradient(180deg,
+          #ffffff 0%,
+          #dcfce7 100%);
 
-  border-color:
-  rgba(59,130,246,.85);
+      border-color: rgba(34, 197, 94, .95);
 
-  box-shadow:
-  0 16px 34px rgba(37,99,235,.20),
-  inset 0 1px 0 rgba(255,255,255,.95);
-}
+      box-shadow:
+        0 16px 34px rgba(16, 185, 129, .22),
+        inset 0 1px 0 rgba(255, 255, 255, .95);
+    }
 
-.side-item.active::before{
-  content:"";
+    .side-item.active::before {
+      content: "";
 
-  position:absolute;
+      position: absolute;
 
-  left:-11px;
-  top:50%;
+      left: -11px;
+      top: 50%;
 
-  width:5px;
-  height:38px;
+      width: 5px;
+      height: 38px;
 
-  border-radius:999px;
+      border-radius: 999px;
 
-  background:
-  linear-gradient(
-    180deg,
-    #60a5fa,
-    #2563eb
-  );
+      background:
+        linear-gradient(180deg,
+          #86efac,
+          #16a34a);
 
-  box-shadow:
-  0 0 20px rgba(59,130,246,.65),
-  0 0 42px rgba(59,130,246,.28);
+      box-shadow:
+        0 0 20px rgba(34, 197, 94, .70),
+        0 0 42px rgba(34, 197, 94, .28);
 
-  transform:
-  translateY(-50%);
-}
+      transform: translateY(-50%);
+    }
 
-/* =======================================================
-ÍCONE BASE — SILHUETAS
+    /* =======================================================
+ÍCONE BASE — SILHUETAS SIMPLES
 ======================================================= */
 
-.side-icon{
-  width:38px;
-  height:38px;
+    .side-icon {
+      width: 38px;
+      height: 38px;
 
-  border-radius:16px;
+      border-radius: 16px;
 
-  background:
-  linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #e0f2fe 100%
-  );
+      background:
+        linear-gradient(180deg,
+          #ffffff 0%,
+          #dcfce7 100%);
 
-  border:
-  1px solid rgba(96,165,250,.54);
+      border: 1px solid rgba(74, 222, 128, .58);
 
-  position:relative;
+      position: relative;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-  box-shadow:
-  inset 0 1px 0 rgba(255,255,255,.95),
-  0 8px 18px rgba(37,99,235,.10);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .95),
+        0 8px 18px rgba(16, 185, 129, .12);
 
-  transition:.18s ease;
-}
+      transition: .18s ease;
+    }
 
-.side-item:hover .side-icon,
-.side-item.active .side-icon{
-  background:
-  linear-gradient(
-    180deg,
-    #dbeafe 0%,
-    #bfdbfe 100%
-  );
+    .side-item:hover .side-icon,
+    .side-item.active .side-icon {
+      background:
+        linear-gradient(180deg,
+          #dcfce7 0%,
+          #bbf7d0 100%);
 
-  border-color:
-  rgba(37,99,235,.72);
+      border-color: rgba(22, 163, 74, .72);
 
-  box-shadow:
-  0 10px 22px rgba(37,99,235,.18),
-  inset 0 1px 0 rgba(255,255,255,.95);
-}
+      box-shadow:
+        0 10px 22px rgba(16, 185, 129, .18),
+        inset 0 1px 0 rgba(255, 255, 255, .95);
+    }
 
-/* =======================================================
-SILHUETA HOME
+    /* =======================================================
+SILHUETA DASHBOARD
 ======================================================= */
 
-.home-icon::before{
-  content:"";
-  width:20px;
-  height:17px;
-  position:absolute;
-  bottom:8px;
-  background:var(--azul-700);
-  border-radius:4px 4px 6px 6px;
-}
+    .home-icon::before {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 18px;
+      left: 9px;
+      bottom: 9px;
+      border-radius: 999px 999px 4px 4px;
+      background: var(--verde-700);
+      box-shadow:
+        11px -6px 0 0 var(--verde-600);
+    }
 
-.home-icon::after{
-  content:"";
-  width:18px;
-  height:18px;
-  position:absolute;
-  top:8px;
-  background:var(--azul-700);
-  transform:rotate(45deg);
-  border-radius:4px;
-}
+    .home-icon::after {
+      content: "";
+      position: absolute;
+      width: 27px;
+      height: 4px;
+      left: 6px;
+      bottom: 7px;
+      border-radius: 999px;
+      background: var(--verde-800);
+    }
 
-/* =======================================================
+    /* =======================================================
 SILHUETA EQUIPE
 ======================================================= */
 
-.team-icon::before{
-  content:"";
-  width:10px;
-  height:10px;
-  position:absolute;
-  top:8px;
-  left:14px;
-  background:var(--azul-700);
-  border-radius:50%;
-  box-shadow:
-  -8px 3px 0 -1px var(--azul-500),
-  8px 3px 0 -1px var(--azul-500);
-}
+    .team-icon::before {
+      content: "";
+      width: 11px;
+      height: 11px;
+      position: absolute;
+      top: 8px;
+      left: 14px;
+      background: var(--verde-700);
+      border-radius: 50%;
+      box-shadow:
+        -9px 4px 0 -1px var(--verde-500),
+        9px 4px 0 -1px var(--verde-500);
+    }
 
-.team-icon::after{
-  content:"";
-  width:24px;
-  height:12px;
-  position:absolute;
-  bottom:8px;
-  left:7px;
-  background:var(--azul-700);
-  border-radius:12px 12px 7px 7px;
-  box-shadow:
-  -8px 2px 0 -3px var(--azul-500),
-  8px 2px 0 -3px var(--azul-500);
-}
+    .team-icon::after {
+      content: "";
+      width: 25px;
+      height: 12px;
+      position: absolute;
+      bottom: 8px;
+      left: 7px;
+      background: var(--verde-700);
+      border-radius: 14px 14px 8px 8px;
+      box-shadow:
+        -9px 2px 0 -3px var(--verde-500),
+        9px 2px 0 -3px var(--verde-500);
+    }
 
-/* =======================================================
-SILHUETA TAREFAS
+    /* =======================================================
+SILHUETA CHECKLIST / TAREFAS
 ======================================================= */
 
-.task-icon::before{
-  content:"";
-  width:22px;
-  height:24px;
-  position:absolute;
-  background:var(--azul-700);
-  border-radius:6px;
-}
+    .task-icon::before {
+      content: "";
+      width: 22px;
+      height: 25px;
+      position: absolute;
+      background: var(--verde-700);
+      border-radius: 7px;
+      box-shadow:
+        inset 0 5px 0 rgba(255, 255, 255, .24);
+    }
 
-.task-icon::after{
-  content:"";
-  width:14px;
-  height:8px;
-  position:absolute;
-  border-left:3px solid #ffffff;
-  border-bottom:3px solid #ffffff;
-  transform:rotate(-45deg);
-  top:14px;
-  left:12px;
-}
+    .task-icon::after {
+      content: "";
+      width: 13px;
+      height: 8px;
+      position: absolute;
+      border-left: 3px solid #ffffff;
+      border-bottom: 3px solid #ffffff;
+      transform: rotate(-45deg);
+      top: 14px;
+      left: 12px;
+    }
 
-/* =======================================================
+    /* =======================================================
 SILHUETA MÍDIAS
 ======================================================= */
 
-.media-icon::before{
-  content:"";
-  width:23px;
-  height:18px;
-  position:absolute;
-  background:var(--azul-700);
-  border-radius:6px;
-}
+    .media-icon::before {
+      content: "";
+      width: 24px;
+      height: 18px;
+      position: absolute;
+      background: var(--verde-700);
+      border-radius: 7px;
+    }
 
-.media-icon::after{
-  content:"";
-  width:0;
-  height:0;
-  position:absolute;
-  border-left:8px solid #ffffff;
-  border-top:5px solid transparent;
-  border-bottom:5px solid transparent;
-  left:16px;
-}
+    .media-icon::after {
+      content: "";
+      width: 0;
+      height: 0;
+      position: absolute;
+      border-left: 8px solid #ffffff;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      left: 16px;
+    }
 
-/* =======================================================
+    /* =======================================================
 SILHUETA PONTUAÇÃO
 ======================================================= */
 
-.trophy-icon::before{
-  content:"";
-  width:18px;
-  height:17px;
-  position:absolute;
-  top:8px;
-  background:var(--azul-700);
-  border-radius:5px 5px 9px 9px;
-}
+    .trophy-icon::before {
+      content: "";
+      width: 18px;
+      height: 17px;
+      position: absolute;
+      top: 8px;
+      background: var(--verde-700);
+      border-radius: 5px 5px 9px 9px;
+    }
 
-.trophy-icon::after{
-  content:"";
-  width:22px;
-  height:20px;
-  position:absolute;
-  top:9px;
-  border-left:4px solid var(--azul-700);
-  border-right:4px solid var(--azul-700);
-  border-radius:7px;
-  box-shadow:
-  0 13px 0 -8px var(--azul-700),
-  0 20px 0 -7px var(--azul-700);
-}
+    .trophy-icon::after {
+      content: "";
+      width: 24px;
+      height: 20px;
+      position: absolute;
+      top: 9px;
+      border-left: 4px solid var(--verde-700);
+      border-right: 4px solid var(--verde-700);
+      border-radius: 8px;
+      box-shadow:
+        0 13px 0 -8px var(--verde-700),
+        0 20px 0 -7px var(--verde-700);
+    }
 
-/* =======================================================
-SILHUETA FONTES DE DADOS
+    /* =======================================================
+SILHUETA FONTES / DADOS
 ======================================================= */
 
-.data-icon::before{
-  content:"";
-  width:22px;
-  height:24px;
-  position:absolute;
-  background:
-  linear-gradient(
-    180deg,
-    var(--azul-600),
-    var(--azul-700)
-  );
-  border-radius:50% / 14%;
-  box-shadow:
-  inset 0 4px 0 rgba(255,255,255,.38),
-  inset 0 -5px 0 rgba(15,23,42,.14);
-}
+    .data-icon::before {
+      content: "";
+      width: 23px;
+      height: 24px;
+      position: absolute;
+      background:
+        linear-gradient(180deg,
+          var(--verde-600),
+          var(--verde-800));
+      border-radius: 50% / 14%;
+      box-shadow:
+        inset 0 4px 0 rgba(255, 255, 255, .38),
+        inset 0 -5px 0 rgba(15, 23, 42, .14);
+    }
 
-.data-icon::after{
-  content:"";
-  width:22px;
-  height:7px;
-  position:absolute;
-  top:15px;
-  border-top:1px solid rgba(255,255,255,.72);
-  border-bottom:1px solid rgba(15,23,42,.15);
-  border-radius:50%;
-}
+    .data-icon::after {
+      content: "";
+      width: 23px;
+      height: 7px;
+      position: absolute;
+      top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, .74);
+      border-bottom: 1px solid rgba(15, 23, 42, .15);
+      border-radius: 50%;
+    }
 
-/* =======================================================
+    /* =======================================================
 SILHUETA LINHA DO TEMPO
 ======================================================= */
 
-.timeline-icon::before{
-  content:"";
-  width:4px;
-  height:25px;
-  position:absolute;
-  left:17px;
-  background:var(--azul-700);
-  border-radius:999px;
-}
+    .timeline-icon::before {
+      content: "";
+      width: 4px;
+      height: 25px;
+      position: absolute;
+      left: 17px;
+      background: var(--verde-700);
+      border-radius: 999px;
+    }
 
-.timeline-icon::after{
-  content:"";
-  width:9px;
-  height:9px;
-  position:absolute;
-  left:14px;
-  top:8px;
-  background:var(--azul-700);
-  border-radius:50%;
-  box-shadow:
-  0 9px 0 var(--azul-500),
-  0 18px 0 var(--azul-700),
-  9px 0 0 -2px var(--azul-300),
-  9px 9px 0 -2px var(--azul-300),
-  9px 18px 0 -2px var(--azul-300);
-}
+    .timeline-icon::after {
+      content: "";
+      width: 9px;
+      height: 9px;
+      position: absolute;
+      left: 14px;
+      top: 8px;
+      background: var(--verde-700);
+      border-radius: 50%;
+      box-shadow:
+        0 9px 0 var(--verde-500),
+        0 18px 0 var(--verde-700),
+        9px 0 0 -2px var(--verde-300),
+        9px 9px 0 -2px var(--verde-300),
+        9px 18px 0 -2px var(--verde-300);
+    }
 
-/* =======================================================
+    /* =======================================================
 TEXTO DOS BOTÕES
 ======================================================= */
 
-.side-item span{
-  font-size:10.7px;
-  font-weight:800;
+    .side-item span {
+      font-size: 10.4px;
+      font-weight: 900;
 
-  color:var(--azul-900);
+      color: var(--verde-950);
 
-  letter-spacing:-0.35px;
+      letter-spacing: -0.42px;
 
-  line-height:1.05;
-  text-align:center;
+      line-height: 1.05;
+      text-align: center;
 
-  max-width:100%;
+      max-width: 100%;
 
-  white-space:nowrap;
-}
+      white-space: nowrap;
+    }
 
-/* =======================================================
-BADGE AZUL
+    /* =======================================================
+BADGE
 ======================================================= */
 
-.badge{
-  position:absolute;
+    .badge {
+      position: absolute;
 
-  top:11px;
-  right:17px;
+      top: 11px;
+      right: 16px;
 
-  width:9px;
-  height:9px;
+      width: 9px;
+      height: 9px;
 
-  border-radius:50%;
+      border-radius: 50%;
 
-  background:#2563eb;
+      background: #16a34a;
 
-  border:
-  2px solid #ffffff;
+      border: 2px solid #ffffff;
 
-  box-shadow:
-  0 0 14px rgba(37,99,235,.72),
-  0 0 26px rgba(37,99,235,.35);
+      box-shadow:
+        0 0 14px rgba(22, 163, 74, .78),
+        0 0 26px rgba(22, 163, 74, .34);
 
-  z-index:2;
-}
+      z-index: 2;
+    }
 
-/* =======================================================
-MAIN
+    /* =======================================================
+ÁREA PRINCIPAL
 ======================================================= */
 
-.main{
-  flex:1;
-  background:
-  linear-gradient(
-    135deg,
-    #f8fbff,
-    #eff6ff
-  );
-  position:relative;
-  overflow:hidden;
-  padding:12px;
-}
+    .main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      padding: 12px;
+      z-index: 2;
+    }
 
-/* =======================================================
+    /* =======================================================
+TOPO DECORATIVO DO MAIN
+======================================================= */
+
+    .main::before {
+      content: "CheckFlow Operacional";
+      position: absolute;
+      left: 26px;
+      top: 22px;
+
+      height: 34px;
+      padding: 0 14px;
+
+      display: flex;
+      align-items: center;
+
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: -.35px;
+
+      color: var(--verde-900);
+
+      background: rgba(255, 255, 255, .72);
+      border: 1px solid rgba(187, 247, 208, .82);
+      border-radius: 999px;
+
+      box-shadow:
+        0 10px 24px rgba(16, 185, 129, .10),
+        inset 0 1px 0 rgba(255, 255, 255, .95);
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    /* =======================================================
 IFRAME PRINCIPAL
 ======================================================= */
 
-#contentFrame{
-  width:100%;
-  height:100%;
-  border:none;
-  background:#fff;
-  border-radius:24px;
+    #contentFrame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+      border-radius: 28px;
 
-  box-shadow:
-  0 18px 46px rgba(15,23,42,.08);
+      box-shadow:
+        0 24px 60px rgba(15, 23, 42, .10),
+        0 8px 22px rgba(16, 185, 129, .08);
 
-  overflow:hidden;
-}
+      overflow: hidden;
 
-/* =======================================================
+      position: relative;
+      z-index: 3;
+    }
+
+    /* =======================================================
 POPUP OVERLAY
 ======================================================= */
 
-.popup-overlay{
-  position:fixed;
-  inset:0;
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
 
-  background:
-  rgba(15,23,42,.42);
+      background:
+        rgba(5, 46, 26, .38);
 
-  backdrop-filter:
-  blur(14px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
 
-  -webkit-backdrop-filter:
-  blur(14px);
+      display: none;
 
-  display:none;
+      align-items: center;
+      justify-content: center;
 
-  align-items:center;
-  justify-content:center;
+      padding: 24px;
 
-  padding:24px;
+      overflow: hidden;
 
-  overflow:hidden;
+      z-index: 999999;
+    }
 
-  z-index:999999;
-}
-
-/* =======================================================
+    /* =======================================================
 POPUP BOX
 ======================================================= */
 
-.popup-box{
-  width:100%;
-  max-width:1620px;
+    .popup-box {
+      width: 100%;
+      max-width: 1620px;
 
-  height:94vh;
-  height:94dvh;
+      height: 94vh;
+      height: 94dvh;
 
-  max-height:94vh;
-  max-height:94dvh;
+      max-height: 94vh;
+      max-height: 94dvh;
 
-  background:#ffffff;
+      background: #ffffff;
 
-  border-radius:32px;
+      border-radius: 34px;
 
-  overflow:hidden;
+      overflow: hidden;
 
-  display:flex;
-  flex-direction:column;
+      display: flex;
+      flex-direction: column;
 
-  border:
-  1px solid rgba(191,219,254,.9);
+      border: 1px solid rgba(187, 247, 208, .95);
 
-  box-shadow:
-  0 35px 100px rgba(15,23,42,.24),
-  0 12px 36px rgba(37,99,235,.12);
+      box-shadow:
+        0 35px 100px rgba(5, 46, 26, .26),
+        0 12px 36px rgba(16, 185, 129, .14);
 
-  animation:popupShow .18s ease;
+      animation: popupShow .18s ease;
 
-  position:relative;
-}
+      position: relative;
+    }
 
-/* =======================================================
+    /* =======================================================
 ANIMAÇÃO POPUP
 ======================================================= */
 
-@keyframes popupShow{
-  from{
-    transform:
-    scale(.96)
-    translateY(12px);
+    @keyframes popupShow {
+      from {
+        transform: scale(.96) translateY(12px);
+        opacity: 0;
+      }
 
-    opacity:0;
-  }
+      to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
 
-  to{
-    transform:
-    scale(1)
-    translateY(0);
-
-    opacity:1;
-  }
-}
-
-/* =======================================================
+    /* =======================================================
 HEADER POPUP
 ======================================================= */
 
-.popup-header{
-  width:100%;
-  min-height:72px;
+    .popup-header {
+      width: 100%;
+      min-height: 72px;
 
-  padding:0 24px;
+      padding: 0 24px;
 
-  background:
-  linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #eff6ff 100%
-  );
+      background:
+        linear-gradient(180deg,
+          #ffffff 0%,
+          #f0fdf4 100%);
 
-  border-bottom:
-  1px solid rgba(191,219,254,.86);
+      border-bottom: 1px solid rgba(187, 247, 208, .92);
 
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-  position:sticky;
-  top:0;
+      position: sticky;
+      top: 0;
 
-  z-index:20;
+      z-index: 20;
 
-  flex-shrink:0;
-}
+      flex-shrink: 0;
+    }
 
-/* =======================================================
+    /* =======================================================
 TÍTULO POPUP
 ======================================================= */
 
-.popup-title-area{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+    .popup-title-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
 
-.popup-title-dot{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:#2563eb;
-  box-shadow:
-  0 0 16px rgba(37,99,235,.70);
-}
+    .popup-title-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #16a34a;
+      box-shadow: 0 0 16px rgba(22, 163, 74, .70);
+      flex-shrink: 0;
+    }
 
-#popupTitulo{
-  font-size:18px;
-  font-weight:900;
+    #popupTitulo {
+      font-size: 18px;
+      font-weight: 900;
 
-  color:var(--azul-900);
+      color: var(--verde-950);
 
-  letter-spacing:-0.5px;
-}
+      letter-spacing: -0.5px;
 
-/* =======================================================
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* =======================================================
 BOTÃO FECHAR POPUP
 ======================================================= */
 
-.popup-header button{
-  width:44px;
-  height:44px;
+    .popup-header button {
+      width: 44px;
+      height: 44px;
 
-  border:
-  1px solid rgba(147,197,253,.78);
+      border: 1px solid rgba(134, 239, 172, .82);
 
-  border-radius:16px;
+      border-radius: 16px;
 
-  background:
-  linear-gradient(
-    180deg,
-    #ffffff,
-    #dbeafe
-  );
+      background:
+        linear-gradient(180deg,
+          #ffffff,
+          #dcfce7);
 
-  cursor:pointer;
+      cursor: pointer;
 
-  font-size:20px;
-  font-weight:900;
+      font-size: 20px;
+      font-weight: 900;
 
-  color:var(--azul-800);
+      color: var(--verde-900);
 
-  transition:.18s ease;
+      transition: .18s ease;
 
-  box-shadow:
-  0 8px 20px rgba(37,99,235,.10),
-  inset 0 1px 0 rgba(255,255,255,.9);
-}
+      box-shadow:
+        0 8px 20px rgba(16, 185, 129, .12),
+        inset 0 1px 0 rgba(255, 255, 255, .92);
 
-.popup-header button:hover{
-  background:
-  linear-gradient(
-    180deg,
-    #eff6ff,
-    #bfdbfe
-  );
+      flex-shrink: 0;
+    }
 
-  transform:scale(1.04);
-}
+    .popup-header button:hover {
+      background:
+        linear-gradient(180deg,
+          #f0fdf4,
+          #bbf7d0);
 
-/* =======================================================
+      transform: scale(1.04);
+    }
+
+    /* =======================================================
 CONTEÚDO POPUP
 ======================================================= */
 
-.popup-content{
-  flex:1;
+    .popup-content {
+      flex: 1;
 
-  width:100%;
+      width: 100%;
 
-  overflow:hidden;
+      overflow: hidden;
 
-  background:
-  linear-gradient(
-    135deg,
-    #f8fbff,
-    #eff6ff
-  );
+      background:
+        linear-gradient(135deg,
+          #f8fff9,
+          #eefbf3);
 
-  padding:18px;
+      padding: 18px;
 
-  scroll-behavior:smooth;
-}
+      scroll-behavior: smooth;
+    }
 
-/* =======================================================
+    /* =======================================================
 IFRAME POPUP
 ======================================================= */
 
-.popup-content iframe{
-  width:100%;
-  height:100%;
+    .popup-content iframe {
+      width: 100%;
+      height: 100%;
 
-  border:none;
+      border: none;
 
-  border-radius:22px;
+      border-radius: 24px;
 
-  background:#fff;
+      background: #fff;
 
-  box-shadow:
-  0 12px 34px rgba(15,23,42,.08);
+      box-shadow:
+        0 12px 34px rgba(15, 23, 42, .08),
+        0 6px 18px rgba(16, 185, 129, .08);
 
-  overflow:hidden;
-}
+      overflow: hidden;
+    }
 
-/* =======================================================
+    /* =======================================================
+FOCO ACESSÍVEL
+======================================================= */
+
+    .side-item:focus-visible,
+    .popup-header button:focus-visible {
+      outline: 3px solid rgba(34, 197, 94, .45);
+      outline-offset: 3px;
+    }
+
+    /* =======================================================
 RESPONSIVO TABLET
 ======================================================= */
 
-@media(max-width:1100px){
+    @media(max-width:1100px) {
 
-  .layout{
-    padding-bottom:86px;
-  }
+      .layout {
+        padding-bottom: 88px;
+      }
 
-  .main{
-    padding:8px;
-  }
+      .layout::before {
+        inset: 8px;
+        border-radius: 24px;
+      }
 
-  #contentFrame{
-    border-radius:20px;
-  }
+      .main {
+        padding: 8px;
+      }
 
-  .sidebar-black{
-    position:fixed;
+      .main::before {
+        left: 18px;
+        top: 16px;
+        height: 30px;
+        font-size: 11px;
+        padding: 0 12px;
+      }
 
-    left:0;
-    right:0;
-    bottom:0;
+      #contentFrame {
+        border-radius: 22px;
+      }
 
-    width:100%;
-    min-width:100%;
+      .sidebar-black {
+        position: fixed;
 
-    height:86px;
+        left: 0;
+        right: 0;
+        bottom: 0;
 
-    padding:7px 8px;
+        width: 100%;
+        min-width: 100%;
 
-    flex-direction:row;
+        height: 88px;
 
-    justify-content:space-between;
+        padding: 7px 8px;
 
-    gap:6px;
+        flex-direction: row;
 
-    border-right:none;
+        justify-content: space-between;
 
-    border-top:
-    1px solid rgba(147,197,253,.70);
+        gap: 6px;
 
-    box-shadow:
-    0 -16px 34px rgba(37,99,235,.17);
+        border-right: none;
 
-    z-index:999999;
-  }
+        border-top: 1px solid rgba(134, 239, 172, .78);
 
-  .side-item{
-    min-height:70px;
-    height:70px;
+        box-shadow:
+          0 -16px 34px rgba(16, 185, 129, .17);
 
-    flex:1;
+        z-index: 999999;
+      }
 
-    gap:5px;
+      .brand-box {
+        display: none;
+      }
 
-    border-radius:20px;
-  }
+      .side-item {
+        min-height: 72px;
+        height: 72px;
 
-  .side-item.active::before{
-    width:34px;
-    height:5px;
+        flex: 1;
 
-    left:50%;
-    top:-8px;
+        gap: 5px;
 
-    transform:
-    translateX(-50%);
+        border-radius: 20px;
+      }
 
-    border-radius:999px;
-  }
+      .side-item.active::before {
+        width: 34px;
+        height: 5px;
 
-  .side-icon{
-    width:32px;
-    height:32px;
+        left: 50%;
+        top: -8px;
 
-    border-radius:14px;
-  }
+        transform: translateX(-50%);
 
-  .side-item span{
-    font-size:9.4px;
-    line-height:1;
-  }
+        border-radius: 999px;
+      }
 
-  .badge{
-    top:8px;
-    right:15px;
-  }
+      .side-icon {
+        width: 32px;
+        height: 32px;
 
-  .popup-overlay{
-    padding:10px;
-    align-items:center;
-  }
+        border-radius: 14px;
+      }
 
-  .popup-box{
-    width:100%;
+      .side-item span {
+        font-size: 9.2px;
+        line-height: 1;
+      }
 
-    height:96dvh;
-    max-height:96dvh;
+      .badge {
+        top: 8px;
+        right: 15px;
+      }
 
-    border-radius:24px;
-  }
+      .popup-overlay {
+        padding: 10px;
+        align-items: center;
+      }
 
-  .popup-header{
-    min-height:62px;
-    padding:0 14px;
-  }
+      .popup-box {
+        width: 100%;
 
-  #popupTitulo{
-    font-size:16px;
-  }
+        height: 96dvh;
+        max-height: 96dvh;
 
-  .popup-header button{
-    width:40px;
-    height:40px;
-    border-radius:14px;
-  }
+        border-radius: 24px;
+      }
 
-  .popup-content{
-    padding:10px;
-  }
+      .popup-header {
+        min-height: 62px;
+        padding: 0 14px;
+      }
 
-  .popup-content iframe{
-    border-radius:17px;
-  }
+      #popupTitulo {
+        font-size: 16px;
+      }
 
-  .home-icon::before{
-    width:17px;
-    height:14px;
-    bottom:7px;
-  }
+      .popup-header button {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+      }
 
-  .home-icon::after{
-    width:15px;
-    height:15px;
-    top:8px;
-  }
+      .popup-content {
+        padding: 10px;
+      }
 
-  .team-icon::before{
-    left:11px;
-    top:7px;
-  }
+      .popup-content iframe {
+        border-radius: 18px;
+      }
 
-  .team-icon::after{
-    left:4px;
-    bottom:7px;
-  }
+      .home-icon::before {
+        width: 7px;
+        height: 16px;
+        left: 8px;
+        bottom: 8px;
+        box-shadow: 10px -5px 0 0 var(--verde-600);
+      }
 
-  .task-icon::before{
-    width:20px;
-    height:22px;
-  }
+      .home-icon::after {
+        width: 24px;
+        left: 4px;
+        bottom: 6px;
+      }
 
-  .task-icon::after{
-    left:9px;
-    top:12px;
-  }
+      .team-icon::before {
+        left: 11px;
+        top: 7px;
+      }
 
-  .media-icon::before{
-    width:21px;
-    height:16px;
-  }
+      .team-icon::after {
+        left: 4px;
+        bottom: 7px;
+      }
 
-  .media-icon::after{
-    left:14px;
-  }
+      .task-icon::before {
+        width: 20px;
+        height: 22px;
+      }
 
-  .trophy-icon::before{
-    top:7px;
-  }
+      .task-icon::after {
+        left: 9px;
+        top: 12px;
+      }
 
-  .trophy-icon::after{
-    top:8px;
-  }
+      .media-icon::before {
+        width: 21px;
+        height: 16px;
+      }
 
-  .data-icon::before{
-    width:19px;
-    height:21px;
-  }
+      .media-icon::after {
+        left: 14px;
+      }
 
-  .data-icon::after{
-    width:19px;
-    top:14px;
-  }
+      .trophy-icon::before {
+        top: 7px;
+      }
 
-  .timeline-icon::before{
-    left:14px;
-    height:22px;
-  }
+      .trophy-icon::after {
+        top: 8px;
+      }
 
-  .timeline-icon::after{
-    left:11px;
-    top:6px;
-  }
-}
+      .data-icon::before {
+        width: 19px;
+        height: 21px;
+      }
 
-/* =======================================================
+      .data-icon::after {
+        width: 19px;
+        top: 14px;
+      }
+
+      .timeline-icon::before {
+        left: 14px;
+        height: 22px;
+      }
+
+      .timeline-icon::after {
+        left: 11px;
+        top: 6px;
+      }
+    }
+
+    /* =======================================================
 RESPONSIVO CELULAR
 ======================================================= */
 
-@media(max-width:520px){
+    @media(max-width:520px) {
 
-  .layout{
-    padding-bottom:82px;
-  }
+      .layout {
+        padding-bottom: 82px;
+      }
 
-  .main{
-    padding:6px;
-  }
+      .main {
+        padding: 6px;
+      }
 
-  #contentFrame{
-    border-radius:18px;
-  }
+      .main::before {
+        left: 14px;
+        top: 13px;
+        height: 28px;
+        max-width: calc(100vw - 40px);
+        font-size: 10.5px;
+      }
 
-  .sidebar-black{
-    height:82px;
-    padding:6px 4px;
-    gap:4px;
-  }
+      #contentFrame {
+        border-radius: 19px;
+      }
 
-  .side-item{
-    min-height:68px;
-    height:68px;
+      .sidebar-black {
+        height: 82px;
+        padding: 6px 4px;
+        gap: 4px;
+      }
 
-    border-radius:17px;
+      .side-item {
+        min-height: 68px;
+        height: 68px;
 
-    gap:4px;
-  }
+        border-radius: 17px;
 
-  .side-icon{
-    width:30px;
-    height:30px;
+        gap: 4px;
+      }
 
-    border-radius:13px;
-  }
+      .side-icon {
+        width: 30px;
+        height: 30px;
 
-  .side-item span{
-    font-size:8.1px;
-    letter-spacing:-0.45px;
-  }
+        border-radius: 13px;
+      }
 
-  .badge{
-    width:8px;
-    height:8px;
+      .side-item span {
+        font-size: 7.8px;
+        letter-spacing: -0.48px;
+      }
 
-    top:7px;
-    right:10px;
-  }
+      .badge {
+        width: 8px;
+        height: 8px;
 
-  .popup-box{
-    border-radius:22px;
-  }
+        top: 7px;
+        right: 9px;
+      }
 
-  .popup-header{
-    min-height:58px;
-  }
+      .popup-box {
+        border-radius: 22px;
+      }
 
-  #popupTitulo{
-    font-size:15px;
-  }
+      .popup-header {
+        min-height: 58px;
+      }
 
-  .popup-title-dot{
-    width:10px;
-    height:10px;
-  }
+      #popupTitulo {
+        font-size: 15px;
+      }
 
-  .popup-content{
-    padding:8px;
-  }
+      .popup-title-dot {
+        width: 10px;
+        height: 10px;
+      }
 
-  .popup-content iframe{
-    border-radius:15px;
-  }
-}
+      .popup-content {
+        padding: 8px;
+      }
 
-</style>
+      .popup-content iframe {
+        border-radius: 16px;
+      }
+    }
+
+    /* =======================================================
+CELULAR MUITO PEQUENO
+======================================================= */
+
+    @media(max-width:380px) {
+
+      .side-item span {
+        font-size: 7.1px;
+      }
+
+      .side-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .sidebar-black {
+        height: 78px;
+      }
+
+      .layout {
+        padding-bottom: 78px;
+      }
+
+      .side-item {
+        height: 64px;
+        min-height: 64px;
+        border-radius: 15px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="layout">
+  <div class="layout">
 
-  <!-- =======================================================
-  NAVBAR / MENU LATERAL
+    <!-- =======================================================
+  MENU LATERAL / INFERIOR
   ======================================================= -->
 
-  <div class="sidebar-black">
+    <nav class="sidebar-black" aria-label="Menu principal">
 
-    <!-- DASHBOARD -->
-    <div class="side-item active"
-         onclick="trocarPagina(this,'home.html')">
 
-      <div class="side-icon home-icon"></div>
+      <!-- DASHBOARD -->
+      <div class="side-item active" role="button" tabindex="0" onclick="trocarPagina(this,'home.html')"
+        onkeydown="ativarComEnter(event, this, 'home.html')">
 
-      <span>Dashboard</span>
+        <div class="side-icon home-icon"></div>
 
-    </div>
-
-    <!-- EQUIPE -->
-    <div class="side-item"
-         onclick="trocarPagina(this,'../../../usuarios/usuarios.html')">
-
-      <div class="side-icon team-icon"></div>
-
-      <span>Equipe</span>
-
-    </div>
-
-    <!-- TAREFAS -->
-    <div class="side-item"
-         onclick="trocarPagina(this,'tarefas.html')">
-
-      <div class="side-icon task-icon"></div>
-
-      <span>Tarefas</span>
-
-    </div>
-
-    <!-- MÍDIAS -->
-    <div class="side-item"
-         onclick="abrirPopup('inicio', this)">
-
-      <div class="badge"></div>
-
-      <div class="side-icon media-icon"></div>
-
-      <span>Mídias</span>
-
-    </div>
-
-    <!-- PONTUAÇÃO -->
-    <div class="side-item"
-         onclick="abrirPopup('planejador', this)">
-
-      <div class="side-icon trophy-icon"></div>
-
-      <span>Pontuação</span>
-
-    </div>
-
-    <!-- FONTES -->
-    <div class="side-item"
-         onclick="abrirPopup('ia', this)">
-
-      <div class="side-icon data-icon"></div>
-
-      <span>Fontes</span>
-
-    </div>
-
-    <!-- LINHA DO TEMPO -->
-    <div class="side-item"
-         onclick="abrirPopup('linha', this)">
-
-      <div class="side-icon timeline-icon"></div>
-
-      <span>Linha</span>
-
-    </div>
-
-  </div>
-
-  <!-- =======================================================
-  ÁREA PRINCIPAL
-  ======================================================= -->
-
-  <div class="main">
-
-    <iframe
-      id="contentFrame"
-      src="home.html"
-      loading="eager"
-      allow="clipboard-read; clipboard-write; fullscreen">
-    </iframe>
-
-  </div>
-
-</div>
-
-<!-- =======================================================
-POPUP
-======================================================= -->
-
-<div class="popup-overlay"
-     id="popupOverlay"
-     onclick="fecharPopupFora(event)">
-
-  <div class="popup-box">
-
-    <div class="popup-header">
-
-      <div class="popup-title-area">
-
-        <div class="popup-title-dot"></div>
-
-        <div id="popupTitulo">
-          Popup
-        </div>
+        <span>Dashboard</span>
 
       </div>
 
-      <button onclick="fecharPopup()" aria-label="Fechar popup">
-        ×
-      </button>
+      <!-- EQUIPE -->
+      <div class="side-item" role="button" tabindex="0" onclick="trocarPagina(this,'../../../usuarios/usuarios.html')"
+        onkeydown="ativarComEnter(event, this, '../../../usuarios/usuarios.html')">
 
-    </div>
+        <div class="side-icon team-icon"></div>
 
-    <div class="popup-content"
-         id="popupContent">
+        <span>Equipe</span>
 
-    </div>
+      </div>
+
+      <!-- TAREFAS -->
+      <div class="side-item" role="button" tabindex="0" onclick="trocarPagina(this,'tarefas.html')"
+        onkeydown="ativarComEnter(event, this, 'tarefas.html')">
+
+        <div class="side-icon task-icon"></div>
+
+        <span>Checklist</span>
+
+      </div>
+
+      <!-- MÍDIAS -->
+      <div class="side-item" role="button" tabindex="0" onclick="abrirPopup('inicio', this)"
+        onkeydown="ativarPopupComEnter(event, 'inicio', this)">
+
+        <div class="badge"></div>
+
+        <div class="side-icon media-icon"></div>
+
+        <span>Mídias</span>
+
+      </div>
+
+      <!-- PONTUAÇÃO -->
+      <div class="side-item" role="button" tabindex="0" onclick="abrirPopup('planejador', this)"
+        onkeydown="ativarPopupComEnter(event, 'planejador', this)">
+
+        <div class="side-icon trophy-icon"></div>
+
+        <span>Pontos</span>
+
+      </div>
+
+      <!-- FONTES -->
+      <div class="side-item" role="button" tabindex="0" onclick="abrirPopup('ia', this)"
+        onkeydown="ativarPopupComEnter(event, 'ia', this)">
+
+        <div class="side-icon data-icon"></div>
+
+        <span>Fontes</span>
+
+      </div>
+
+      <!-- LINHA DO TEMPO -->
+      <div class="side-item" role="button" tabindex="0" onclick="abrirPopup('linha', this)"
+        onkeydown="ativarPopupComEnter(event, 'linha', this)">
+
+        <div class="side-icon timeline-icon"></div>
+
+        <span>Linha</span>
+
+      </div>
+
+    </nav>
+
+    <!-- =======================================================
+  ÁREA PRINCIPAL
+  ======================================================= -->
+
+    <main class="main">
+
+      <iframe id="contentFrame" src="home.html" loading="eager" title="Área principal do CheckFlow Operacional"
+        allow="clipboard-read; clipboard-write; fullscreen">
+      </iframe>
+
+    </main>
 
   </div>
 
-</div>
+  <!-- =======================================================
+POPUP
+======================================================= -->
 
-<script>
+  <div class="popup-overlay" id="popupOverlay" onclick="fecharPopupFora(event)" aria-hidden="true">
 
-/* =======================================================
-FRAME PRINCIPAL
+    <section class="popup-box" role="dialog" aria-modal="true" aria-labelledby="popupTitulo">
+
+      <header class="popup-header">
+
+        <div class="popup-title-area">
+
+          <div class="popup-title-dot"></div>
+
+          <div id="popupTitulo">
+            Popup
+          </div>
+
+        </div>
+
+        <button onclick="fecharPopup()" aria-label="Fechar popup">
+        ×
+      </button>
+
+      </header>
+
+      <div class="popup-content" id="popupContent">
+      </div>
+
+    </section>
+
+  </div>
+
+  <script>
+    /* =======================================================
+REFERÊNCIAS PRINCIPAIS
 ======================================================= */
 
 const frame =
 document.getElementById('contentFrame')
+
+const popupOverlay =
+document.getElementById('popupOverlay')
+
+const popupTitulo =
+document.getElementById('popupTitulo')
+
+const popupContent =
+document.getElementById('popupContent')
+
+/* =======================================================
+ATIVAR MENU COM TECLADO
+======================================================= */
+
+function ativarComEnter(event, el, url){
+
+  if(event.key === 'Enter' || event.key === ' '){
+    event.preventDefault()
+    trocarPagina(el, url)
+  }
+
+}
+
+function ativarPopupComEnter(event, tipo, el){
+
+  if(event.key === 'Enter' || event.key === ' '){
+    event.preventDefault()
+    abrirPopup(tipo, el)
+  }
+
+}
 
 /* =======================================================
 TROCAR PÁGINA PRINCIPAL
@@ -1291,7 +1482,53 @@ function(e){
 )
 
 /* =======================================================
-POPUP
+MAPA DOS POPUPS
+======================================================= */
+
+const popups = {
+  inicio:{
+    pagina:'popup/popup1.html',
+    titulo:'Mídias'
+  },
+
+  planejador:{
+    pagina:'popup/popup2.html',
+    titulo:'Pontuação'
+  },
+
+  ia:{
+    pagina:'popup/popup3.html',
+    titulo:'Fontes de Dados'
+  },
+
+  linha:{
+    pagina:'linha_do_tempo.html',
+    titulo:'Linha do Tempo'
+  },
+
+  equipes:{
+    pagina:'popup/popup4.html',
+    titulo:'Equipes'
+  },
+
+  metas:{
+    pagina:'popup/popup5.html',
+    titulo:'Metas'
+  },
+
+  planilhas:{
+    pagina:'popup/popup6.html',
+    titulo:'Planilhas'
+  },
+
+  mais:{
+    pagina:'popup/popup7.html',
+    titulo:'Mais'
+  }
+}
+
+/* =======================================================
+ABRIR POPUP
 ======================================================= */
 
 function abrirPopup(tipo, el){
@@ -1306,73 +1543,28 @@ function abrirPopup(tipo, el){
     el.classList.add('active')
   }
 
-  const overlay =
-  document.getElementById("popupOverlay")
-
-  const titulo =
-  document.getElementById("popupTitulo")
-
-  const content =
-  document.getElementById("popupContent")
-
-  let pagina = ""
-  let nomeTitulo = ""
-
-  if(tipo === "inicio"){
-    pagina = "popup/popup1.html"
-    nomeTitulo = "Mídias"
+  const config =
+  popups[tipo] || {
+    pagina:'popup/popup1.html',
+    titulo:'Popup'
   }
 
-  else if(tipo === "planejador"){
-    pagina = "popup/popup2.html"
-    nomeTitulo = "Pontuação"
-  }
+  popupTitulo.innerHTML =
+  config.titulo
 
-  else if(tipo === "ia"){
-    pagina = "popup/popup3.html"
-    nomeTitulo = "Fontes de Dados"
-  }
+  popupOverlay.style.display =
+  'flex'
 
-  else if(tipo === "linha"){
-    pagina = "linha_do_tempo.html"
-    nomeTitulo = "Linha do Tempo"
-  }
+  popupOverlay.setAttribute(
+    'aria-hidden',
+    'false'
+  )
 
-  else if(tipo === "equipes"){
-    pagina = "popup/popup4.html"
-    nomeTitulo = "Equipes"
-  }
-
-  else if(tipo === "metas"){
-    pagina = "popup/popup5.html"
-    nomeTitulo = "Metas"
-  }
-
-  else if(tipo === "planilhas"){
-    pagina = "popup/popup6.html"
-    nomeTitulo = "Planilhas"
-  }
-
-  else if(tipo === "mais"){
-    pagina = "popup/popup7.html"
-    nomeTitulo = "Mais"
-  }
-
-  else{
-    pagina = "popup/popup1.html"
-    nomeTitulo = "Popup"
-  }
-
-  titulo.innerHTML =
-  nomeTitulo
-
-  overlay.style.display =
-  "flex"
-
-  content.innerHTML = `
+  popupContent.innerHTML = `
     <iframe
-      src="${pagina}"
+      src="${config.pagina}"
       loading="lazy"
+      title="${config.titulo}"
       allow="clipboard-read; clipboard-write; fullscreen">
     </iframe>
   `
@@ -1384,21 +1576,20 @@ FECHAR POPUP
 
 function fecharPopup(){
 
-  const overlay =
-  document.getElementById("popupOverlay")
-
-  const content =
-  document.getElementById("popupContent")
-
-  if(!overlay || !content){
+  if(!popupOverlay || !popupContent){
     return
   }
 
-  overlay.style.display =
-  "none"
+  popupOverlay.style.display =
+  'none'
 
-  content.innerHTML =
-  ""
+  popupOverlay.setAttribute(
+    'aria-hidden',
+    'true'
+  )
+
+  popupContent.innerHTML =
+  ''
 }
 
 /* =======================================================
@@ -1407,7 +1598,7 @@ FECHAR CLICANDO FORA
 
 function fecharPopupFora(event){
 
-  if(event.target.id === "popupOverlay"){
+  if(event.target.id === 'popupOverlay'){
     fecharPopup()
   }
 
@@ -1428,7 +1619,33 @@ function(e){
 }
 )
 
-</script>
+/* =======================================================
+AJUSTE EXTRA PARA ALTURA MOBILE
+======================================================= */
+
+function ajustarAlturaMobile(){
+
+  document.documentElement.style.setProperty(
+    '--vh',
+    `${window.innerHeight * 0.01}px`
+  )
+
+}
+
+window.addEventListener(
+'resize',
+ajustarAlturaMobile
+)
+
+window.addEventListener(
+'orientationchange',
+ajustarAlturaMobile
+)
+
+ajustarAlturaMobile()
+
+  </script>
 
 </body>
+
 </html>
