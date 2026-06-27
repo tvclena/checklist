@@ -21,7 +21,7 @@ viewport-fit=cover" />
 
   <style>
     /* =======================================================
-RESET GERAL
+RESET
 ======================================================= */
 
     * {
@@ -37,28 +37,26 @@ RESET GERAL
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #eefbf3;
+      background: #f1fbf5;
       touch-action: manipulation;
     }
 
     button,
-    input,
-    select,
-    textarea {
-      font-family: 'Inter', sans-serif;
+    iframe {
+      border: 0;
     }
 
     /* =======================================================
-VARIÁVEIS VISUAIS — TEMA VERDE CLARO
+VARIÁVEIS — VERDE CLARO FINO
 ======================================================= */
 
     :root {
       --verde-950: #052e1a;
       --verde-900: #064e2b;
-      --verde-800: #04733f;
-      --verde-700: #05994f;
-      --verde-600: #10b65f;
-      --verde-500: #22c76b;
+      --verde-800: #076b3a;
+      --verde-700: #0f8f4d;
+      --verde-600: #16a85a;
+      --verde-500: #22c55e;
       --verde-400: #4ade80;
       --verde-300: #86efac;
       --verde-200: #bbf7d0;
@@ -68,19 +66,11 @@ VARIÁVEIS VISUAIS — TEMA VERDE CLARO
       --branco: #ffffff;
       --texto: #0f172a;
       --muted: #64748b;
-      --linha: #d8f3df;
+      --linha: #d9f5e2;
 
-      --sombra-menu:
-        12px 0 36px rgba(16, 185, 129, .13);
-
-      --sombra-card:
-        0 18px 46px rgba(15, 23, 42, .08);
-
-      --sombra-suave:
-        0 14px 34px rgba(16, 185, 129, .14);
-
-      --blur-bg:
-        rgba(255, 255, 255, .74);
+      --sombra-menu: 8px 0 28px rgba(15, 118, 69, .10);
+      --sombra-card: 0 16px 42px rgba(15, 23, 42, .08);
+      --sombra-popup: 0 35px 100px rgba(5, 46, 26, .22);
     }
 
     /* =======================================================
@@ -91,43 +81,32 @@ LAYOUT PRINCIPAL
       width: 100%;
       height: 100vh;
       height: 100dvh;
+
       display: flex;
       overflow: hidden;
-      background:
-        radial-gradient(circle at 6% 3%, rgba(34, 197, 94, .18), transparent 30%),
-        radial-gradient(circle at 95% 12%, rgba(187, 247, 208, .65), transparent 28%),
-        linear-gradient(135deg, #f8fff9 0%, #eefbf3 48%, #e9f8ed 100%);
-      position: relative;
-    }
 
-    /* detalhe decorativo suave */
-    .layout::before {
-      content: "";
-      position: absolute;
-      inset: 18px;
-      border-radius: 34px;
-      pointer-events: none;
       background:
-        linear-gradient(135deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, 0));
-      border: 1px solid rgba(255, 255, 255, .45);
+        radial-gradient(circle at 0% 0%, rgba(34, 197, 94, .12), transparent 34%),
+        radial-gradient(circle at 100% 0%, rgba(187, 247, 208, .45), transparent 30%),
+        linear-gradient(135deg, #fbfffc 0%, #f1fbf5 48%, #eaf8ef 100%);
     }
 
     /* =======================================================
-SIDEBAR — DESKTOP
+MENU LATERAL — MAIS FINO
 ======================================================= */
 
     .sidebar-black {
-      width: 112px;
-      min-width: 112px;
+      width: 82px;
+      min-width: 82px;
       height: 100%;
 
       background:
         linear-gradient(180deg,
-          rgba(240, 253, 244, .98) 0%,
-          rgba(220, 252, 231, .96) 52%,
-          rgba(187, 247, 208, .94) 100%);
+          rgba(255, 255, 255, .92) 0%,
+          rgba(240, 253, 244, .96) 48%,
+          rgba(220, 252, 231, .95) 100%);
 
-      border-right: 1px solid rgba(134, 239, 172, .68);
+      border-right: 1px solid rgba(134, 239, 172, .55);
 
       box-shadow: var(--sombra-menu);
 
@@ -135,55 +114,45 @@ SIDEBAR — DESKTOP
       flex-direction: column;
       align-items: center;
 
-      padding: 16px 10px;
-      gap: 9px;
+      padding: 14px 8px;
+      gap: 8px;
 
       z-index: 50;
-      position: relative;
     }
 
     /* =======================================================
-MARCA / LOGO DO SISTEMA
+MARCA
 ======================================================= */
 
     .brand-box {
       width: 100%;
-      min-height: 78px;
-
-      border-radius: 26px;
+      height: 60px;
 
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
 
-      background:
-        linear-gradient(180deg,
-          rgba(255, 255, 255, .92),
-          rgba(240, 253, 244, .78));
+      border-radius: 20px;
 
-      border: 1px solid rgba(134, 239, 172, .72);
+      background: rgba(255, 255, 255, .72);
+      border: 1px solid rgba(187, 247, 208, .72);
+
+      margin-bottom: 4px;
 
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, .95),
-        0 10px 28px rgba(16, 185, 129, .10);
-
-      margin-bottom: 4px;
+        0 8px 18px rgba(22, 163, 74, .07);
     }
 
     .brand-mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 17px;
+      width: 30px;
+      height: 30px;
 
-      background:
-        linear-gradient(145deg, #ffffff 0%, #dcfce7 52%, #bbf7d0 100%);
+      border-radius: 11px;
 
-      border: 1px solid rgba(74, 222, 128, .75);
-
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, .95),
-        0 10px 22px rgba(16, 185, 129, .18);
+      background: #f0fdf4;
+      border: 1.8px solid var(--verde-600);
 
       position: relative;
     }
@@ -191,137 +160,115 @@ MARCA / LOGO DO SISTEMA
     .brand-mark::before {
       content: "";
       position: absolute;
-      width: 22px;
-      height: 14px;
-      left: 10px;
-      top: 13px;
 
-      border-left: 4px solid var(--verde-700);
-      border-bottom: 4px solid var(--verde-700);
+      width: 14px;
+      height: 8px;
+
+      left: 7px;
+      top: 9px;
+
+      border-left: 2.8px solid var(--verde-700);
+      border-bottom: 2.8px solid var(--verde-700);
 
       transform: rotate(-45deg);
       border-radius: 2px;
     }
 
     .brand-text {
-      margin-top: 7px;
-      font-size: 9.6px;
+      margin-top: 4px;
+      font-size: 7.7px;
       font-weight: 900;
-      color: var(--verde-950);
       letter-spacing: -.35px;
-      line-height: 1;
-      text-align: center;
+      color: var(--verde-900);
     }
 
     /* =======================================================
-ITEM DO MENU
+ITEM MENU
 ======================================================= */
 
     .side-item {
       width: 100%;
-      min-height: 74px;
+      min-height: 62px;
 
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
 
-      gap: 7px;
+      gap: 5px;
 
       cursor: pointer;
       position: relative;
 
-      border-radius: 24px;
+      border-radius: 19px;
 
-      color: var(--verde-950);
+      color: var(--verde-900);
 
-      background:
-        linear-gradient(180deg,
-          rgba(255, 255, 255, .76),
-          rgba(240, 253, 244, .62));
+      background: rgba(255, 255, 255, .58);
 
-      border: 1px solid rgba(134, 239, 172, .50);
+      border: 1px solid rgba(187, 247, 208, .58);
 
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, .88),
-        0 8px 22px rgba(16, 185, 129, .045);
+        inset 0 1px 0 rgba(255, 255, 255, .84),
+        0 6px 16px rgba(22, 163, 74, .045);
 
       transition:
-        background .18s ease,
-        transform .18s ease,
-        box-shadow .18s ease,
-        border-color .18s ease;
+        transform .17s ease,
+        background .17s ease,
+        border-color .17s ease,
+        box-shadow .17s ease;
     }
 
     .side-item:hover {
-      transform: translateY(-2px);
+      transform: translateY(-1px);
 
-      border-color: rgba(34, 197, 94, .82);
+      background: #ffffff;
 
-      background:
-        linear-gradient(180deg,
-          #ffffff 0%,
-          #ecfdf5 100%);
+      border-color: rgba(74, 222, 128, .82);
 
       box-shadow:
-        0 15px 34px rgba(16, 185, 129, .16),
-        inset 0 1px 0 rgba(255, 255, 255, .95);
+        0 10px 24px rgba(22, 163, 74, .11),
+        inset 0 1px 0 rgba(255, 255, 255, .96);
     }
 
     .side-item.active {
-      background:
-        linear-gradient(180deg,
-          #ffffff 0%,
-          #dcfce7 100%);
+      background: #ffffff;
 
       border-color: rgba(34, 197, 94, .95);
 
       box-shadow:
-        0 16px 34px rgba(16, 185, 129, .22),
-        inset 0 1px 0 rgba(255, 255, 255, .95);
+        0 12px 28px rgba(22, 163, 74, .16),
+        inset 0 1px 0 rgba(255, 255, 255, .96);
     }
 
     .side-item.active::before {
       content: "";
-
       position: absolute;
 
-      left: -11px;
+      left: -8px;
       top: 50%;
 
-      width: 5px;
-      height: 38px;
+      width: 4px;
+      height: 30px;
 
       border-radius: 999px;
 
-      background:
-        linear-gradient(180deg,
-          #86efac,
-          #16a34a);
+      background: linear-gradient(180deg, #86efac, #16a34a);
 
       box-shadow:
-        0 0 20px rgba(34, 197, 94, .70),
-        0 0 42px rgba(34, 197, 94, .28);
+        0 0 16px rgba(34, 197, 94, .65),
+        0 0 28px rgba(34, 197, 94, .25);
 
       transform: translateY(-50%);
     }
 
     /* =======================================================
-ÍCONE BASE — SILHUETAS SIMPLES
+ÍCONE BASE — LINHA SIMPLES
 ======================================================= */
 
     .side-icon {
-      width: 38px;
-      height: 38px;
-
-      border-radius: 16px;
-
-      background:
-        linear-gradient(180deg,
-          #ffffff 0%,
-          #dcfce7 100%);
-
-      border: 1px solid rgba(74, 222, 128, .58);
+      width: 28px;
+      height: 28px;
 
       position: relative;
 
@@ -329,225 +276,260 @@ ITEM DO MENU
       align-items: center;
       justify-content: center;
 
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, .95),
-        0 8px 18px rgba(16, 185, 129, .12);
-
-      transition: .18s ease;
+      color: var(--verde-800);
     }
 
     .side-item:hover .side-icon,
     .side-item.active .side-icon {
-      background:
-        linear-gradient(180deg,
-          #dcfce7 0%,
-          #bbf7d0 100%);
-
-      border-color: rgba(22, 163, 74, .72);
-
-      box-shadow:
-        0 10px 22px rgba(16, 185, 129, .18),
-        inset 0 1px 0 rgba(255, 255, 255, .95);
+      color: var(--verde-700);
     }
 
     /* =======================================================
-SILHUETA DASHBOARD
+ÍCONE DASHBOARD — GRÁFICO SIMPLES
 ======================================================= */
 
     .home-icon::before {
       content: "";
       position: absolute;
-      width: 8px;
-      height: 18px;
-      left: 9px;
-      bottom: 9px;
-      border-radius: 999px 999px 4px 4px;
-      background: var(--verde-700);
+
+      width: 4px;
+      height: 14px;
+      left: 6px;
+      bottom: 5px;
+
+      border-radius: 999px;
+      background: currentColor;
+
       box-shadow:
-        11px -6px 0 0 var(--verde-600);
+        7px -5px 0 currentColor,
+        14px -1px 0 currentColor;
     }
 
     .home-icon::after {
       content: "";
       position: absolute;
-      width: 27px;
-      height: 4px;
-      left: 6px;
-      bottom: 7px;
+
+      width: 21px;
+      height: 2px;
+
+      left: 4px;
+      bottom: 4px;
+
       border-radius: 999px;
-      background: var(--verde-800);
+      background: currentColor;
+      opacity: .55;
     }
 
     /* =======================================================
-SILHUETA EQUIPE
+ÍCONE EQUIPE — PESSOAS SIMPLES
 ======================================================= */
 
     .team-icon::before {
       content: "";
-      width: 11px;
-      height: 11px;
       position: absolute;
-      top: 8px;
-      left: 14px;
-      background: var(--verde-700);
+
+      width: 8px;
+      height: 8px;
+
+      top: 5px;
+      left: 10px;
+
+      border: 2px solid currentColor;
       border-radius: 50%;
+
       box-shadow:
-        -9px 4px 0 -1px var(--verde-500),
-        9px 4px 0 -1px var(--verde-500);
+        -9px 4px 0 -2px currentColor,
+        9px 4px 0 -2px currentColor;
     }
 
     .team-icon::after {
       content: "";
-      width: 25px;
-      height: 12px;
       position: absolute;
-      bottom: 8px;
-      left: 7px;
-      background: var(--verde-700);
-      border-radius: 14px 14px 8px 8px;
-      box-shadow:
-        -9px 2px 0 -3px var(--verde-500),
-        9px 2px 0 -3px var(--verde-500);
+
+      width: 20px;
+      height: 10px;
+
+      left: 4px;
+      bottom: 5px;
+
+      border: 2px solid currentColor;
+      border-top: none;
+
+      border-radius: 0 0 12px 12px;
     }
 
     /* =======================================================
-SILHUETA CHECKLIST / TAREFAS
+ÍCONE CHECKLIST — LISTA SIMPLES
 ======================================================= */
 
     .task-icon::before {
       content: "";
-      width: 22px;
-      height: 25px;
       position: absolute;
-      background: var(--verde-700);
-      border-radius: 7px;
-      box-shadow:
-        inset 0 5px 0 rgba(255, 255, 255, .24);
+
+      width: 18px;
+      height: 21px;
+
+      left: 5px;
+      top: 3px;
+
+      border: 2px solid currentColor;
+      border-radius: 5px;
     }
 
     .task-icon::after {
       content: "";
-      width: 13px;
-      height: 8px;
       position: absolute;
-      border-left: 3px solid #ffffff;
-      border-bottom: 3px solid #ffffff;
+
+      width: 9px;
+      height: 5px;
+
+      left: 10px;
+      top: 12px;
+
+      border-left: 2.5px solid currentColor;
+      border-bottom: 2.5px solid currentColor;
+
       transform: rotate(-45deg);
-      top: 14px;
-      left: 12px;
+      border-radius: 1px;
     }
 
     /* =======================================================
-SILHUETA MÍDIAS
+ÍCONE MÍDIAS — PLAY SIMPLES
 ======================================================= */
 
     .media-icon::before {
       content: "";
-      width: 24px;
-      height: 18px;
       position: absolute;
-      background: var(--verde-700);
-      border-radius: 7px;
+
+      width: 20px;
+      height: 15px;
+
+      left: 4px;
+      top: 6px;
+
+      border: 2px solid currentColor;
+      border-radius: 5px;
     }
 
     .media-icon::after {
       content: "";
+      position: absolute;
+
+      left: 12px;
+      top: 10px;
+
       width: 0;
       height: 0;
-      position: absolute;
-      border-left: 8px solid #ffffff;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      left: 16px;
+
+      border-left: 7px solid currentColor;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
     }
 
     /* =======================================================
-SILHUETA PONTUAÇÃO
+ÍCONE PONTOS — ESTRELA SIMPLES
 ======================================================= */
 
     .trophy-icon::before {
-      content: "";
-      width: 18px;
-      height: 17px;
+      content: "★";
       position: absolute;
-      top: 8px;
-      background: var(--verde-700);
-      border-radius: 5px 5px 9px 9px;
+
+      left: 3px;
+      top: -1px;
+
+      font-size: 25px;
+      line-height: 28px;
+      color: currentColor;
     }
 
     .trophy-icon::after {
       content: "";
-      width: 24px;
-      height: 20px;
       position: absolute;
-      top: 9px;
-      border-left: 4px solid var(--verde-700);
-      border-right: 4px solid var(--verde-700);
-      border-radius: 8px;
-      box-shadow:
-        0 13px 0 -8px var(--verde-700),
-        0 20px 0 -7px var(--verde-700);
+
+      width: 14px;
+      height: 2px;
+
+      left: 7px;
+      bottom: 4px;
+
+      border-radius: 999px;
+      background: currentColor;
+      opacity: .55;
     }
 
     /* =======================================================
-SILHUETA FONTES / DADOS
+ÍCONE FONTES — BANCO SIMPLES
 ======================================================= */
 
     .data-icon::before {
       content: "";
-      width: 23px;
-      height: 24px;
       position: absolute;
-      background:
-        linear-gradient(180deg,
-          var(--verde-600),
-          var(--verde-800));
-      border-radius: 50% / 14%;
-      box-shadow:
-        inset 0 4px 0 rgba(255, 255, 255, .38),
-        inset 0 -5px 0 rgba(15, 23, 42, .14);
+
+      width: 20px;
+      height: 7px;
+
+      left: 4px;
+      top: 5px;
+
+      border: 2px solid currentColor;
+      border-radius: 50%;
     }
 
     .data-icon::after {
       content: "";
-      width: 23px;
-      height: 7px;
       position: absolute;
-      top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, .74);
-      border-bottom: 1px solid rgba(15, 23, 42, .15);
-      border-radius: 50%;
+
+      width: 20px;
+      height: 16px;
+
+      left: 4px;
+      top: 8px;
+
+      border-left: 2px solid currentColor;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+
+      border-radius: 0 0 8px 8px;
+
+      box-shadow:
+        inset 0 -5px 0 -3px currentColor;
     }
 
     /* =======================================================
-SILHUETA LINHA DO TEMPO
+ÍCONE LINHA DO TEMPO — PONTOS SIMPLES
 ======================================================= */
 
     .timeline-icon::before {
       content: "";
-      width: 4px;
-      height: 25px;
       position: absolute;
-      left: 17px;
-      background: var(--verde-700);
+
+      width: 2px;
+      height: 22px;
+
+      left: 13px;
+      top: 3px;
+
       border-radius: 999px;
+      background: currentColor;
+      opacity: .7;
     }
 
     .timeline-icon::after {
       content: "";
-      width: 9px;
-      height: 9px;
       position: absolute;
-      left: 14px;
-      top: 8px;
-      background: var(--verde-700);
+
+      width: 7px;
+      height: 7px;
+
+      left: 10.5px;
+      top: 4px;
+
       border-radius: 50%;
+      background: currentColor;
+
       box-shadow:
-        0 9px 0 var(--verde-500),
-        0 18px 0 var(--verde-700),
-        9px 0 0 -2px var(--verde-300),
-        9px 9px 0 -2px var(--verde-300),
-        9px 18px 0 -2px var(--verde-300);
+        0 8px 0 currentColor,
+        0 16px 0 currentColor;
     }
 
     /* =======================================================
@@ -555,14 +537,14 @@ TEXTO DOS BOTÕES
 ======================================================= */
 
     .side-item span {
-      font-size: 10.4px;
-      font-weight: 900;
+      font-size: 8.7px;
+      font-weight: 800;
 
       color: var(--verde-950);
 
-      letter-spacing: -0.42px;
+      letter-spacing: -0.32px;
 
-      line-height: 1.05;
+      line-height: 1;
       text-align: center;
 
       max-width: 100%;
@@ -577,11 +559,11 @@ BADGE
     .badge {
       position: absolute;
 
-      top: 11px;
-      right: 16px;
+      top: 9px;
+      right: 12px;
 
-      width: 9px;
-      height: 9px;
+      width: 7px;
+      height: 7px;
 
       border-radius: 50%;
 
@@ -590,59 +572,21 @@ BADGE
       border: 2px solid #ffffff;
 
       box-shadow:
-        0 0 14px rgba(22, 163, 74, .78),
-        0 0 26px rgba(22, 163, 74, .34);
+        0 0 12px rgba(22, 163, 74, .76),
+        0 0 22px rgba(22, 163, 74, .28);
 
       z-index: 2;
     }
 
     /* =======================================================
-ÁREA PRINCIPAL
+MAIN
 ======================================================= */
 
     .main {
       flex: 1;
       position: relative;
       overflow: hidden;
-      padding: 12px;
-      z-index: 2;
-    }
-
-    /* =======================================================
-TOPO DECORATIVO DO MAIN
-======================================================= */
-
-    .main::before {
-      content: "CheckFlow Operacional";
-      position: absolute;
-      left: 26px;
-      top: 22px;
-
-      height: 34px;
-      padding: 0 14px;
-
-      display: flex;
-      align-items: center;
-
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: -.35px;
-
-      color: var(--verde-900);
-
-      background: rgba(255, 255, 255, .72);
-      border: 1px solid rgba(187, 247, 208, .82);
-      border-radius: 999px;
-
-      box-shadow:
-        0 10px 24px rgba(16, 185, 129, .10),
-        inset 0 1px 0 rgba(255, 255, 255, .95);
-
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-
-      z-index: 4;
-      pointer-events: none;
+      padding: 10px;
     }
 
     /* =======================================================
@@ -652,18 +596,18 @@ IFRAME PRINCIPAL
     #contentFrame {
       width: 100%;
       height: 100%;
+
       border: none;
+
       background: #fff;
-      border-radius: 28px;
+
+      border-radius: 22px;
 
       box-shadow:
-        0 24px 60px rgba(15, 23, 42, .10),
-        0 8px 22px rgba(16, 185, 129, .08);
+        0 18px 48px rgba(15, 23, 42, .08),
+        0 6px 18px rgba(22, 163, 74, .06);
 
       overflow: hidden;
-
-      position: relative;
-      z-index: 3;
     }
 
     /* =======================================================
@@ -674,18 +618,17 @@ POPUP OVERLAY
       position: fixed;
       inset: 0;
 
-      background:
-        rgba(5, 46, 26, .38);
+      background: rgba(5, 46, 26, .36);
 
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
 
       display: none;
 
       align-items: center;
       justify-content: center;
 
-      padding: 24px;
+      padding: 22px;
 
       overflow: hidden;
 
@@ -698,7 +641,7 @@ POPUP BOX
 
     .popup-box {
       width: 100%;
-      max-width: 1620px;
+      max-width: 1600px;
 
       height: 94vh;
       height: 94dvh;
@@ -708,18 +651,18 @@ POPUP BOX
 
       background: #ffffff;
 
-      border-radius: 34px;
+      border-radius: 28px;
 
       overflow: hidden;
 
       display: flex;
       flex-direction: column;
 
-      border: 1px solid rgba(187, 247, 208, .95);
+      border: 1px solid rgba(187, 247, 208, .92);
 
       box-shadow:
-        0 35px 100px rgba(5, 46, 26, .26),
-        0 12px 36px rgba(16, 185, 129, .14);
+        var(--sombra-popup),
+        0 10px 34px rgba(22, 163, 74, .10);
 
       animation: popupShow .18s ease;
 
@@ -732,7 +675,7 @@ ANIMAÇÃO POPUP
 
     @keyframes popupShow {
       from {
-        transform: scale(.96) translateY(12px);
+        transform: scale(.97) translateY(10px);
         opacity: 0;
       }
 
@@ -748,16 +691,16 @@ HEADER POPUP
 
     .popup-header {
       width: 100%;
-      min-height: 72px;
+      min-height: 64px;
 
-      padding: 0 24px;
+      padding: 0 20px;
 
       background:
         linear-gradient(180deg,
           #ffffff 0%,
           #f0fdf4 100%);
 
-      border-bottom: 1px solid rgba(187, 247, 208, .92);
+      border-bottom: 1px solid rgba(187, 247, 208, .9);
 
       display: flex;
       align-items: center;
@@ -778,26 +721,30 @@ TÍTULO POPUP
     .popup-title-area {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
     }
 
     .popup-title-dot {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
+
       background: #16a34a;
-      box-shadow: 0 0 16px rgba(22, 163, 74, .70);
+
+      box-shadow:
+        0 0 14px rgba(22, 163, 74, .70);
+
       flex-shrink: 0;
     }
 
     #popupTitulo {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
 
       color: var(--verde-950);
 
-      letter-spacing: -0.5px;
+      letter-spacing: -0.45px;
 
       overflow: hidden;
       text-overflow: ellipsis;
@@ -805,16 +752,16 @@ TÍTULO POPUP
     }
 
     /* =======================================================
-BOTÃO FECHAR POPUP
+BOTÃO FECHAR
 ======================================================= */
 
     .popup-header button {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
 
       border: 1px solid rgba(134, 239, 172, .82);
 
-      border-radius: 16px;
+      border-radius: 14px;
 
       background:
         linear-gradient(180deg,
@@ -831,19 +778,15 @@ BOTÃO FECHAR POPUP
       transition: .18s ease;
 
       box-shadow:
-        0 8px 20px rgba(16, 185, 129, .12),
+        0 8px 18px rgba(22, 163, 74, .10),
         inset 0 1px 0 rgba(255, 255, 255, .92);
 
       flex-shrink: 0;
     }
 
     .popup-header button:hover {
-      background:
-        linear-gradient(180deg,
-          #f0fdf4,
-          #bbf7d0);
-
       transform: scale(1.04);
+      background: #ecfdf5;
     }
 
     /* =======================================================
@@ -859,12 +802,10 @@ CONTEÚDO POPUP
 
       background:
         linear-gradient(135deg,
-          #f8fff9,
+          #fbfffc,
           #eefbf3);
 
-      padding: 18px;
-
-      scroll-behavior: smooth;
+      padding: 14px;
     }
 
     /* =======================================================
@@ -877,24 +818,23 @@ IFRAME POPUP
 
       border: none;
 
-      border-radius: 24px;
+      border-radius: 20px;
 
       background: #fff;
 
       box-shadow:
-        0 12px 34px rgba(15, 23, 42, .08),
-        0 6px 18px rgba(16, 185, 129, .08);
+        0 12px 34px rgba(15, 23, 42, .07);
 
       overflow: hidden;
     }
 
     /* =======================================================
-FOCO ACESSÍVEL
+ACESSIBILIDADE
 ======================================================= */
 
     .side-item:focus-visible,
     .popup-header button:focus-visible {
-      outline: 3px solid rgba(34, 197, 94, .45);
+      outline: 3px solid rgba(34, 197, 94, .38);
       outline-offset: 3px;
     }
 
@@ -905,28 +845,15 @@ RESPONSIVO TABLET
     @media(max-width:1100px) {
 
       .layout {
-        padding-bottom: 88px;
-      }
-
-      .layout::before {
-        inset: 8px;
-        border-radius: 24px;
+        padding-bottom: 74px;
       }
 
       .main {
-        padding: 8px;
-      }
-
-      .main::before {
-        left: 18px;
-        top: 16px;
-        height: 30px;
-        font-size: 11px;
-        padding: 0 12px;
+        padding: 7px;
       }
 
       #contentFrame {
-        border-radius: 22px;
+        border-radius: 18px;
       }
 
       .sidebar-black {
@@ -939,22 +866,21 @@ RESPONSIVO TABLET
         width: 100%;
         min-width: 100%;
 
-        height: 88px;
+        height: 74px;
 
-        padding: 7px 8px;
+        padding: 6px 7px;
 
         flex-direction: row;
 
         justify-content: space-between;
 
-        gap: 6px;
+        gap: 5px;
 
         border-right: none;
 
-        border-top: 1px solid rgba(134, 239, 172, .78);
+        border-top: 1px solid rgba(134, 239, 172, .72);
 
-        box-shadow:
-          0 -16px 34px rgba(16, 185, 129, .17);
+        box-shadow: 0 -12px 30px rgba(22, 163, 74, .13);
 
         z-index: 999999;
       }
@@ -964,22 +890,22 @@ RESPONSIVO TABLET
       }
 
       .side-item {
-        min-height: 72px;
-        height: 72px;
+        min-height: 60px;
+        height: 60px;
 
         flex: 1;
 
-        gap: 5px;
+        gap: 4px;
 
-        border-radius: 20px;
+        border-radius: 17px;
       }
 
       .side-item.active::before {
-        width: 34px;
-        height: 5px;
+        width: 30px;
+        height: 4px;
 
         left: 50%;
-        top: -8px;
+        top: -7px;
 
         transform: translateX(-50%);
 
@@ -987,128 +913,50 @@ RESPONSIVO TABLET
       }
 
       .side-icon {
-        width: 32px;
-        height: 32px;
-
-        border-radius: 14px;
+        width: 25px;
+        height: 25px;
       }
 
       .side-item span {
-        font-size: 9.2px;
-        line-height: 1;
+        font-size: 8px;
       }
 
       .badge {
-        top: 8px;
-        right: 15px;
+        top: 7px;
+        right: 12px;
       }
 
       .popup-overlay {
         padding: 10px;
-        align-items: center;
       }
 
       .popup-box {
-        width: 100%;
-
         height: 96dvh;
         max-height: 96dvh;
-
-        border-radius: 24px;
+        border-radius: 22px;
       }
 
       .popup-header {
-        min-height: 62px;
-        padding: 0 14px;
+        min-height: 58px;
+        padding: 0 13px;
       }
 
       #popupTitulo {
-        font-size: 16px;
+        font-size: 15px;
       }
 
       .popup-header button {
-        width: 40px;
-        height: 40px;
-        border-radius: 14px;
+        width: 38px;
+        height: 38px;
+        border-radius: 13px;
       }
 
       .popup-content {
-        padding: 10px;
+        padding: 9px;
       }
 
       .popup-content iframe {
-        border-radius: 18px;
-      }
-
-      .home-icon::before {
-        width: 7px;
-        height: 16px;
-        left: 8px;
-        bottom: 8px;
-        box-shadow: 10px -5px 0 0 var(--verde-600);
-      }
-
-      .home-icon::after {
-        width: 24px;
-        left: 4px;
-        bottom: 6px;
-      }
-
-      .team-icon::before {
-        left: 11px;
-        top: 7px;
-      }
-
-      .team-icon::after {
-        left: 4px;
-        bottom: 7px;
-      }
-
-      .task-icon::before {
-        width: 20px;
-        height: 22px;
-      }
-
-      .task-icon::after {
-        left: 9px;
-        top: 12px;
-      }
-
-      .media-icon::before {
-        width: 21px;
-        height: 16px;
-      }
-
-      .media-icon::after {
-        left: 14px;
-      }
-
-      .trophy-icon::before {
-        top: 7px;
-      }
-
-      .trophy-icon::after {
-        top: 8px;
-      }
-
-      .data-icon::before {
-        width: 19px;
-        height: 21px;
-      }
-
-      .data-icon::after {
-        width: 19px;
-        top: 14px;
-      }
-
-      .timeline-icon::before {
-        left: 14px;
-        height: 22px;
-      }
-
-      .timeline-icon::after {
-        left: 11px;
-        top: 6px;
+        border-radius: 16px;
       }
     }
 
@@ -1119,84 +967,75 @@ RESPONSIVO CELULAR
     @media(max-width:520px) {
 
       .layout {
-        padding-bottom: 82px;
+        padding-bottom: 70px;
       }
 
       .main {
-        padding: 6px;
-      }
-
-      .main::before {
-        left: 14px;
-        top: 13px;
-        height: 28px;
-        max-width: calc(100vw - 40px);
-        font-size: 10.5px;
+        padding: 5px;
       }
 
       #contentFrame {
-        border-radius: 19px;
+        border-radius: 16px;
       }
 
       .sidebar-black {
-        height: 82px;
-        padding: 6px 4px;
-        gap: 4px;
+        height: 70px;
+        padding: 5px 4px;
+        gap: 3px;
       }
 
       .side-item {
-        min-height: 68px;
-        height: 68px;
+        min-height: 58px;
+        height: 58px;
 
-        border-radius: 17px;
+        border-radius: 15px;
 
-        gap: 4px;
+        gap: 3px;
       }
 
       .side-icon {
-        width: 30px;
-        height: 30px;
-
-        border-radius: 13px;
+        width: 23px;
+        height: 23px;
       }
 
       .side-item span {
-        font-size: 7.8px;
-        letter-spacing: -0.48px;
+        font-size: 7.1px;
+        letter-spacing: -0.42px;
       }
 
       .badge {
-        width: 8px;
-        height: 8px;
+        width: 7px;
+        height: 7px;
 
-        top: 7px;
-        right: 9px;
+        top: 6px;
+        right: 8px;
       }
 
       .popup-box {
-        border-radius: 22px;
+        border-radius: 20px;
       }
 
       .popup-header {
-        min-height: 58px;
+        min-height: 55px;
       }
 
       #popupTitulo {
-        font-size: 15px;
+        font-size: 14px;
       }
 
       .popup-title-dot {
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
       }
 
       .popup-content {
-        padding: 8px;
+        padding: 7px;
       }
 
       .popup-content iframe {
-        border-radius: 16px;
+        border-radius: 14px;
       }
+
     }
 
     /* =======================================================
@@ -1205,28 +1044,29 @@ CELULAR MUITO PEQUENO
 
     @media(max-width:380px) {
 
-      .side-item span {
-        font-size: 7.1px;
-      }
-
-      .side-icon {
-        width: 28px;
-        height: 28px;
+      .layout {
+        padding-bottom: 66px;
       }
 
       .sidebar-black {
-        height: 78px;
-      }
-
-      .layout {
-        padding-bottom: 78px;
+        height: 66px;
       }
 
       .side-item {
-        height: 64px;
-        min-height: 64px;
-        border-radius: 15px;
+        min-height: 54px;
+        height: 54px;
+        border-radius: 14px;
       }
+
+      .side-icon {
+        width: 21px;
+        height: 21px;
+      }
+
+      .side-item span {
+        font-size: 6.5px;
+      }
+
     }
   </style>
 </head>
@@ -1262,7 +1102,7 @@ CELULAR MUITO PEQUENO
 
       </div>
 
-      <!-- TAREFAS -->
+      <!-- CHECKLIST -->
       <div class="side-item" role="button" tabindex="0" onclick="trocarPagina(this,'tarefas.html')"
         onkeydown="ativarComEnter(event, this, 'tarefas.html')">
 
@@ -1322,7 +1162,7 @@ CELULAR MUITO PEQUENO
 
     <main class="main">
 
-      <iframe id="contentFrame" src="home.html" loading="eager" title="Área principal do CheckFlow Operacional"
+      <iframe id="contentFrame" src="home.html" loading="eager" title="CheckFlow Operacional"
         allow="clipboard-read; clipboard-write; fullscreen">
       </iframe>
 
@@ -1365,7 +1205,7 @@ POPUP
 
   <script>
     /* =======================================================
-REFERÊNCIAS PRINCIPAIS
+REFERÊNCIAS
 ======================================================= */
 
 const frame =
@@ -1381,7 +1221,7 @@ const popupContent =
 document.getElementById('popupContent')
 
 /* =======================================================
-ATIVAR MENU COM TECLADO
+TECLADO
 ======================================================= */
 
 function ativarComEnter(event, el, url){
@@ -1403,7 +1243,7 @@ function ativarPopupComEnter(event, tipo, el){
 }
 
 /* =======================================================
-TROCAR PÁGINA PRINCIPAL
+TROCAR PÁGINA
 ======================================================= */
 
 function trocarPagina(el,url){
@@ -1482,10 +1322,11 @@ function(e){
 )
 
 /* =======================================================
-MAPA DOS POPUPS
+POPUPS
 ======================================================= */
 
 const popups = {
+
   inicio:{
     pagina:'popup/popup1.html',
     titulo:'Mídias'
@@ -1525,6 +1366,7 @@ const popups = {
     pagina:'popup/popup7.html',
     titulo:'Mais'
   }
+
 }
 
 /* =======================================================
@@ -1593,7 +1435,7 @@ function fecharPopup(){
 }
 
 /* =======================================================
-FECHAR CLICANDO FORA
+FECHAR FORA
 ======================================================= */
 
 function fecharPopupFora(event){
@@ -1618,31 +1460,6 @@ function(e){
 
 }
 )
-
-/* =======================================================
-AJUSTE EXTRA PARA ALTURA MOBILE
-======================================================= */
-
-function ajustarAlturaMobile(){
-
-  document.documentElement.style.setProperty(
-    '--vh',
-    `${window.innerHeight * 0.01}px`
-  )
-
-}
-
-window.addEventListener(
-'resize',
-ajustarAlturaMobile
-)
-
-window.addEventListener(
-'orientationchange',
-ajustarAlturaMobile
-)
-
-ajustarAlturaMobile()
 
   </script>
 
